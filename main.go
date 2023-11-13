@@ -5,7 +5,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 )
@@ -22,7 +21,6 @@ var (
 	ContinueLine  = errors.New("skip line")
 	InvalidSyntax = errors.New("invalid file structure")
 )
-var logger = log.New(os.Stderr, "", log.Lmsgprefix)
 
 type Task struct {
 	Title    string
@@ -41,7 +39,8 @@ func NewTask() *Task {
 func main() {
 	flag.Parse()
 	if flag.NArg() != 1 {
-		logger.Fatal("Usage: tct [filename]")
+		fmt.Printf("Usage: tst [filename]")
+		os.Exit(1)
 	}
 	fileName := flag.Arg(0)
 	lines := scanFile(fileName)
@@ -71,7 +70,8 @@ func scanFile(fileName string) []string {
 
 func closeFile(file *os.File) {
 	if err := file.Close(); err != nil {
-		logger.Fatal("Error closing file: ", err)
+		fmt.Printf("Error closing file: %s\n", err.Error())
+		os.Exit(1)
 	}
 }
 
