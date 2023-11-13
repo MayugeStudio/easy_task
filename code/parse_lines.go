@@ -7,9 +7,9 @@ import (
 
 func ParseLines(lines []string) ([]TaskPtr, []string) {
 	tasks := make([]TaskPtr, 0)
-	errMsgSlice := make([]string, 0)
+	errorMessages := make([]string, 0)
 	for i, line := range lines {
-		pLine, skip := toProcessedLineFromRawLine(line)
+		pLine, skip := removeUnnecessaryTokenFromLine(line)
 		if skip {
 			continue
 		}
@@ -18,46 +18,39 @@ func ParseLines(lines []string) ([]TaskPtr, []string) {
 			msg := fmt.Sprintf("Error in preprocessing task: %s\n", err.Error())
 			msg += fmt.Sprintf("  > in line - %d\n", i+1)
 			msg += fmt.Sprintf("     > %q", line)
-			errMsgSlice = append(errMsgSlice, msg)
+			errorMessages = append(errorMessages, msg)
 			continue
 		}
 		task := parseLine(tokens)
 		tasks = append(tasks, task)
 	}
-	return tasks, errMsgSlice
+	return tasks, errorMessages
 }
 
 func parseLine(tokens []string) TaskPtr {
 	task := NewTask()
+parsing:
 	for {
-		isDone := processLine(tokens, task)
-		if isDone {
-			break
+		token := strings.ToUpper(tokens[0])
+		switch token {
+		case "X":
+			task.IsDone = true
+		default:
+			task.Title = strings.Join(tokens, " ")
+			break parsing
 		}
 		tokens = tokens[1:]
 	}
 	return task
 }
 
-func processLine(tokens []string, task TaskPtr) (done bool) {
-	token := strings.ToUpper(tokens[0])
-	switch token {
-	case "X":
-		task.IsDone = true
-		return false
-	default:
-		task.Title = strings.Join(tokens, " ")
-		return true
-	}
-}
-
-func toProcessedLineFromRawLine(line string) (processedLine string, skip bool) {
+func removeUnnecessaryTokenFromLine(line string) (processedLine string, skip bool) {
 	if !strings.HasPrefix(line, "-") {
 		return "", true
 	}
 	line = strings.TrimPrefix(line, "-")
-	line = strings.ReplaceAll(line, "[", "")
-	line = strings.ReplaceAll(line, "]", "")
+	line = strings.Replace(line, "[", "", 1)
+	line = strings.Replace(line, "]", "", 1)
 	return line, false
 }
 
