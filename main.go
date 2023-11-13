@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"errors"
-	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -12,42 +11,36 @@ import (
 type TokenType string
 
 const (
-	PriorityHigh   TokenType = "H"
-	PriorityMedium           = "M"
-	PriorityLow              = "L"
-)
-
-const (
 	DoneSymbol     = "X"
 	UndoneSymbol   = " "
 	ProgressSymbol = "#"
 )
 
+const DefaultProgressBarLength = 40.0
+
 var InvalidSyntax = errors.New("invalid file structure")
 
 type Task struct {
-	Title    string
-	IsDone   bool
-	Priority string
+	Title  string
+	IsDone bool
 }
 
 type TaskPtr *Task
 
 func NewTask() TaskPtr {
 	return &Task{
-		Title:    "",
-		IsDone:   false,
-		Priority: "",
+		Title:  "",
+		IsDone: false,
 	}
 }
 
 func main() {
-	flag.Parse()
-	if flag.NArg() != 1 {
+	args := os.Args[1:]
+	if len(args) != 1 {
 		fmt.Printf("Usage: tst [filename]")
 		os.Exit(1)
 	}
-	fileName := flag.Arg(0)
+	fileName := args[0]
 	lines := scanFile(fileName)
 	tasks, msgSlice := parseLines(lines)
 	printErrorMessages(msgSlice)
@@ -110,12 +103,6 @@ parsing:
 		switch TokenType(token) {
 		case "X":
 			task.IsDone = true
-		case PriorityHigh:
-			task.Priority = "High"
-		case PriorityMedium:
-			task.Priority = "Medium"
-		case PriorityLow:
-			task.Priority = "Low"
 		default:
 			task.Title = strings.Join(tokens, " ")
 			break parsing
@@ -138,9 +125,7 @@ func toProcessedLineFromRawLine(line string) (processedLine string, skip bool) {
 func processedLineToTokens(processedLine string) ([]string, error) {
 	tokens := strings.Fields(processedLine)
 	if len(tokens) == 0 {
-		return nil, InvalidSyntax
-	} else if len(tokens) <= 3 {
-		return nil, InvalidSyntax
+		return nil, InvalidSyntax // 'X TaskTitle' or '  TaskTitle'
 	}
 	return tokens, nil
 }
@@ -179,11 +164,11 @@ func printTask(task TaskPtr, maxTaskNameLength int) {
 	} else {
 		doneStr = UndoneSymbol
 	}
-	fmt.Printf("[%s] %-*s ~ <priority: %s>\n", doneStr, maxTaskNameLength, task.Title, task.Priority)
+	fmt.Printf("[%s] %-*s\n", doneStr, maxTaskNameLength, task.Title)
 }
 
 func printTaskProgress(tasks []TaskPtr) {
-	progressBarLength := 20.0
+	progressBarLength := DefaultProgressBarLength
 	taskNum := float64(len(tasks))
 	doneTaskNum := 0.0
 	for _, task := range tasks {
