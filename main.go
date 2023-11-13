@@ -3,27 +3,24 @@ package main
 import (
 	"bufio"
 	"errors"
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 )
 
+type TokenType string
+
 const (
-	High   = "H"
-	Medium = "M"
-	Low    = "L"
+	PriorityHigh   TokenType = "H"
+	PriorityMedium           = "M"
+	PriorityLow              = "L"
 )
 
-var PriorityMap = map[string]string{
-	High:   "High",
-	Medium: "Medium",
-	Low:    "Low",
-}
-
 var (
-	ContinueLine      = errors.New("skip line")
-	InvalidLineSyntax = errors.New("invalid file structure")
+	ContinueLine  = errors.New("skip line")
+	InvalidSyntax = errors.New("invalid file structure")
 )
 
 type Task struct {
@@ -41,15 +38,11 @@ func NewTask() *Task {
 }
 
 func main() {
-	args := os.Args[1:]
-	if len(args) >= 2 {
+	flag.Parse()
+	if flag.NArg() != 1 {
 		log.Fatal("Usage: tct [filename]")
-	} else if len(args) == 0 {
-		fmt.Println("Error: need one argument.")
-		fmt.Println("Usage: tct [filename]")
-		os.Exit(1)
 	}
-	fileName := args[0]
+	fileName := flag.Args()[0]
 	lines := scanFile(fileName)
 	tasks := parseLines(lines)
 	printTasks(tasks)
@@ -108,28 +101,29 @@ func parseLine(line string) (*Task, error) {
 	line = strings.TrimPrefix(line, "-")
 	line = strings.ReplaceAll(line, "[", "")
 	line = strings.ReplaceAll(line, "]", "")
-	fields := strings.Fields(line)
-
-	if len(fields) <= 3 {
-		return nil, InvalidLineSyntax
+	tokens := strings.Fields(line)
+	if len(tokens) == 0 {
+		return nil, InvalidSyntax
+	} else if len(tokens) <= 3 {
+		return nil, InvalidSyntax
 	}
 parsing:
 	for {
-		field := strings.ToUpper(fields[0])
-		switch field {
+		token := strings.ToUpper(tokens[0])
+		switch TokenType(token) {
 		case "X":
 			task.IsDone = true
-		case High:
-			task.Priority = PriorityMap[High]
-		case Medium:
-			task.Priority = PriorityMap[Medium]
-		case Low:
-			task.Priority = PriorityMap[Low]
+		case PriorityHigh:
+			task.Priority = "High"
+		case PriorityMedium:
+			task.Priority = "Medium"
+		case PriorityLow:
+			task.Priority = "Low"
 		default:
-			task.Title = strings.Join(fields, " ")
+			task.Title = strings.Join(tokens, " ")
 			break parsing
 		}
-		fields = fields[1:]
+		tokens = tokens[1:]
 	}
 	return task, nil
 }
