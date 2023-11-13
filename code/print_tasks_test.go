@@ -6,26 +6,26 @@ import (
 
 func TestPrintTasks(t *testing.T) {
 	tasks := []TaskPtr{{Title: "TestTask1", IsDone: true}, {Title: "TestTask2", IsDone: false}}
-	testWriter := &TestWriter{}
+	writer := &TestWriter{}
 	expected := "[X] TestTask1\n[ ] TestTask2\n"
-	err := PrintTasks(testWriter, tasks)
+	err := PrintTasks(writer, tasks)
 	if err != nil {
 		t.Fatalf("PrintTasks() error = %v", err)
 	}
-	if actual := string(testWriter.WrittenData); actual != expected {
+	if actual := string(writer.WrittenData); actual != expected {
 		t.Errorf("PrintTasks() = %v, want %v", actual, expected)
 	}
 }
 
 func Test_printTask(t *testing.T) {
 	task := &Task{Title: "Test", IsDone: true}
-	w := &TestWriter{}
+	writer := &TestWriter{}
 	expected := "[X] Test\n"
-	err := printTask(w, task, len(task.Title))
+	err := printTask(writer, task, len(task.Title))
 	if err != nil {
 		t.Fatalf("printTask() error = %v", err)
 	}
-	if actual := string(w.WrittenData); actual != expected {
+	if actual := string(writer.WrittenData); actual != expected {
 		t.Errorf("printTask() = %v, want %v", actual, expected)
 	}
 }

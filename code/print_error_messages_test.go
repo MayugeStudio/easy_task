@@ -6,8 +6,8 @@ import (
 
 func TestPrintErrorMessages(t *testing.T) {
 	messages := []string{"Error1", "Error2"}
-	testWriter := &TestWriter{}
-	if err := PrintErrorMessages(testWriter, messages); err != nil {
+	writer := &TestWriter{}
+	if err := PrintErrorMessages(writer, messages); err != nil {
 		t.Fatalf("PrintErrorMessages error = %v", err)
 	}
 }
