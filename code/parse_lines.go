@@ -29,19 +29,26 @@ func ParseLines(lines []string) ([]TaskPtr, []string) {
 
 func parseLine(tokens []string) TaskPtr {
 	task := NewTask()
-parsing:
 	for {
-		token := strings.ToUpper(tokens[0])
-		switch token {
-		case "X":
-			task.IsDone = true
-		default:
-			task.Title = strings.Join(tokens, " ")
-			break parsing
+		isDone := processLine(tokens, task)
+		if isDone {
+			break
 		}
 		tokens = tokens[1:]
 	}
 	return task
+}
+
+func processLine(tokens []string, task TaskPtr) (done bool) {
+	token := strings.ToUpper(tokens[0])
+	switch token {
+	case "X":
+		task.IsDone = true
+		return false
+	default:
+		task.Title = strings.Join(tokens, " ")
+		return true
+	}
 }
 
 func toProcessedLineFromRawLine(line string) (processedLine string, skip bool) {
