@@ -8,8 +8,6 @@ import (
 	"strings"
 )
 
-type TokenType string
-
 const (
 	DoneSymbol     = "X"
 	UndoneSymbol   = " "
@@ -72,7 +70,7 @@ func parseLine(tokens []string) TaskPtr {
 parsing:
 	for {
 		token := strings.ToUpper(tokens[0])
-		switch TokenType(token) {
+		switch token {
 		case "X":
 			task.IsDone = true
 		default:
