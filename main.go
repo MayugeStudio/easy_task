@@ -18,7 +18,9 @@ func main() {
 	if err := code.PrintErrorMessages(os.Stdout, msgSlice); err != nil {
 		fmt.Println("Error:", err)
 	}
-	code.PrintTasks(tasks)
+	if err := code.PrintTasks(os.Stdout, tasks); err != nil {
+		fmt.Println("Error:", err)
+	}
 	if err := code.PrintTaskProgress(os.Stdout, tasks); err != nil {
 		fmt.Println("Error:", err)
 	}
