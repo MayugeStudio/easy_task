@@ -31,7 +31,9 @@ type Task struct {
 	Priority string
 }
 
-func NewTask() *Task {
+type TaskPtr *Task
+
+func NewTask() TaskPtr {
 	return &Task{
 		Title:    "",
 		IsDone:   false,
@@ -78,8 +80,8 @@ func scanFile(fileName string) []string {
 	return lines
 }
 
-func parseLines(lines []string) ([]*Task, []string) {
-	tasks := make([]*Task, 0)
+func parseLines(lines []string) ([]TaskPtr, []string) {
+	tasks := make([]TaskPtr, 0)
 	errMsgSlice := make([]string, 0)
 	for i, line := range lines {
 		pLine, skip := toProcessedLineFromRawLine(line)
@@ -100,7 +102,7 @@ func parseLines(lines []string) ([]*Task, []string) {
 	return tasks, errMsgSlice
 }
 
-func parseLine(tokens []string) *Task {
+func parseLine(tokens []string) TaskPtr {
 	task := NewTask()
 parsing:
 	for {
@@ -153,7 +155,7 @@ func printErrorMessages(messages []string) {
 	fmt.Printf("\n")
 }
 
-func getMaxTaskNameLength(tasks []*Task) int {
+func getMaxTaskNameLength(tasks []TaskPtr) int {
 	maxLength := 0
 	for _, task := range tasks {
 		if len(task.Title) > maxLength {
@@ -163,14 +165,14 @@ func getMaxTaskNameLength(tasks []*Task) int {
 	return maxLength
 }
 
-func printTasks(tasks []*Task) {
+func printTasks(tasks []TaskPtr) {
 	maxTaskNameLength := getMaxTaskNameLength(tasks)
 	for _, task := range tasks {
 		printTask(task, maxTaskNameLength)
 	}
 }
 
-func printTask(task *Task, maxTaskNameLength int) {
+func printTask(task TaskPtr, maxTaskNameLength int) {
 	var doneStr string
 	if task.IsDone {
 		doneStr = DoneSymbol
@@ -180,7 +182,7 @@ func printTask(task *Task, maxTaskNameLength int) {
 	fmt.Printf("[%s] %-*s ~ <priority: %s>\n", doneStr, maxTaskNameLength, task.Title, task.Priority)
 }
 
-func printTaskProgress(tasks []*Task) {
+func printTaskProgress(tasks []TaskPtr) {
 	progressBarLength := 20.0
 	taskNum := float64(len(tasks))
 	doneTaskNum := 0.0
