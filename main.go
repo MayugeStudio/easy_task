@@ -15,7 +15,9 @@ func main() {
 	fileName := args[0]
 	lines := code.ScanFile(fileName)
 	tasks, msgSlice := code.ParseLines(lines)
-	code.PrintErrorMessages(msgSlice)
+	if err := code.PrintErrorMessages(os.Stdout, msgSlice); err != nil {
+		fmt.Println("Error:", err)
+	}
 	code.PrintTasks(tasks)
 	code.PrintTaskProgress(tasks)
 }

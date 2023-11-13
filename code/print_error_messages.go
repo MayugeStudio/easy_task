@@ -1,13 +1,27 @@
 package code
 
-import "fmt"
+import (
+	"io"
+)
 
-func PrintErrorMessages(messages []string) {
+// PrintErrorMessages prints error messages to the provided io.Writer.
+// It returns an error if writing to the io.Writer fails.
+func PrintErrorMessages(w io.Writer, messages []string) error {
 	if len(messages) == 0 {
-		return
+		return nil
 	}
+
 	for _, message := range messages {
-		fmt.Print(message)
+		_, err := w.Write([]byte(message))
+		if err != nil {
+			return err
+		}
 	}
-	fmt.Printf("\n")
+
+	_, err := w.Write([]byte("\n"))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
