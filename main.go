@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"math"
 	"os"
 	"strings"
 )
@@ -17,10 +18,13 @@ const (
 	PriorityLow              = "L"
 )
 
-var (
-	ContinueLine  = errors.New("skip line")
-	InvalidSyntax = errors.New("invalid file structure")
+const (
+	DoneSymbol     = "X"
+	UndoneSymbol   = " "
+	ProgressSymbol = "#"
 )
+
+var InvalidSyntax = errors.New("invalid file structure")
 
 type Task struct {
 	Title    string
@@ -44,8 +48,10 @@ func main() {
 	}
 	fileName := flag.Arg(0)
 	lines := scanFile(fileName)
-	tasks := parseLines(lines)
+	tasks, msgSlice := parseLines(lines)
+	printErrorMessages(msgSlice)
 	printTasks(tasks)
+	printTaskProgress(tasks)
 }
 
 func scanFile(fileName string) []string {
@@ -75,38 +81,30 @@ func closeFile(file *os.File) {
 	}
 }
 
-func parseLines(lines []string) []*Task {
+func parseLines(lines []string) ([]*Task, []string) {
 	tasks := make([]*Task, 0)
-	for _, line := range lines {
-		if task, err := parseLine(line); err != nil {
-			if errors.Is(err, ContinueLine) {
-				continue
-			} else {
-				fmt.Printf("Error parsing task: %s\n", err.Error())
-				fmt.Printf("\tLine: %s\n", line)
-				continue
-			}
-		} else {
-			tasks = append(tasks, task)
+	errMsgSlice := make([]string, 0)
+	for i, line := range lines {
+		pLine, skip := toPreprocessedLine(line)
+		if skip {
+			continue
 		}
+		tokens, err := preprocessedLineToTokens(pLine)
+		if err != nil {
+			msg := fmt.Sprintf("Error in preprocessing task: %s\n", err.Error())
+			msg += fmt.Sprintf("  > in line - %d\n", i+1)
+			msg += fmt.Sprintf("     > %q", line)
+			errMsgSlice = append(errMsgSlice, msg)
+			continue
+		}
+		task := parseLine(tokens)
+		tasks = append(tasks, task)
 	}
-	return tasks
+	return tasks, errMsgSlice
 }
 
-func parseLine(line string) (*Task, error) {
+func parseLine(tokens []string) *Task {
 	task := NewTask()
-	if !strings.HasPrefix(line, "-") {
-		return nil, ContinueLine
-	}
-	line = strings.TrimPrefix(line, "-")
-	line = strings.ReplaceAll(line, "[", "")
-	line = strings.ReplaceAll(line, "]", "")
-	tokens := strings.Fields(line)
-	if len(tokens) == 0 {
-		return nil, InvalidSyntax
-	} else if len(tokens) <= 3 {
-		return nil, InvalidSyntax
-	}
 parsing:
 	for {
 		token := strings.ToUpper(tokens[0])
@@ -125,23 +123,77 @@ parsing:
 		}
 		tokens = tokens[1:]
 	}
-	return task, nil
+	return task
+}
+
+func toPreprocessedLine(line string) (preprocessedLine string, skip bool) {
+	if !strings.HasPrefix(line, "-") {
+		return "", true
+	}
+	line = strings.TrimPrefix(line, "-")
+	line = strings.ReplaceAll(line, "[", "")
+	line = strings.ReplaceAll(line, "]", "")
+	return line, false
+}
+
+func preprocessedLineToTokens(line string) ([]string, error) {
+	tokens := strings.Fields(line)
+	if len(tokens) == 0 {
+		return nil, InvalidSyntax
+	} else if len(tokens) <= 3 {
+		return nil, InvalidSyntax
+	}
+	return tokens, nil
+}
+
+func printErrorMessages(messages []string) {
+	if len(messages) == 0 {
+		return
+	}
+	for _, message := range messages {
+		fmt.Print(message)
+	}
+	fmt.Printf("\n")
 }
 
 func printTasks(tasks []*Task) {
-	for i, task := range tasks {
-		printTask(i, task)
+	maxTaskNameLength := 0
+	for _, task := range tasks {
+		if len(task.Title) > maxTaskNameLength {
+			maxTaskNameLength = len(task.Title)
+		}
+	}
+	for _, task := range tasks {
+		printTask(task, maxTaskNameLength)
 	}
 }
 
-func printTask(index int, task *Task) {
+func printTask(task *Task, maxTaskNameLength int) {
 	var doneStr string
-	if task.IsDone {
-		doneStr = "Complete"
-	} else {
-		doneStr = "InProgress"
+	var paddingStr string
+	if len(task.Title) <= maxTaskNameLength {
+		paddingStr = strings.Repeat(" ", maxTaskNameLength-len(task.Title))
 	}
-	fmt.Printf("[%d] %s\n", index, task.Title)
-	fmt.Printf("\tPriority: %s\n", task.Priority)
-	fmt.Printf("\tStatus: %s\n", doneStr)
+	if task.IsDone {
+		doneStr = DoneSymbol
+	} else {
+		doneStr = UndoneSymbol
+	}
+	fmt.Printf("[%s] %s%s ~ <priority: %s>\n", doneStr, task.Title, paddingStr, task.Priority)
+}
+
+func printTaskProgress(tasks []*Task) {
+	progressBarLength := 20.0
+	taskNum := float64(len(tasks))
+	doneTaskNum := 0.0
+	for _, task := range tasks {
+		if task.IsDone {
+			doneTaskNum++
+		}
+	}
+	doneTaskRatio := doneTaskNum / taskNum
+	doneTaskStrLength := int(math.Ceil(progressBarLength * doneTaskRatio))
+	doneTaskStr := strings.Repeat(ProgressSymbol, doneTaskStrLength)
+	undoneTaskStr := strings.Repeat(" ", int(progressBarLength)-doneTaskStrLength)
+	fmt.Printf("[%s%s]", doneTaskStr, undoneTaskStr)
 }
