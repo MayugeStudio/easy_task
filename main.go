@@ -5,7 +5,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"math"
 	"os"
 	"strings"
 )
@@ -60,7 +59,12 @@ func scanFile(fileName string) []string {
 		fmt.Println("Error opening file:", openErr)
 		os.Exit(1)
 	}
-	defer closeFile(file)
+	defer func(f *os.File) {
+		if err := f.Close(); err != nil {
+			fmt.Printf("Error closing file: %s\n", err.Error())
+			os.Exit(1)
+		}
+	}(file)
 
 	scanner := bufio.NewScanner(file)
 	lines := make([]string, 0)
@@ -74,22 +78,15 @@ func scanFile(fileName string) []string {
 	return lines
 }
 
-func closeFile(file *os.File) {
-	if err := file.Close(); err != nil {
-		fmt.Printf("Error closing file: %s\n", err.Error())
-		os.Exit(1)
-	}
-}
-
 func parseLines(lines []string) ([]*Task, []string) {
 	tasks := make([]*Task, 0)
 	errMsgSlice := make([]string, 0)
 	for i, line := range lines {
-		pLine, skip := toPreprocessedLine(line)
+		pLine, skip := toProcessedLineFromRawLine(line)
 		if skip {
 			continue
 		}
-		tokens, err := preprocessedLineToTokens(pLine)
+		tokens, err := processedLineToTokens(pLine)
 		if err != nil {
 			msg := fmt.Sprintf("Error in preprocessing task: %s\n", err.Error())
 			msg += fmt.Sprintf("  > in line - %d\n", i+1)
@@ -126,7 +123,7 @@ parsing:
 	return task
 }
 
-func toPreprocessedLine(line string) (preprocessedLine string, skip bool) {
+func toProcessedLineFromRawLine(line string) (processedLine string, skip bool) {
 	if !strings.HasPrefix(line, "-") {
 		return "", true
 	}
@@ -136,8 +133,8 @@ func toPreprocessedLine(line string) (preprocessedLine string, skip bool) {
 	return line, false
 }
 
-func preprocessedLineToTokens(line string) ([]string, error) {
-	tokens := strings.Fields(line)
+func processedLineToTokens(processedLine string) ([]string, error) {
+	tokens := strings.Fields(processedLine)
 	if len(tokens) == 0 {
 		return nil, InvalidSyntax
 	} else if len(tokens) <= 3 {
@@ -156,13 +153,18 @@ func printErrorMessages(messages []string) {
 	fmt.Printf("\n")
 }
 
-func printTasks(tasks []*Task) {
-	maxTaskNameLength := 0
+func getMaxTaskNameLength(tasks []*Task) int {
+	maxLength := 0
 	for _, task := range tasks {
-		if len(task.Title) > maxTaskNameLength {
-			maxTaskNameLength = len(task.Title)
+		if len(task.Title) > maxLength {
+			maxLength = len(task.Title)
 		}
 	}
+	return maxLength
+}
+
+func printTasks(tasks []*Task) {
+	maxTaskNameLength := getMaxTaskNameLength(tasks)
 	for _, task := range tasks {
 		printTask(task, maxTaskNameLength)
 	}
@@ -170,16 +172,12 @@ func printTasks(tasks []*Task) {
 
 func printTask(task *Task, maxTaskNameLength int) {
 	var doneStr string
-	var paddingStr string
-	if len(task.Title) <= maxTaskNameLength {
-		paddingStr = strings.Repeat(" ", maxTaskNameLength-len(task.Title))
-	}
 	if task.IsDone {
 		doneStr = DoneSymbol
 	} else {
 		doneStr = UndoneSymbol
 	}
-	fmt.Printf("[%s] %s%s ~ <priority: %s>\n", doneStr, task.Title, paddingStr, task.Priority)
+	fmt.Printf("[%s] %-*s ~ <priority: %s>\n", doneStr, maxTaskNameLength, task.Title, task.Priority)
 }
 
 func printTaskProgress(tasks []*Task) {
@@ -192,8 +190,8 @@ func printTaskProgress(tasks []*Task) {
 		}
 	}
 	doneTaskRatio := doneTaskNum / taskNum
-	doneTaskStrLength := int(math.Ceil(progressBarLength * doneTaskRatio))
+	doneTaskStrLength := int(doneTaskRatio * progressBarLength)
 	doneTaskStr := strings.Repeat(ProgressSymbol, doneTaskStrLength)
 	undoneTaskStr := strings.Repeat(" ", int(progressBarLength)-doneTaskStrLength)
-	fmt.Printf("[%s%s]", doneTaskStr, undoneTaskStr)
+	fmt.Printf("[%s%s]%d%%", doneTaskStr, undoneTaskStr, int(doneTaskRatio*100))
 }
