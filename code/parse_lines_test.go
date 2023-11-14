@@ -21,15 +21,11 @@ func TestParseLines(t *testing.T) {
 			IsDone: true,
 		},
 	}
-	expectedErrorMessages := make([]string, 0)
 
-	actualTasks, actualErrorMessages := ParseLines(lines)
+	actualTasks := ParseLines(lines)
 
 	if !reflect.DeepEqual(actualTasks, expectedTasks) {
 		t.Errorf("ParseLines() got = %v, want %v", actualTasks, expectedTasks)
-	}
-	if !reflect.DeepEqual(actualErrorMessages, expectedErrorMessages) {
-		t.Errorf("ParseLines() got1 = %v, want %v", actualErrorMessages, expectedErrorMessages)
 	}
 }
 
@@ -44,10 +40,9 @@ func Test_parseLine(t *testing.T) {
 func Test_processedLineToTokens_success(t *testing.T) {
 	processedLine := " X TestName"
 	expectedTokens := []string{"X", "TestName"}
-	actualTokens, err := processedLineToTokens(processedLine)
-	if err != nil {
-		t.Errorf("processedLineToTokens() error = %v", err)
-		return
+	actualTokens, skip := processedLineToTokens(processedLine)
+	if skip == true {
+		t.Errorf("processedLineToTokens() skip = true, want false")
 	}
 	if !reflect.DeepEqual(actualTokens, expectedTokens) {
 		t.Errorf("processedLineToTokens() actual = %v, want %v", actualTokens, expectedTokens)

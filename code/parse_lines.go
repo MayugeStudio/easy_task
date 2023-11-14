@@ -1,30 +1,24 @@
 package code
 
 import (
-	"fmt"
 	"strings"
 )
 
-func ParseLines(lines []string) ([]TaskPtr, []string) {
+func ParseLines(lines []string) []TaskPtr {
 	tasks := make([]TaskPtr, 0)
-	errorMessages := make([]string, 0)
-	for i, line := range lines {
+	for _, line := range lines {
 		pLine, skip := removeUnnecessaryTokenFromLine(line)
 		if skip {
 			continue
 		}
-		tokens, err := processedLineToTokens(pLine)
-		if err != nil {
-			msg := fmt.Sprintf("Error in preprocessing task: %s\n", err.Error())
-			msg += fmt.Sprintf("  > in line - %d\n", i+1)
-			msg += fmt.Sprintf("     > %q", line)
-			errorMessages = append(errorMessages, msg)
+		tokens, skip := processedLineToTokens(pLine)
+		if skip {
 			continue
 		}
 		task := parseLine(tokens)
 		tasks = append(tasks, task)
 	}
-	return tasks, errorMessages
+	return tasks
 }
 
 func parseLine(tokens []string) TaskPtr {
@@ -53,10 +47,10 @@ func removeUnnecessaryTokenFromLine(line string) (processedLine string, skip boo
 	return line, false
 }
 
-func processedLineToTokens(processedLine string) ([]string, error) {
-	tokens := strings.Fields(processedLine)
+func processedLineToTokens(processedLine string) (tokens []string, skip bool) {
+	tokens = strings.Fields(processedLine)
 	if len(tokens) == 0 {
-		return nil, InvalidSyntax // 'X TaskTitle' or '  TaskTitle'
+		return nil, true
 	}
-	return tokens, nil
+	return tokens, false
 }

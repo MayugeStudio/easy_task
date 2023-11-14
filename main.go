@@ -9,8 +9,12 @@ import (
 func main() {
 	args := os.Args[1:]
 	if len(args) != 1 {
-		fmt.Printf("Usage: tst [filename]")
+		printUsage()
 		os.Exit(1)
+	}
+	if args[0] == "-h" || args[0] == "--help" {
+		printUsage()
+		os.Exit(0)
 	}
 	fileName := args[0]
 	lines, scanErr := code.ScanFile(fileName)
@@ -18,11 +22,7 @@ func main() {
 		fmt.Println("Error:", scanErr)
 		os.Exit(1)
 	}
-	tasks, msgSlice := code.ParseLines(lines)
-	if err := code.PrintErrorMessages(os.Stdout, msgSlice); err != nil {
-		fmt.Println("Error:", err)
-		os.Exit(1)
-	}
+	tasks := code.ParseLines(lines)
 	if err := code.PrintTasks(os.Stdout, tasks); err != nil {
 		fmt.Println("Error:", err)
 		os.Exit(1)
@@ -31,4 +31,10 @@ func main() {
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
+}
+
+func printUsage() {
+	fmt.Printf("Usage:\n")
+	fmt.Printf("\ttst %-12s\t%s", "[filename]", "Displays the task in passed filename.\n")
+	fmt.Printf("\ttst %-12s\t%s", "[-h | --help]", "Show this message.\n")
 }
