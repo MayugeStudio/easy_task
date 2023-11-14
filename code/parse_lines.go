@@ -4,28 +4,29 @@ import (
 	"strings"
 )
 
+// ParseLines processes a slice of strings representing tasks
+// and returns a slice of Task pointers
 func ParseLines(lines []string) []TaskPtr {
 	tasks := make([]TaskPtr, 0)
 	for _, line := range lines {
-		pLine, skip := removeUnnecessaryTokenFromLine(line)
-		if skip {
+		if !isLineValid(line) {
 			continue
 		}
-		tokens, skip := processedLineToTokens(pLine)
-		if skip {
-			continue
-		}
-		task := parseLine(tokens)
+		cleanLine := processLine(line)
+		tokens := strings.Fields(cleanLine)
+		task := convertTokensToTask(tokens)
 		tasks = append(tasks, task)
 	}
 	return tasks
 }
 
-func parseLine(tokens []string) TaskPtr {
+// convertTokensToTask takes a slice of strings representing tokens
+// and convert them into a Task pointer.
+func convertTokensToTask(tokens []string) TaskPtr {
 	task := NewTask()
-	for tokens != nil {
+	// Process each token until the tokens slice is empty.
+	for len(tokens) > 0 {
 		token := strings.ToUpper(tokens[0])
-		tokens = tokens[1:]
 		switch token {
 		case "X":
 			task.IsDone = true
@@ -33,24 +34,23 @@ func parseLine(tokens []string) TaskPtr {
 			task.Title = strings.Join(tokens, " ")
 			tokens = nil
 		}
+		if len(tokens) > 0 {
+			tokens = tokens[1:]
+		}
 	}
 	return task
 }
 
-func removeUnnecessaryTokenFromLine(line string) (processedLine string, skip bool) {
-	if !strings.HasPrefix(line, "-") {
-		return "", true
-	}
+// isLineValid checks if a line meets the criteria for a valid task.
+func isLineValid(line string) bool {
+	noBlankCharCount := len(line) - strings.Count(line, " ")
+	return len(line) >= 2 && noBlankCharCount >= 2 && strings.HasPrefix(line, "-")
+}
+
+// processLine removes unnecessary tokens from a line.
+func processLine(line string) string {
 	line = strings.TrimPrefix(line, "-")
 	line = strings.Replace(line, "[", "", 1)
 	line = strings.Replace(line, "]", "", 1)
-	return line, false
-}
-
-func processedLineToTokens(processedLine string) (tokens []string, skip bool) {
-	tokens = strings.Fields(processedLine)
-	if len(tokens) == 0 {
-		return nil, true
-	}
-	return tokens, false
+	return line
 }
