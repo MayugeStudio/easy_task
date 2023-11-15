@@ -48,7 +48,9 @@ func FormatTaskString(taskString string) string {
 		b.WriteString("[")
 		ls.trimPrefix("[")
 	} else {
-		return ""
+		// task group string
+		b.WriteString(ls.line)
+		return b.String()
 	}
 	ls.trimSpace()
 

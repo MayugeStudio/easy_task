@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func Test_formatLine(t *testing.T) {
+func TestFormatTaskString(t *testing.T) {
 	type args struct {
 		line string
 	}
@@ -20,7 +20,6 @@ func Test_formatLine(t *testing.T) {
 		"DoneTaskLine_BadIndent2":   {args{line: "- [X]Buy the milk."}, "- [X] Buy the milk."},
 		"DoneTaskLine_BadIndent3":   {args{line: "-[X]Buy the milk."}, "- [X] Buy the milk."},
 		"NotStartWithDash":          {args{line: "[] notStartWithDash."}, ""},
-		"InvalidString":             {args{line: "-A[] 'A' is invalid."}, ""},
 		"GroupLine_Valid":           {args{line: "-Buy the milk task group."}, "- Buy the milk task group."},
 		"GroupLine_BadIndent":       {args{line: "-Buy the milk task group."}, "- Buy the milk task group."},
 	}
