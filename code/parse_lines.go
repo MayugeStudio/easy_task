@@ -6,7 +6,7 @@ import "strings"
 // and returns a slice of Task pointers
 func ParseTaskStringsToTasks(taskStrings []string) []TaskPtr {
 	tasks := make([]TaskPtr, 0)
-	taskStrings = FormatLines(taskStrings)
+	taskStrings = FormatTaskStrings(taskStrings)
 	for _, str := range taskStrings {
 		if strings.HasPrefix(str, "-") {
 			tokens := strings.Fields(str)

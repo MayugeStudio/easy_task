@@ -26,9 +26,9 @@ func Test_formatLine(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := formatLine(tt.args.line)
+			got := FormatTaskString(tt.args.line)
 			if got != tt.want {
-				t.Errorf("formatLine() = %q, want %q", got, tt.want)
+				t.Errorf("FormatTaskString() = %q, want %q", got, tt.want)
 			}
 		})
 	}
