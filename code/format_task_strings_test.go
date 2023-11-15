@@ -5,27 +5,24 @@ import (
 )
 
 func TestFormatTaskString(t *testing.T) {
-	type args struct {
-		line string
-	}
 	tests := map[string]struct {
-		args args
+		in   string
 		want string
 	}{
-		"TaskLine_Valid":            {args{line: "- [ ] Buy the milk."}, "- [ ] Buy the milk."},
-		"UndoneTaskLine_BadIndent1": {args{line: "-[] Buy the milk."}, "- [ ] Buy the milk."},
-		"UndoneTaskLine_BadIndent2": {args{line: "- []Buy the milk."}, "- [ ] Buy the milk."},
-		"UndoneTaskLine_BadIndent3": {args{line: "- []Buy the milk."}, "- [ ] Buy the milk."},
-		"DoneTaskLine_BadIndent1":   {args{line: "-[X] Buy the milk."}, "- [X] Buy the milk."},
-		"DoneTaskLine_BadIndent2":   {args{line: "- [X]Buy the milk."}, "- [X] Buy the milk."},
-		"DoneTaskLine_BadIndent3":   {args{line: "-[X]Buy the milk."}, "- [X] Buy the milk."},
-		"NotStartWithDash":          {args{line: "[] notStartWithDash."}, ""},
-		"GroupLine_Valid":           {args{line: "-Buy the milk task group."}, "- Buy the milk task group."},
-		"GroupLine_BadIndent":       {args{line: "-Buy the milk task group."}, "- Buy the milk task group."},
+		"TaskLine_Valid":            {"- [ ] Buy the milk.", "- [ ] Buy the milk."},
+		"UndoneTaskLine_BadIndent1": {"-[] Buy the milk.", "- [ ] Buy the milk."},
+		"UndoneTaskLine_BadIndent2": {"- []Buy the milk.", "- [ ] Buy the milk."},
+		"UndoneTaskLine_BadIndent3": {"- []Buy the milk.", "- [ ] Buy the milk."},
+		"DoneTaskLine_BadIndent1":   {"-[X] Buy the milk.", "- [X] Buy the milk."},
+		"DoneTaskLine_BadIndent2":   {"- [X]Buy the milk.", "- [X] Buy the milk."},
+		"DoneTaskLine_BadIndent3":   {"-[X]Buy the milk.", "- [X] Buy the milk."},
+		"NotStartWithDash":          {"[] notStartWithDash.", ""},
+		"GroupLine_Valid":           {"-Buy the milk task group.", "- Buy the milk task group."},
+		"GroupLine_BadIndent":       {"-Buy the milk task group.", "- Buy the milk task group."},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := FormatTaskString(tt.args.line)
+			got := FormatTaskString(tt.in)
 			if got != tt.want {
 				t.Errorf("FormatTaskString() = %q, want %q", got, tt.want)
 			}
