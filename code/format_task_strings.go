@@ -18,10 +18,10 @@ func (l *lineS) trimSpace() {
 	l.line = strings.TrimSpace(l.line)
 }
 
-func FormatLines(lines []string) []string {
+func FormatTaskStrings(taskStrings []string) []string {
 	result := make([]string, 0)
-	for _, line := range lines {
-		if fl := formatLine(line); fl != "" {
+	for _, line := range taskStrings {
+		if fl := FormatTaskString(line); fl != "" {
 			result = append(result, fl)
 		} else {
 			continue
@@ -30,10 +30,10 @@ func FormatLines(lines []string) []string {
 	return result
 }
 
-func formatLine(line string) string {
+func FormatTaskString(taskString string) string {
 	var b strings.Builder
 
-	ls := lineS{line}
+	ls := lineS{taskString}
 
 	if !ls.hasPrefix("-") {
 		return ""
