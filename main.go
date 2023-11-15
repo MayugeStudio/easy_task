@@ -22,7 +22,7 @@ func main() {
 		fmt.Println("Error:", scanErr)
 		os.Exit(1)
 	}
-	tasks := code.ParseLines(lines)
+	tasks := code.ParseStringsToTasks(lines)
 	code.PrintTasks(tasks)
 	code.PrintTaskProgress(tasks)
 }
