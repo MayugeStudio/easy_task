@@ -1,8 +1,36 @@
 package code
 
 import (
+	"reflect"
 	"testing"
 )
+
+func TestFormatTaskStrings(t *testing.T) {
+	tests := map[string]struct {
+		in   []string
+		want []string
+	}{
+		"TaskStrings": {
+			[]string{"-[]Bake the bread.", "- [] Fry eggs.", "- []Prepare coffee."},
+			[]string{"- [ ] Bake the bread.", "- [ ] Fry eggs.", "- [ ] Prepare coffee."},
+		},
+		"ContainsInvalidTaskString": {
+			[]string{"- [ ] Bake the bread.", "Invalid TaskString.", "- [ ] Prepare coffee."},
+			[]string{"- [ ] Bake the bread.", "- [ ] Prepare coffee."},
+		},
+		"AllTaskStringsAreInvalid": {
+			[]string{"Bake the bread.", "Fry eggs.", "Prepare coffee."},
+			[]string{},
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			if got := FormatTaskStrings(tt.in); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FormatTaskStrings() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
 func TestFormatTaskString(t *testing.T) {
 	tests := map[string]struct {
