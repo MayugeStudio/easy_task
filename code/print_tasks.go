@@ -2,14 +2,14 @@ package code
 
 import "fmt"
 
-func PrintTasks(tasks []TaskPtr) {
+func PrintTasks(tasks []*Task) {
 	maxTaskNameLength := getMaxTaskNameLength(tasks)
 	for _, task := range tasks {
 		printTask(task, maxTaskNameLength)
 	}
 }
 
-func printTask(task TaskPtr, maxTaskNameLength int) {
+func printTask(task *Task, maxTaskNameLength int) {
 	var doneStr string
 	if task.IsDone {
 		doneStr = DoneSymbol
@@ -19,7 +19,7 @@ func printTask(task TaskPtr, maxTaskNameLength int) {
 	fmt.Printf("[%s] %-*s\n", doneStr, maxTaskNameLength, task.Title)
 }
 
-func getMaxTaskNameLength(tasks []TaskPtr) int {
+func getMaxTaskNameLength(tasks []*Task) int {
 	maxLength := 0
 	for _, task := range tasks {
 		if len(task.Title) > maxLength {

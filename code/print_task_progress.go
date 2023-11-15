@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func PrintTaskProgress(tasks []TaskPtr) {
+func PrintTaskProgress(tasks []*Task) {
 	progressBarLength := DefaultProgressBarLength
 	taskNum := float64(len(tasks))
 	doneTaskNum := 0.0

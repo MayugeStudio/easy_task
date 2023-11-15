@@ -7,7 +7,7 @@ import (
 
 func TestParseLines(t *testing.T) {
 	lines := []string{"- [ ] Task1", "- [ ] Task2", "- [X] Task3"}
-	expectedTasks := []TaskPtr{
+	expectedTasks := []*Task{
 		{
 			Title:  "Task1",
 			IsDone: false,
@@ -31,7 +31,7 @@ func TestParseLines(t *testing.T) {
 
 func Test_parseLine(t *testing.T) {
 	tokens := []string{"X", "TaskName"}
-	expectedTask := TaskPtr(&Task{Title: "TaskName", IsDone: true})
+	expectedTask := &Task{Title: "TaskName", IsDone: true}
 	if actualTask := parseLine(tokens); !reflect.DeepEqual(actualTask, expectedTask) {
 		t.Errorf("parseLine() = %v, want %v", actualTask, expectedTask)
 	}
