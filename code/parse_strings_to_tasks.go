@@ -9,8 +9,13 @@ func ParseStringsToTasks(taskStrings []string) []*Task {
 	taskStrings = FormatTaskStrings(taskStrings)
 	for _, str := range taskStrings {
 		if strings.HasPrefix(str, "-") {
+			str = strings.TrimPrefix(str, "-")
+			str = strings.TrimSpace(str)
+			str = strings.Replace(str, "[", "", 1)
+			str = strings.Replace(str, "]", "", 1)
+			str = strings.TrimSpace(str)
 			tokens := strings.Fields(str)
-			task := ParseTaskStringToTask(tokens)
+			task := ParseStringToTask(tokens)
 			tasks = append(tasks, task)
 		} else {
 			continue
@@ -19,9 +24,9 @@ func ParseStringsToTasks(taskStrings []string) []*Task {
 	return tasks
 }
 
-// ParseTaskStringToTask takes a slice of strings representing tokens
+// ParseStringToTask takes a slice of strings representing tokens
 // and convert them into a Task pointer.
-func ParseTaskStringToTask(tokens []string) *Task {
+func ParseStringToTask(tokens []string) *Task {
 	task := NewTask()
 	// Process each token until the tokens slice is empty.
 	for len(tokens) > 0 {
