@@ -1,28 +1,27 @@
 package code
 
-import (
-	"strings"
-)
+import "strings"
 
-// ParseLines processes a slice of strings representing tasks
+// ParseTaskStringsToTasks processes a slice of strings representing tasks
 // and returns a slice of Task pointers
-func ParseLines(lines []string) []TaskPtr {
+func ParseTaskStringsToTasks(taskStrings []string) []TaskPtr {
 	tasks := make([]TaskPtr, 0)
-	for _, line := range lines {
-		if !isLineValid(line) {
+	taskStrings = FormatLines(taskStrings)
+	for _, str := range taskStrings {
+		if strings.HasPrefix(str, "-") {
+			tokens := strings.Fields(str)
+			task := ParseTaskStringToTask(tokens)
+			tasks = append(tasks, task)
+		} else {
 			continue
 		}
-		cleanLine := processLine(line)
-		tokens := strings.Fields(cleanLine)
-		task := convertTokensToTask(tokens)
-		tasks = append(tasks, task)
 	}
 	return tasks
 }
 
-// convertTokensToTask takes a slice of strings representing tokens
+// ParseTaskStringToTask takes a slice of strings representing tokens
 // and convert them into a Task pointer.
-func convertTokensToTask(tokens []string) TaskPtr {
+func ParseTaskStringToTask(tokens []string) TaskPtr {
 	task := NewTask()
 	// Process each token until the tokens slice is empty.
 	for len(tokens) > 0 {
@@ -39,18 +38,4 @@ func convertTokensToTask(tokens []string) TaskPtr {
 		}
 	}
 	return task
-}
-
-// isLineValid checks if a line meets the criteria for a valid task.
-func isLineValid(line string) bool {
-	noBlankCharCount := len(line) - strings.Count(line, " ")
-	return len(line) >= 2 && noBlankCharCount >= 2 && strings.HasPrefix(line, "-")
-}
-
-// processLine removes unnecessary tokens from a line.
-func processLine(line string) string {
-	line = strings.TrimPrefix(line, "-")
-	line = strings.Replace(line, "[", "", 1)
-	line = strings.Replace(line, "]", "", 1)
-	return line
 }
