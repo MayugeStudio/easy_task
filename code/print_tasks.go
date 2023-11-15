@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-func PrintTasks(w io.Writer, tasks []TaskPtr) error {
+func PrintTasks(w io.Writer, tasks []*Task) error {
 	maxTaskNameLength := getMaxTaskNameLength(tasks)
 	for _, task := range tasks {
 		if err := printTask(w, task, maxTaskNameLength); err != nil {
@@ -15,7 +15,7 @@ func PrintTasks(w io.Writer, tasks []TaskPtr) error {
 	return nil
 }
 
-func printTask(w io.Writer, task TaskPtr, maxTaskNameLength int) error {
+func printTask(w io.Writer, task *Task, maxTaskNameLength int) error {
 	var doneStr string
 	if task.IsDone {
 		doneStr = DoneSymbol
@@ -28,7 +28,7 @@ func printTask(w io.Writer, task TaskPtr, maxTaskNameLength int) error {
 	return nil
 }
 
-func getMaxTaskNameLength(tasks []TaskPtr) int {
+func getMaxTaskNameLength(tasks []*Task) int {
 	maxLength := 0
 	for _, task := range tasks {
 		if len(task.Title) > maxLength {

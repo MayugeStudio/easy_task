@@ -5,9 +5,7 @@ type Task struct {
 	IsDone bool
 }
 
-type TaskPtr *Task
-
-func NewTask() TaskPtr {
+func NewTask() *Task {
 	return &Task{
 		Title:  "",
 		IsDone: false,

@@ -7,8 +7,8 @@ import (
 )
 
 // PrintTaskProgress prints a progress bar to represent the completion status of tasks.
-// It takes a slice of TaskPtr and calculates the ratio of completed tasks to total tasks.
-func PrintTaskProgress(w io.Writer, tasks []TaskPtr) error {
+// It takes a slice of Task pointer and calculates the ratio of completed tasks to total tasks.
+func PrintTaskProgress(w io.Writer, tasks []*Task) error {
 	progressBarLength := DefaultProgressBarLength
 	taskNum := float64(len(tasks))
 	doneTaskNum := 0.0

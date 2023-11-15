@@ -2,12 +2,12 @@ package code
 
 type TaskGroup struct {
 	Title      string
-	ChildTasks []TaskPtr
+	ChildTasks []*Task
 }
 
 func NewTaskGroup(title string) *TaskGroup {
 	return &TaskGroup{
 		Title:      title,
-		ChildTasks: make([]TaskPtr, 0),
+		ChildTasks: make([]*Task, 0),
 	}
 }
