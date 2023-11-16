@@ -63,13 +63,7 @@ func FormatTaskString(taskString string) string {
 	}
 	lineFormatter.TrimSpace()
 
-	if lineFormatter.HasPrefix("X") {
-		lineFormatter.WriteString("X")
-		lineFormatter.TrimPrefix("X")
-	} else {
-		lineFormatter.WriteString(" ")
-	}
-	lineFormatter.TrimSpace()
+	CheckTaskStatusString(lineFormatter)
 
 	if lineFormatter.HasPrefix("]") {
 		lineFormatter.WriteString("]")
@@ -82,4 +76,14 @@ func FormatTaskString(taskString string) string {
 
 	lineFormatter.WriteString(lineFormatter.Line)
 	return lineFormatter.String()
+}
+
+func CheckTaskStatusString(lineFormatter *LineFormatter) {
+	if lineFormatter.HasPrefix("X") {
+		lineFormatter.TrimPrefix("X")
+		lineFormatter.WriteString("X")
+	} else {
+		lineFormatter.WriteString(" ")
+	}
+	lineFormatter.TrimSpace()
 }
