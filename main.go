@@ -6,6 +6,8 @@ import (
 	"os"
 )
 
+var out = os.Stdout
+
 func main() {
 	args := os.Args[1:]
 	if len(args) != 1 {
@@ -23,8 +25,8 @@ func main() {
 		os.Exit(1)
 	}
 	tasks := code.ParseStringsToTasks(lines)
-	code.PrintTasks(tasks)
-	code.PrintTaskProgress(tasks)
+	code.PrintTasks(out, tasks)
+	code.PrintTaskProgress(out, tasks)
 }
 
 func printUsage() {

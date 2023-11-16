@@ -1,22 +1,31 @@
 package code
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+)
 
-func PrintTasks(tasks []*Task) {
+func PrintTasks(w io.Writer, tasks []*Task) error {
 	maxTaskNameLength := getMaxTaskNameLength(tasks)
 	for _, task := range tasks {
-		printTask(task, maxTaskNameLength)
+		if err := printTask(w, task, maxTaskNameLength); err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
-func printTask(task *Task, maxTaskNameLength int) {
+func printTask(w io.Writer, task *Task, maxTaskNameLength int) error {
 	var doneStr string
 	if task.IsDone {
 		doneStr = DoneSymbol
 	} else {
 		doneStr = UndoneSymbol
 	}
-	fmt.Printf("[%s] %-*s\n", doneStr, maxTaskNameLength, task.Title)
+	if _, err := fmt.Fprintf(w, "[%s] %-*s\n", doneStr, maxTaskNameLength, task.Title); err != nil {
+		return err
+	}
+	return nil
 }
 
 func getMaxTaskNameLength(tasks []*Task) int {
