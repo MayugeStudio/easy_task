@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+const ProgressSymbol = "#"
+
 func PrintTaskProgress(w io.Writer, tasks []*Task) error {
 	progressBarLength := DefaultProgressBarLength
 	taskNum := float64(len(tasks))
