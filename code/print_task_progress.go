@@ -7,6 +7,7 @@ import (
 )
 
 const ProgressSymbol = "#"
+const DefaultProgressBarLength = 40.0
 
 func PrintTaskProgress(w io.Writer, tasks []*Task) error {
 	progressBarLength := DefaultProgressBarLength
