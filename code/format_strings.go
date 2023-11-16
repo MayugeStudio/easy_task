@@ -2,20 +2,25 @@ package code
 
 import "strings"
 
-type lineS struct {
-	line string
+type LineFormatter struct {
+	Line    string
+	Builder strings.Builder
 }
 
-func (l *lineS) HasPrefix(prefix string) bool {
-	return strings.HasPrefix(l.line, prefix)
+func NewLineFormatter(line string) *LineFormatter {
+	return &LineFormatter{Line: line}
 }
 
-func (l *lineS) TrimPrefix(prefix string) {
-	l.line = strings.TrimPrefix(l.line, prefix)
+func (f *LineFormatter) HasPrefix(prefix string) bool {
+	return strings.HasPrefix(f.Line, prefix)
 }
 
-func (l *lineS) TrimSpace() {
-	l.line = strings.TrimSpace(l.line)
+func (f *LineFormatter) TrimPrefix(prefix string) {
+	f.Line = strings.TrimPrefix(f.Line, prefix)
+}
+
+func (f *LineFormatter) TrimSpace() {
+	f.Line = strings.TrimSpace(f.Line)
 }
 
 func FormatTaskStrings(taskStrings []string) []string {
@@ -23,8 +28,6 @@ func FormatTaskStrings(taskStrings []string) []string {
 	for _, line := range taskStrings {
 		if fl := FormatTaskString(line); fl != "" {
 			result = append(result, fl)
-		} else {
-			continue
 		}
 	}
 	return result
@@ -33,44 +36,44 @@ func FormatTaskStrings(taskStrings []string) []string {
 func FormatTaskString(taskString string) string {
 	var b strings.Builder
 
-	ls := lineS{taskString}
+	lineFormatter := NewLineFormatter(taskString)
 
-	if !ls.HasPrefix("-") {
+	if !lineFormatter.HasPrefix("-") {
 		return ""
 	}
 
-	ls.TrimPrefix("-")
+	lineFormatter.TrimPrefix("-")
 	b.WriteString("-")
 	b.WriteString(" ")
-	ls.TrimSpace()
+	lineFormatter.TrimSpace()
 
-	if ls.HasPrefix("[") {
+	if lineFormatter.HasPrefix("[") {
 		b.WriteString("[")
-		ls.TrimPrefix("[")
+		lineFormatter.TrimPrefix("[")
 	} else {
 		// task group string
-		b.WriteString(ls.line)
+		b.WriteString(lineFormatter.Line)
 		return b.String()
 	}
-	ls.TrimSpace()
+	lineFormatter.TrimSpace()
 
-	if ls.HasPrefix("X") {
+	if lineFormatter.HasPrefix("X") {
 		b.WriteString("X")
-		ls.TrimPrefix("X")
+		lineFormatter.TrimPrefix("X")
 	} else {
 		b.WriteString(" ")
 	}
-	ls.TrimSpace()
+	lineFormatter.TrimSpace()
 
-	if ls.HasPrefix("]") {
+	if lineFormatter.HasPrefix("]") {
 		b.WriteString("]")
-		ls.TrimPrefix("]")
+		lineFormatter.TrimPrefix("]")
 	} else {
 		return ""
 	}
 	b.WriteString(" ")
-	ls.TrimSpace()
+	lineFormatter.TrimSpace()
 
-	b.WriteString(ls.line)
+	b.WriteString(lineFormatter.Line)
 	return b.String()
 }
