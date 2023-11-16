@@ -25,8 +25,14 @@ func main() {
 		os.Exit(1)
 	}
 	tasks := code.ParseStringsToTasks(lines)
-	code.PrintTasks(out, tasks)
-	code.PrintTaskProgress(out, tasks)
+	if err := code.PrintTasks(out, tasks); err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
+	if err := code.PrintTaskProgress(out, tasks); err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
 }
 
 func printUsage() {
