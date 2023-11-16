@@ -3,8 +3,8 @@ package code
 import "strings"
 
 type LineFormatter struct {
-	Line    string
-	Builder strings.Builder
+	Line string
+	b    strings.Builder
 }
 
 func NewLineFormatter(line string) *LineFormatter {
@@ -23,6 +23,14 @@ func (f *LineFormatter) TrimSpace() {
 	f.Line = strings.TrimSpace(f.Line)
 }
 
+func (f *LineFormatter) WriteString(s string) {
+	f.b.WriteString(s)
+}
+
+func (f *LineFormatter) String() string {
+	return f.b.String()
+}
+
 func FormatTaskStrings(taskStrings []string) []string {
 	result := make([]string, 0)
 	for _, line := range taskStrings {
@@ -34,8 +42,6 @@ func FormatTaskStrings(taskStrings []string) []string {
 }
 
 func FormatTaskString(taskString string) string {
-	var b strings.Builder
-
 	lineFormatter := NewLineFormatter(taskString)
 
 	if !lineFormatter.HasPrefix("-") {
@@ -43,37 +49,37 @@ func FormatTaskString(taskString string) string {
 	}
 
 	lineFormatter.TrimPrefix("-")
-	b.WriteString("-")
-	b.WriteString(" ")
+	lineFormatter.WriteString("-")
+	lineFormatter.WriteString(" ")
 	lineFormatter.TrimSpace()
 
 	if lineFormatter.HasPrefix("[") {
-		b.WriteString("[")
+		lineFormatter.WriteString("[")
 		lineFormatter.TrimPrefix("[")
 	} else {
 		// task group string
-		b.WriteString(lineFormatter.Line)
-		return b.String()
+		lineFormatter.WriteString(lineFormatter.Line)
+		return lineFormatter.String()
 	}
 	lineFormatter.TrimSpace()
 
 	if lineFormatter.HasPrefix("X") {
-		b.WriteString("X")
+		lineFormatter.WriteString("X")
 		lineFormatter.TrimPrefix("X")
 	} else {
-		b.WriteString(" ")
+		lineFormatter.WriteString(" ")
 	}
 	lineFormatter.TrimSpace()
 
 	if lineFormatter.HasPrefix("]") {
-		b.WriteString("]")
+		lineFormatter.WriteString("]")
 		lineFormatter.TrimPrefix("]")
 	} else {
 		return ""
 	}
-	b.WriteString(" ")
+	lineFormatter.WriteString(" ")
 	lineFormatter.TrimSpace()
 
-	b.WriteString(lineFormatter.Line)
-	return b.String()
+	lineFormatter.WriteString(lineFormatter.Line)
+	return lineFormatter.String()
 }
