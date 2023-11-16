@@ -5,6 +5,11 @@ import (
 	"io"
 )
 
+const (
+	DoneSymbol   = "X"
+	UndoneSymbol = " "
+)
+
 func PrintTasks(w io.Writer, tasks []*Task) error {
 	maxTaskNameLength := getMaxTaskNameLength(tasks)
 	for _, task := range tasks {
