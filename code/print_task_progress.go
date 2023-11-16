@@ -10,6 +10,9 @@ const ProgressSymbol = "#"
 const DefaultProgressBarLength = 40.0
 
 func PrintTaskProgress(w io.Writer, tasks []*Task) error {
+	if len(tasks) == 0 {
+		return nil
+	}
 	progressBarLength := DefaultProgressBarLength
 	taskNum := float64(len(tasks))
 	doneTaskNum := 0.0

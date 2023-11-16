@@ -2,8 +2,6 @@ package code
 
 import "strings"
 
-// ParseStringsToTasks processes a slice of strings representing tasks
-// and returns a slice of Task pointers
 func ParseStringsToTasks(taskStrings []string) []*Task {
 	tasks := make([]*Task, 0)
 	taskStrings = FormatTaskStrings(taskStrings)
@@ -24,8 +22,6 @@ func ParseStringsToTasks(taskStrings []string) []*Task {
 	return tasks
 }
 
-// ParseStringToTask takes a slice of strings representing tokens
-// and convert them into a Task pointer.
 func ParseStringToTask(tokens []string) *Task {
 	task := NewTask()
 	// Process each token until the tokens slice is empty.
