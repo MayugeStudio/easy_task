@@ -6,15 +6,15 @@ type lineS struct {
 	line string
 }
 
-func (l *lineS) hasPrefix(prefix string) bool {
+func (l *lineS) HasPrefix(prefix string) bool {
 	return strings.HasPrefix(l.line, prefix)
 }
 
-func (l *lineS) trimPrefix(prefix string) {
+func (l *lineS) TrimPrefix(prefix string) {
 	l.line = strings.TrimPrefix(l.line, prefix)
 }
 
-func (l *lineS) trimSpace() {
+func (l *lineS) TrimSpace() {
 	l.line = strings.TrimSpace(l.line)
 }
 
@@ -35,41 +35,41 @@ func FormatTaskString(taskString string) string {
 
 	ls := lineS{taskString}
 
-	if !ls.hasPrefix("-") {
+	if !ls.HasPrefix("-") {
 		return ""
 	}
 
-	ls.trimPrefix("-")
+	ls.TrimPrefix("-")
 	b.WriteString("-")
 	b.WriteString(" ")
-	ls.trimSpace()
+	ls.TrimSpace()
 
-	if ls.hasPrefix("[") {
+	if ls.HasPrefix("[") {
 		b.WriteString("[")
-		ls.trimPrefix("[")
+		ls.TrimPrefix("[")
 	} else {
 		// task group string
 		b.WriteString(ls.line)
 		return b.String()
 	}
-	ls.trimSpace()
+	ls.TrimSpace()
 
-	if ls.hasPrefix("X") {
+	if ls.HasPrefix("X") {
 		b.WriteString("X")
-		ls.trimPrefix("X")
+		ls.TrimPrefix("X")
 	} else {
 		b.WriteString(" ")
 	}
-	ls.trimSpace()
+	ls.TrimSpace()
 
-	if ls.hasPrefix("]") {
+	if ls.HasPrefix("]") {
 		b.WriteString("]")
-		ls.trimPrefix("]")
+		ls.TrimPrefix("]")
 	} else {
 		return ""
 	}
 	b.WriteString(" ")
-	ls.trimSpace()
+	ls.TrimSpace()
 
 	b.WriteString(ls.line)
 	return b.String()
