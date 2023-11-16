@@ -21,16 +21,16 @@ func main() {
 	fileName := args[0]
 	lines, scanErr := code.ScanFile(fileName)
 	if scanErr != nil {
-		fmt.Println("Error:", scanErr)
+		fmt.Printf("scanning file: %v\n", scanErr)
 		os.Exit(1)
 	}
 	tasks := code.ParseStringsToTasks(lines)
 	if err := code.PrintTasks(out, tasks); err != nil {
-		fmt.Println("Error:", err)
+		fmt.Printf("printing tasks: %v\n", err)
 		os.Exit(1)
 	}
 	if err := code.PrintTaskProgress(out, tasks); err != nil {
-		fmt.Println("Error:", err)
+		fmt.Printf("printing task progress: %v\n", err)
 		os.Exit(1)
 	}
 }
