@@ -18,8 +18,15 @@ func (f *LineFormatter) HasPrefix(prefix string) bool {
 }
 
 func (f *LineFormatter) TrimPrefix(prefix string) *LineFormatter {
-	f.Line = strings.TrimPrefix(f.Line, strings.ToUpper(prefix))
-	f.Line = strings.TrimPrefix(f.Line, strings.ToLower(prefix))
+	upperPrefix := strings.ToUpper(prefix)
+	lowerPrefix := strings.ToLower(prefix)
+
+	if strings.HasPrefix(f.Line, upperPrefix) {
+		f.Line = strings.TrimPrefix(f.Line, upperPrefix)
+	} else if strings.HasPrefix(f.Line, lowerPrefix) {
+		f.Line = strings.TrimPrefix(f.Line, lowerPrefix)
+	}
+
 	return f
 }
 
