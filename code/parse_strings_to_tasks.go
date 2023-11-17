@@ -2,17 +2,17 @@ package code
 
 import "strings"
 
-func ParseStringsToTasks(taskStrings []string) []*Task {
+func ParseStringsToTasks(lines []string) []*Task {
 	tasks := make([]*Task, 0)
-	taskStrings = FormatTaskStrings(taskStrings)
-	for _, str := range taskStrings {
-		if strings.HasPrefix(str, "-") {
-			str = strings.TrimPrefix(str, "-")
-			str = strings.TrimSpace(str)
-			str = strings.Replace(str, "[", "", 1)
-			str = strings.Replace(str, "]", "", 1)
-			str = strings.TrimSpace(str)
-			tokens := strings.Fields(str)
+	lines = FormatTaskStrings(lines)
+	for _, line := range lines {
+		if strings.HasPrefix(line, "-") {
+			line = strings.TrimPrefix(line, "-")
+			line = strings.TrimSpace(line)
+			line = strings.Replace(line, "[", "", 1)
+			line = strings.Replace(line, "]", "", 1)
+			line = strings.TrimSpace(line)
+			tokens := strings.Fields(line)
 			task := NewTask()
 			// Process each token until the tokens slice is empty.
 			for len(tokens) > 0 {
