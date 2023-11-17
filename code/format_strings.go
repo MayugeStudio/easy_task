@@ -18,7 +18,8 @@ func (f *LineFormatter) HasPrefix(prefix string) bool {
 }
 
 func (f *LineFormatter) TrimPrefix(prefix string) *LineFormatter {
-	f.Line = strings.TrimPrefix(f.Line, prefix)
+	f.Line = strings.TrimPrefix(f.Line, strings.ToUpper(prefix))
+	f.Line = strings.TrimPrefix(f.Line, strings.ToLower(prefix))
 	return f
 }
 
@@ -79,7 +80,7 @@ func getGroupTitle(s string) string {
 }
 
 func GetStatusString(f *LineFormatter) string {
-	if f.HasPrefix("X") {
+	if f.HasPrefix("X") || f.HasPrefix("x") {
 		return "X"
 	}
 	return " "

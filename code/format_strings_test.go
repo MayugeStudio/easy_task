@@ -44,6 +44,7 @@ func TestFormatTaskString(t *testing.T) {
 		"DoneTaskLine_BadIndent1":   {"-[X] Buy the milk.", "- [X] Buy the milk."},
 		"DoneTaskLine_BadIndent2":   {"- [X]Buy the milk.", "- [X] Buy the milk."},
 		"DoneTaskLine_BadIndent3":   {"-[X]Buy the milk.", "- [X] Buy the milk."},
+		"DoneTaskLine_LowerCase":    {"-[x]Buy the milk.", "- [X] Buy the milk."},
 		"NotStartWithDash":          {"[] notStartWithDash.", ""},
 		"GroupLine_Valid":           {"-Buy the milk task group.", "- Buy the milk task group."},
 		"GroupLine_BadIndent":       {"-Buy the milk task group.", "- Buy the milk task group."},
