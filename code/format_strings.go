@@ -27,6 +27,27 @@ func (f *LineFormatter) TrimSpace() {
 	f.Line = strings.TrimSpace(f.Line)
 }
 
+func (f *LineFormatter) GetStatusString() string {
+	if f.HasPrefix("X") || f.HasPrefix("x") {
+		return "X"
+	}
+	return " "
+}
+
+func IsGroup(s string) bool {
+	s = strings.TrimPrefix(s, "-")
+	s = strings.TrimSpace(s)
+	if strings.HasPrefix(s, "[") {
+		return false
+	}
+	return true
+}
+
+func GetGroupTitle(s string) string {
+	s = strings.TrimPrefix(s, "-")
+	return strings.TrimSpace(s)
+}
+
 func FormatTaskStrings(taskStrings []string) []string {
 	result := make([]string, 0)
 	for _, line := range taskStrings {
@@ -42,7 +63,7 @@ func FormatTaskString(taskString string) string {
 		return ""
 	}
 	if IsGroup(taskString) {
-		return fmt.Sprintf("- %s", getGroupTitle(taskString))
+		return fmt.Sprintf("- %s", GetGroupTitle(taskString))
 	}
 
 	formatter := NewLineFormatter(taskString)
@@ -54,7 +75,7 @@ func FormatTaskString(taskString string) string {
 	}
 	formatter.TrimPrefix("[").TrimSpace()
 
-	statusStr := GetStatusString(formatter)
+	statusStr := formatter.GetStatusString()
 	formatter.TrimPrefix(statusStr).TrimSpace()
 
 	if !formatter.HasPrefix("]") {
@@ -64,24 +85,4 @@ func FormatTaskString(taskString string) string {
 	formatter.TrimPrefix("]").TrimSpace()
 
 	return fmt.Sprintf("- [%s] %s", statusStr, formatter.Line)
-}
-
-func IsGroup(s string) bool {
-	s = strings.TrimPrefix(s, "-")
-	s = strings.TrimSpace(s)
-	if strings.HasPrefix(s, "[") {
-		return false
-	}
-	return true
-}
-
-func getGroupTitle(s string) string {
-	return strings.TrimSpace(strings.TrimPrefix(s, "-"))
-}
-
-func GetStatusString(f *LineFormatter) string {
-	if f.HasPrefix("X") || f.HasPrefix("x") {
-		return "X"
-	}
-	return " "
 }
