@@ -97,9 +97,9 @@ func TestFormatInGroupString(t *testing.T) {
 
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := FormatInGroupString(tt.in)
+			got := FormatGroupTaskString(tt.in)
 			if got != tt.want {
-				t.Errorf("FormatInGroupString() = %q, want %q", got, tt.want)
+				t.Errorf("FormatGroupTaskString() = %q, want %q", got, tt.want)
 			}
 		})
 	}
