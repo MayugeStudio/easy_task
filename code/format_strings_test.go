@@ -69,9 +69,10 @@ func TestFormatGroupTaskString(t *testing.T) {
 		in   string
 		want string
 	}{
-		"Valid":     {"  - [ ] Buy the milk.", validGroupString},
-		"OneIndent": {" - [ ] Buy the milk.", validGroupString},
-		"NoIndent":  {"- [ ] Buy the milk.", ""},
+		"Valid":         {"  - [ ] Buy the milk.", validGroupString},
+		"OneIndent":     {" - [ ] Buy the milk.", validGroupString},
+		"NoIndent":      {"- [ ] Buy the milk.", ""},
+		"InvalidFormat": {"  - Buy the milk.", ""},
 	}
 
 	for testName, tt := range tests {
