@@ -30,11 +30,29 @@ func (f *LineFormatter) TrimPrefix(prefix string) *LineFormatter {
 	return f
 }
 
+func (f *LineFormatter) Replace(old string, new string, n int) *LineFormatter {
+	f.Line = strings.Replace(f.Line, old, new, n)
+	return f
+}
+
 func (f *LineFormatter) TrimSpace() {
 	f.Line = strings.TrimSpace(f.Line)
 }
 
-func (f *LineFormatter) GetStatusString() string {
+func GetStatusString(taskString string) string {
+	if !strings.HasPrefix(taskString, "-") {
+		return ""
+	}
+
+	f := NewLineFormatter(taskString)
+
+	f.TrimPrefix("-").TrimSpace()
+
+	if !f.HasPrefix("[") {
+		return ""
+	}
+	f.TrimPrefix("[").TrimSpace()
+
 	if f.HasPrefix("X") || f.HasPrefix("x") {
 		return "X"
 	}
@@ -146,7 +164,7 @@ func FormatTaskString(s string) string {
 	}
 	formatter.TrimPrefix("[").TrimSpace()
 
-	statusStr := formatter.GetStatusString()
+	statusStr := GetStatusString(s)
 	formatter.TrimPrefix(statusStr).TrimSpace()
 
 	if !formatter.HasPrefix("]") {
