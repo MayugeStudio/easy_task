@@ -1,32 +1,61 @@
 package code
 
 import (
+	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 )
 
-func TestFormatTaskStrings(t *testing.T) {
+func joinWithComma(elems []string) string {
+	newElems := make([]string, 0)
+	for _, elem := range elems {
+		newElems = append(newElems, fmt.Sprintf("%q", elem))
+	}
+	return "[" + strings.Join(newElems, ", ") + "]"
+}
+
+func TestFormatTaskStrings_OnlySingleTasks(t *testing.T) {
 	tests := map[string]struct {
 		in   []string
 		want []string
 	}{
 		"TaskStrings": {
-			[]string{"-[]Bake the bread.", "- [] Fry eggs.", "- []Prepare coffee."},
-			[]string{"- [ ] Bake the bread.", "- [ ] Fry eggs.", "- [ ] Prepare coffee."},
+			[]string{
+				"-[]Bake the bread.",
+				"- [] Fry eggs.",
+				"- []Prepare coffee.",
+			},
+			[]string{
+				"- [ ] Bake the bread.",
+				"- [ ] Fry eggs.",
+				"- [ ] Prepare coffee.",
+			},
 		},
 		"ContainsInvalidTaskString": {
-			[]string{"- [ ] Bake the bread.", "Invalid TaskString.", "- [ ] Prepare coffee."},
-			[]string{"- [ ] Bake the bread.", "- [ ] Prepare coffee."},
+			[]string{
+				"- [ ] Bake the bread.",
+				"Invalid TaskString.",
+				"- [ ] Prepare coffee.",
+			},
+			[]string{
+				"- [ ] Bake the bread.",
+				"- [ ] Prepare coffee.",
+			},
 		},
 		"AllTaskStringsAreInvalid": {
-			[]string{"Bake the bread.", "Fry eggs.", "Prepare coffee."},
+			[]string{
+				"Bake the bread.",
+				"Fry eggs.",
+				"Prepare coffee.",
+			},
 			[]string{},
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			if got := FormatTaskStrings(tt.in); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FormatTaskStrings() = %v, want %v", got, tt.want)
+				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
 			}
 		})
 	}
