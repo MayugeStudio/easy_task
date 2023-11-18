@@ -104,3 +104,22 @@ func TestFormatInGroupString(t *testing.T) {
 		})
 	}
 }
+
+func TestFormatGroupTitleString(t *testing.T) {
+	tests := map[string]struct {
+		in   string
+		want string
+	}{
+		"Valid":       {"- GroupTitle", "- GroupTitle"},
+		"BadIndent":   {"-GroupTitle", "- GroupTitle"},
+		"InvalidLine": {"GroupTitle", ""},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			got := FormatGroupTitleString(tt.in)
+			if got != tt.want {
+				t.Errorf("FormatGroupTitleString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
