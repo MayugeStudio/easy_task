@@ -48,6 +48,10 @@ func TestFormatTaskString_Task(t *testing.T) {
 		"Done_NoDash":                  {"[X] No Dash.", errString},
 		"Done_NoSpaceInBracket":        {"- [X] Buy the milk.", validStringDone},
 		"Done_BadIndentStartEnd":       {"-[X]Buy the milk.", validStringDone},
+		"Done_Valid_Lower":             {"- [x] Buy the milk.", validStringDone},
+		"Done_NoDash_Lower":            {"[x] No Dash.", errString},
+		"Done_NoSpaceInBracket_Lower":  {"- [x] Buy the milk.", validStringDone},
+		"Done_BadIndentStartEnd_Lower": {"-[x]Buy the milk.", validStringDone},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
