@@ -143,23 +143,3 @@ func FormatTaskString(s string) string {
 
 	return fmt.Sprintf("- [%s] %s", statusStr, formatter.Line)
 }
-
-func FormatGroupTitleString(s string) string {
-	if !IsGroupTitle(s) {
-		s = ""
-	}
-	title := GetGroupTitle(s)
-	return fmt.Sprintf("- %s", title)
-}
-
-func FormatInGroupString(s string) string {
-	if !strings.HasPrefix(s, " ") {
-		return ""
-	}
-	noSpaceStr := strings.TrimSpace(s)
-	formattedString := FormatTaskString(noSpaceStr)
-	if formattedString == "" {
-		return ""
-	}
-	return fmt.Sprintf("  %s", formattedString)
-}
