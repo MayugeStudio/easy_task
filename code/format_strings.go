@@ -41,7 +41,7 @@ func (f *LineFormatter) GetStatusString() string {
 	return " "
 }
 
-func IsGroup(s string) bool {
+func IsGroupTitleString(s string) bool {
 	s = strings.TrimPrefix(s, "-")
 	s = strings.TrimSpace(s)
 	if strings.HasPrefix(s, "[") {
@@ -69,7 +69,7 @@ func FormatTaskString(taskString string) string {
 	if !strings.HasPrefix(taskString, "-") {
 		return ""
 	}
-	if IsGroup(taskString) {
+	if IsGroupTitleString(taskString) {
 		return fmt.Sprintf("- %s", GetGroupTitle(taskString))
 	}
 
