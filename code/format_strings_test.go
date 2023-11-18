@@ -61,6 +61,113 @@ func TestFormatTaskStrings_OnlySingleTasks(t *testing.T) {
 	}
 }
 
+func TestFormatTaskStrings_OnlyGroupTasks(t *testing.T) {
+	tests := map[string]struct {
+		in   []string
+		want []string
+	}{
+		"ValidGroupTaskString": {
+			[]string{
+				"- Eat breakfast.",
+				// Child task must have Two indentations in the prefix.
+				"  -[X]Bake the bread.",
+				"  - [] Fry eggs.",
+				"  - [ ]Prepare coffee.",
+			},
+			[]string{
+				"- Eat breakfast.",
+				"  - [X] Bake the bread.",
+				"  - [ ] Fry eggs.",
+				"  - [ ] Prepare coffee.",
+			},
+		},
+		"ContainsInvalidChildTaskString": {
+			[]string{
+				"- Eat breakfast.",
+				"  - [X] Bake the bread.",
+				"Invalid TaskString.",
+				"  - [ ] Prepare coffee.",
+			},
+			[]string{
+				"- Eat breakfast.",
+				"  - [X] Bake the bread.",
+				"  - [ ] Prepare coffee.",
+			},
+		},
+		"AllTaskStringsAreInvalid": {
+			[]string{
+				"- Eat breakfast.",
+				"  Bake the bread.",
+				"  Fry eggs.",
+				"  Prepare coffee.",
+			},
+			[]string{
+				"- Eat breakfast.",
+			},
+		},
+		"InvalidGroupTitleWithUndoneTasks": {
+			[]string{
+				"Eat breakfast.",
+				"  - [ ] Bake the bread.",
+				"  - [ ] Fry eggs.",
+				"  - [ ] Prepare coffee.",
+			},
+			[]string{},
+		},
+		"InvalidGroupTitleWithDoneTasks": {
+			[]string{
+				"Eat breakfast.",
+				"  - [X] Bake the bread.",
+				"  - [X] Fry eggs.",
+				"  - [X] Prepare coffee.",
+			},
+			[]string{},
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			if got := FormatTaskStrings(tt.in); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
+			}
+		})
+	}
+}
+
+func TestFormatTaskStrings_MultiGroup(t *testing.T) {
+	tests := map[string]struct {
+		in   []string
+		want []string
+	}{
+		"ValidGroupTaskString": {
+			[]string{
+				"- Eat breakfast.",
+				"  -[X] Bake the bread.",
+				"  -[]Fry eggs.",
+				"  -[ ]Prepare coffee.",
+				"-Study English.",
+				"  -[X]Watch english TV show.",
+				"  - []Memorize english words.",
+			},
+			[]string{
+				"- Eat breakfast.",
+				"  - [X] Bake the bread.",
+				"  - [ ] Fry eggs.",
+				"  - [ ] Prepare coffee.",
+				"- Study English.",
+				"  - [X] Watch english TV show.",
+				"  - [ ] Memorize english words.",
+			},
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			if got := FormatTaskStrings(tt.in); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
+			}
+		})
+	}
+}
+
 func TestFormatTaskString(t *testing.T) {
 	validStringDone := "- [X] Buy the milk."
 	validStringUndone := "- [ ] Buy the milk."
