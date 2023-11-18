@@ -83,7 +83,7 @@ func TestFormatTaskString_Group(t *testing.T) {
 	}
 }
 
-func TestFormatInGroupString(t *testing.T) {
+func TestFormatGroupTaskString(t *testing.T) {
 	validGroupString := "  - [ ] Buy the milk."
 
 	tests := map[string]struct {
