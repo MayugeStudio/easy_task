@@ -1,33 +1,39 @@
 package code
 
-import "strings"
+import (
+	"strings"
+)
 
 func ParseStringsToTasks(lines []string) []*Task {
-	tasks := make([]*Task, 0)
 	lines = FormatTaskStrings(lines)
+	tasks := make([]*Task, 0, len(lines))
+	// Extruct Group Lines : 1
+	// Parse Group Lines : 2
+	// Parse Single Task Lines : 3
 	for _, line := range lines {
 		if strings.HasPrefix(line, "-") {
-			line = strings.TrimPrefix(line, "-")
-			line = strings.TrimSpace(line)
+			// Trim unnecessary tokens.
+			line = strings.TrimPrefix(line, "- ")
 			line = strings.Replace(line, "[", "", 1)
 			line = strings.Replace(line, "]", "", 1)
-			line = strings.TrimSpace(line)
 			tokens := strings.Fields(line)
-			task := NewTask()
 			// Process each token until the tokens slice is empty.
+			title := ""
+			isDone := false
 			for len(tokens) > 0 {
 				token := tokens[0]
 				switch token {
 				case "X":
-					task.IsDone = true
+					isDone = true
 				default:
-					task.Title = strings.Join(tokens, " ")
+					title = strings.Join(tokens, " ")
 					tokens = nil
 				}
 				if len(tokens) > 0 {
 					tokens = tokens[1:]
 				}
 			}
+			task := NewTask(title, isDone)
 			tasks = append(tasks, task)
 		} else {
 			continue
