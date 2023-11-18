@@ -32,7 +32,7 @@ func TestFormatTaskStrings(t *testing.T) {
 	}
 }
 
-func TestFormatTaskString_Task(t *testing.T) {
+func TestFormatTaskString(t *testing.T) {
 	validStringDone := "- [X] Buy the milk."
 	validStringUndone := "- [ ] Buy the milk."
 	errString := ""
