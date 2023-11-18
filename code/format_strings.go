@@ -7,18 +7,17 @@ import (
 
 func FormatTaskStrings(taskStrings []string) []string {
 	result := make([]string, 0)
+	inGroup := false
 	for _, line := range taskStrings {
 		if IsGroupTitle(line) {
+			inGroup = true
 			groupTitle := FormatGroupTitleString(line)
 			result = append(result, groupTitle)
 			continue
 		}
 
-		if IsGroupTaskString(line) {
+		if IsGroupTaskString(line) && inGroup {
 			formattedString := FormatGroupTaskString(line)
-			if formattedString == "" {
-				continue
-			}
 			result = append(result, formattedString)
 			continue
 		}
@@ -28,6 +27,7 @@ func FormatTaskStrings(taskStrings []string) []string {
 			continue
 		}
 		result = append(result, formattedString)
+		inGroup = false
 	}
 	return result
 }
