@@ -82,3 +82,25 @@ func TestFormatTaskString_Group(t *testing.T) {
 		})
 	}
 }
+
+func TestFormatInGroupString(t *testing.T) {
+	validGroupString := "  - [ ] Buy the milk."
+
+	tests := map[string]struct {
+		in   string
+		want string
+	}{
+		"Valid":     {"  - [ ] Buy the milk.", validGroupString},
+		"OneIndent": {" - [ ] Buy the milk.", validGroupString},
+		"NoIndent":  {"- [ ] Buy the milk.", ""},
+	}
+
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			got := FormatInGroupString(tt.in)
+			if got != tt.want {
+				t.Errorf("FormatInGroupString() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
