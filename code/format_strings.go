@@ -88,9 +88,26 @@ func GetGroupTitle(s string) string {
 func FormatTaskStrings(taskStrings []string) []string {
 	result := make([]string, 0)
 	for _, line := range taskStrings {
-		if fl := FormatTaskString(line); fl != "" {
-			result = append(result, fl)
+		if IsGroupTitle(line) {
+			groupTitle := FormatGroupTitleString(line)
+			result = append(result, groupTitle)
+			continue
 		}
+
+		if IsGroupTaskString(line) {
+			formattedString := FormatGroupTaskString(line)
+			if formattedString == "" {
+				continue
+			}
+			result = append(result, formattedString)
+			continue
+		}
+
+		formattedString := FormatTaskString(line) // TODO: Create FormatSingleTaskString function to improve readability.
+		if formattedString == "" {
+			continue
+		}
+		result = append(result, formattedString)
 	}
 	return result
 }
