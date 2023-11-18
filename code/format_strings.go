@@ -65,15 +65,15 @@ func FormatTaskStrings(taskStrings []string) []string {
 	return result
 }
 
-func FormatTaskString(taskString string) string {
-	if !strings.HasPrefix(taskString, "-") {
+func FormatTaskString(s string) string {
+	if !strings.HasPrefix(s, "-") {
 		return ""
 	}
-	if IsGroupTitleString(taskString) {
-		return fmt.Sprintf("- %s", GetGroupTitle(taskString))
+	if IsGroupTitleString(s) {
+		return fmt.Sprintf("- %s", GetGroupTitle(s))
 	}
 
-	formatter := NewLineFormatter(taskString)
+	formatter := NewLineFormatter(s)
 
 	formatter.TrimPrefix("-").TrimSpace()
 
