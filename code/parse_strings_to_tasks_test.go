@@ -6,25 +6,25 @@ import (
 )
 
 func TestParseStringsToTasks(t *testing.T) {
-	lines := []string{"- [ ] Task1", "- [ ] Task2", "- [X] Task3"}
-	expectedTasks := []*Task{
-		{
-			Title:  "Task1",
-			IsDone: false,
+	tests := map[string]struct {
+		in   []string
+		want []*Task
+	}{
+		"Success": {
+			[]string{"- [ ] Task1", "- [X] Task2"},
+			[]*Task{{"Task1", false}, {"Task2", true}},
 		},
-		{
-			Title:  "Task2",
-			IsDone: false,
-		},
-		{
-			Title:  "Task3",
-			IsDone: true,
+		"LowerCase_DoneSymbol": {
+			[]string{"- [x] Task1", "- [x] Task2"},
+			[]*Task{{"Task1", true}, {"Task2", true}},
 		},
 	}
-
-	actualTasks := ParseStringsToTasks(lines)
-
-	if !reflect.DeepEqual(actualTasks, expectedTasks) {
-		t.Errorf("ParseLines() got = %v, want %v", actualTasks, expectedTasks)
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			got := ParseStringsToTasks(tt.in)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ParseStringsToTasks() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
