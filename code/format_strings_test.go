@@ -62,27 +62,6 @@ func TestFormatTaskString_Task(t *testing.T) {
 	}
 }
 
-func TestFormatTaskString_Group(t *testing.T) {
-	validString := "- Buy the milk task group."
-	errString := ""
-	tests := map[string]struct {
-		in   string
-		want string
-	}{
-		"Valid":     {"- Buy the milk task group.", validString},
-		"BadIndent": {"-Buy the milk task group.", validString},
-		"NoDash":    {"Buy the milk task group.", errString},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			got := FormatTaskString(tt.in)
-			if got != tt.want {
-				t.Errorf("FormatTaskString() = %q, want %q", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestFormatGroupTaskString(t *testing.T) {
 	validGroupString := "  - [ ] Buy the milk."
 

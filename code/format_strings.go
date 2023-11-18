@@ -119,9 +119,6 @@ func FormatTaskString(s string) string {
 	if !strings.HasPrefix(s, "-") {
 		return ""
 	}
-	if IsGroupTitle(s) {
-		return fmt.Sprintf("- %s", GetGroupTitle(s))
-	}
 
 	formatter := NewLineFormatter(s)
 
