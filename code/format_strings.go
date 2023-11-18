@@ -1,21 +1,58 @@
 package code
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
-type lineS struct {
-	line string
+type LineFormatter struct {
+	Line string
 }
 
-func (l *lineS) hasPrefix(prefix string) bool {
-	return strings.HasPrefix(l.line, prefix)
+func NewLineFormatter(line string) *LineFormatter {
+	return &LineFormatter{Line: line}
 }
 
-func (l *lineS) trimPrefix(prefix string) {
-	l.line = strings.TrimPrefix(l.line, prefix)
+func (f *LineFormatter) HasPrefix(prefix string) bool {
+	return strings.HasPrefix(f.Line, prefix)
 }
 
-func (l *lineS) trimSpace() {
-	l.line = strings.TrimSpace(l.line)
+func (f *LineFormatter) TrimPrefix(prefix string) *LineFormatter {
+	upperPrefix := strings.ToUpper(prefix)
+	lowerPrefix := strings.ToLower(prefix)
+
+	if strings.HasPrefix(f.Line, upperPrefix) {
+		f.Line = strings.TrimPrefix(f.Line, upperPrefix)
+	} else if strings.HasPrefix(f.Line, lowerPrefix) {
+		f.Line = strings.TrimPrefix(f.Line, lowerPrefix)
+	}
+
+	return f
+}
+
+func (f *LineFormatter) TrimSpace() {
+	f.Line = strings.TrimSpace(f.Line)
+}
+
+func (f *LineFormatter) GetStatusString() string {
+	if f.HasPrefix("X") || f.HasPrefix("x") {
+		return "X"
+	}
+	return " "
+}
+
+func IsGroup(s string) bool {
+	s = strings.TrimPrefix(s, "-")
+	s = strings.TrimSpace(s)
+	if strings.HasPrefix(s, "[") {
+		return false
+	}
+	return true
+}
+
+func GetGroupTitle(s string) string {
+	s = strings.TrimPrefix(s, "-")
+	return strings.TrimSpace(s)
 }
 
 func FormatTaskStrings(taskStrings []string) []string {
@@ -23,54 +60,36 @@ func FormatTaskStrings(taskStrings []string) []string {
 	for _, line := range taskStrings {
 		if fl := FormatTaskString(line); fl != "" {
 			result = append(result, fl)
-		} else {
-			continue
 		}
 	}
 	return result
 }
 
 func FormatTaskString(taskString string) string {
-	var b strings.Builder
+	if !strings.HasPrefix(taskString, "-") {
+		return ""
+	}
+	if IsGroup(taskString) {
+		return fmt.Sprintf("- %s", GetGroupTitle(taskString))
+	}
 
-	ls := lineS{taskString}
+	formatter := NewLineFormatter(taskString)
 
-	if !ls.hasPrefix("-") {
+	formatter.TrimPrefix("-").TrimSpace()
+
+	if !formatter.HasPrefix("[") {
+		return ""
+	}
+	formatter.TrimPrefix("[").TrimSpace()
+
+	statusStr := formatter.GetStatusString()
+	formatter.TrimPrefix(statusStr).TrimSpace()
+
+	if !formatter.HasPrefix("]") {
 		return ""
 	}
 
-	ls.trimPrefix("-")
-	b.WriteString("-")
-	b.WriteString(" ")
-	ls.trimSpace()
+	formatter.TrimPrefix("]").TrimSpace()
 
-	if ls.hasPrefix("[") {
-		b.WriteString("[")
-		ls.trimPrefix("[")
-	} else {
-		// task group string
-		b.WriteString(ls.line)
-		return b.String()
-	}
-	ls.trimSpace()
-
-	if ls.hasPrefix("X") {
-		b.WriteString("X")
-		ls.trimPrefix("X")
-	} else {
-		b.WriteString(" ")
-	}
-	ls.trimSpace()
-
-	if ls.hasPrefix("]") {
-		b.WriteString("]")
-		ls.trimPrefix("]")
-	} else {
-		return ""
-	}
-	b.WriteString(" ")
-	ls.trimSpace()
-
-	b.WriteString(ls.line)
-	return b.String()
+	return fmt.Sprintf("- [%s] %s", statusStr, formatter.Line)
 }
