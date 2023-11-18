@@ -46,6 +46,8 @@ func TestFormatTaskString(t *testing.T) {
 		"Undone_BadIndentEndBracket":   {"- []Buy the milk.", validStringUndone},
 		"Done_Valid":                   {"- [X] Buy the milk.", validStringDone},
 		"Done_NoDash":                  {"[X] No Dash.", errString},
+		"Done_NoBracketStart":          {"- X] No BracketStart.", errString},
+		"Done_NoBracketEnd":            {"- [X No BracketEnd.", errString},
 		"Done_BadIndentStartEnd":       {"-[X]Buy the milk.", validStringDone},
 		"Done_Valid_Lower":             {"- [x] Buy the milk.", validStringDone},
 		"Done_NoDash_Lower":            {"[x] No Dash.", errString},
