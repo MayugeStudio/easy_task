@@ -22,13 +22,21 @@ func GetStatusString(taskString string) string {
 	return " "
 }
 
+func GetGroupTitle(s string) string {
+	if !strings.HasPrefix(s, "-") {
+		return ""
+	}
+	s = strings.TrimPrefix(s, "-")
+	return strings.TrimSpace(s)
+}
+
 func IsGroupTitle(s string) bool {
 	if !strings.HasPrefix(s, "-") {
 		return false
 	}
-	s = strings.TrimPrefix(s, "-")
-	s = strings.TrimSpace(s)
-	if strings.HasPrefix(s, "[") {
+	f := NewLineFormatter(s)
+	f.TrimPrefix("-").TrimSpace()
+	if f.HasPrefix("[") {
 		return false
 	}
 	return true
@@ -38,30 +46,25 @@ func IsGroupTaskString(s string) bool {
 	if !strings.HasPrefix(s, " ") {
 		return false
 	}
-	formatter := NewLineFormatter(strings.TrimSpace(s))
+	f := NewLineFormatter(strings.TrimSpace(s))
 
-	if !formatter.HasPrefix("-") {
+	if !f.HasPrefix("-") {
 		return false
 	}
-	formatter.TrimPrefix("-").TrimSpace()
+	f.TrimPrefix("-").TrimSpace()
 
-	if !formatter.HasPrefix("[") {
+	if !f.HasPrefix("[") {
 		return false
 	}
-	formatter.TrimPrefix("[").TrimSpace()
+	f.TrimPrefix("[").TrimSpace()
 
-	if formatter.HasPrefix("X") || formatter.HasPrefix("x") {
-		formatter.TrimPrefix("X").TrimSpace()
+	if f.HasPrefix("X") || f.HasPrefix("x") {
+		f.TrimPrefix("X").TrimSpace()
 	}
 
-	if !strings.HasPrefix(s, "]") {
+	if !f.HasPrefix("]") {
 		return false
 	}
 
 	return true
-}
-
-func GetGroupTitle(s string) string {
-	s = strings.TrimPrefix(s, "-")
-	return strings.TrimSpace(s)
 }
