@@ -96,3 +96,22 @@ func TestIsGroupTaskString(t *testing.T) {
 		})
 	}
 }
+
+func TestIsSingleTaskString(t *testing.T) {
+	tests := map[string]struct {
+		in   string
+		want bool
+	}{
+		"SingleTask_Done":   {"- [ ] I am SingleTask!", true},
+		"SingleTask_Undone": {"- [X] I am SingleTask!", true},
+		"GroupTask_Done":    {"  - [X] I am SingleTask!", false},
+		"GroupTask_Undone":  {"  - [X] I am SingleTask!", false},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			if got := IsSingleTaskString(tt.in); got != tt.want {
+				t.Errorf("IsSingleTaskString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

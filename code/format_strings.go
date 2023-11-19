@@ -1,6 +1,7 @@
 package code
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -13,31 +14,27 @@ func FormatTaskStrings(taskStrings []string) []string {
 		var formattedString string
 		var err error
 		if IsGroupTitle(line) {
-			inGroup = true
 			formattedString, err = FormatGroupTitleString(line)
-			if err != nil {
-				errs = append(errs, err)
-				continue
-			}
-			result = append(result, formattedString)
-			continue
-		} else if IsGroupTaskString(line) && inGroup {
+			inGroup = true
+		} else if inGroup && IsGroupTaskString(line) {
 			formattedString, err = FormatGroupTaskString(line)
-			if err != nil {
-				errs = append(errs, err)
-				continue
-			}
-			result = append(result, formattedString)
-			continue
-		} else {
+		} else if IsSingleTaskString(line) {
 			formattedString, err = FormatTaskString(line)
-			if err != nil {
-				errs = append(errs, err)
-				continue
-			}
-			result = append(result, formattedString)
 			inGroup = false
+		} else {
+			if !strings.HasPrefix(line, "  ") {
+				inGroup = false
+			}
+			continue
 		}
+		if err != nil {
+			errs = append(errs, err)
+			if errors.Is(err, InvalidIndentError) {
+				inGroup = false
+			}
+			continue
+		}
+		result = append(result, formattedString)
 	}
 	return result
 }
@@ -52,7 +49,7 @@ func FormatGroupTitleString(s string) (string, error) {
 
 func FormatGroupTaskString(s string) (string, error) {
 	if !strings.HasPrefix(s, " ") {
-		return "", NoValidIndentError
+		return "", InvalidIndentError
 	}
 	noSpaceStr := strings.TrimSpace(s)
 	formattedString, err := FormatTaskString(noSpaceStr)

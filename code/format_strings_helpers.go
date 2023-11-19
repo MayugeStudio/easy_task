@@ -11,7 +11,7 @@ var (
 	NoDashError         = fmt.Errorf("%w: no dash", SyntaxError)
 	NoBracketStartError = fmt.Errorf("%w: no bracket start", SyntaxError)
 	NoBracketEndError   = fmt.Errorf("%w: no bracket end", SyntaxError)
-	NoValidIndentError  = fmt.Errorf("%w: no valid indent", SyntaxError)
+	InvalidIndentError  = fmt.Errorf("%w: no valid indent", SyntaxError)
 )
 
 func GetStatusString(taskString string) (string, error) {
@@ -63,6 +63,30 @@ func IsGroupTaskString(s string) bool {
 	if !f.HasPrefix("-") {
 		return false
 	}
+	f.TrimPrefix("-").TrimSpace()
+
+	if !f.HasPrefix("[") {
+		return false
+	}
+	f.TrimPrefix("[").TrimSpace()
+
+	if f.HasPrefix("X") || f.HasPrefix("x") {
+		f.TrimPrefix("X").TrimSpace()
+	}
+
+	if !f.HasPrefix("]") {
+		return false
+	}
+
+	return true
+}
+
+func IsSingleTaskString(s string) bool {
+	if !strings.HasPrefix(s, "-") {
+		return false
+	}
+
+	f := NewLineFormatter(s)
 	f.TrimPrefix("-").TrimSpace()
 
 	if !f.HasPrefix("[") {

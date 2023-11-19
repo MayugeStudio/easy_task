@@ -82,11 +82,23 @@ func TestFormatTaskStrings_OnlyGroupTasks(t *testing.T) {
 				"  - [ ] Prepare coffee.",
 			},
 		},
-		"ContainsInvalidChildTaskString": {
+		"ContainsInvalidIndentChildTaskString": {
 			[]string{
 				"- Eat breakfast.",
 				"  - [X] Bake the bread.",
 				"Invalid TaskString.",
+				"  - [ ] Prepare coffee.",
+			},
+			[]string{
+				"- Eat breakfast.",
+				"  - [X] Bake the bread.",
+			},
+		},
+		"ContainsInvalidChildTaskStringOtherThanInvalidIndent": {
+			[]string{
+				"- Eat breakfast.",
+				"  - [X] Bake the bread.",
+				"  Invalid TaskString.",
 				"  - [ ] Prepare coffee.",
 			},
 			[]string{
@@ -158,6 +170,24 @@ func TestFormatTaskStrings_MultiGroup(t *testing.T) {
 				"- Study English.",
 				"  - [X] Watch english TV show.",
 				"  - [ ] Memorize english words.",
+			},
+		},
+		"ContainInValidGroupTaskString": {
+			[]string{
+				"- Eat breakfast.",
+				"  -[X] Bake the bread.",
+				"  Fry eggs.",
+				"  -[ ]Prepare coffee.",
+				"-Study English.",
+				"  -[X]Watch english TV show.",
+				"Memorize english words.",
+			},
+			[]string{
+				"- Eat breakfast.",
+				"  - [X] Bake the bread.",
+				"  - [ ] Prepare coffee.",
+				"- Study English.",
+				"  - [X] Watch english TV show.",
 			},
 		},
 	}
