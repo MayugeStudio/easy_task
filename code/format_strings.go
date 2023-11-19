@@ -10,34 +10,34 @@ func FormatTaskStrings(taskStrings []string) []string {
 	errs := make([]error, 0)
 	inGroup := false
 	for _, line := range taskStrings {
+		var formattedString string
+		var err error
 		if IsGroupTitle(line) {
 			inGroup = true
-			groupTitle, err := FormatGroupTitleString(line)
-			if err != nil {
-				errs = append(errs, err)
-				continue
-			}
-			result = append(result, groupTitle)
-			continue
-		}
-
-		if IsGroupTaskString(line) && inGroup {
-			formattedString, err := FormatGroupTaskString(line)
+			formattedString, err = FormatGroupTitleString(line)
 			if err != nil {
 				errs = append(errs, err)
 				continue
 			}
 			result = append(result, formattedString)
 			continue
-		}
-
-		formattedString, err := FormatTaskString(line) // TODO: Create FormatSingleTaskString function to improve readability.
-		if err != nil {
-			errs = append(errs, err)
+		} else if IsGroupTaskString(line) && inGroup {
+			formattedString, err = FormatGroupTaskString(line)
+			if err != nil {
+				errs = append(errs, err)
+				continue
+			}
+			result = append(result, formattedString)
 			continue
+		} else {
+			formattedString, err = FormatTaskString(line)
+			if err != nil {
+				errs = append(errs, err)
+				continue
+			}
+			result = append(result, formattedString)
+			inGroup = false
 		}
-		result = append(result, formattedString)
-		inGroup = false
 	}
 	return result
 }
