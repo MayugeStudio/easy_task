@@ -4,19 +4,26 @@ import "testing"
 
 func TestGetStatusString(t *testing.T) {
 	tests := map[string]struct {
-		in   string
-		want string
+		in      string
+		want    string
+		wantErr bool
 	}{
-		"ValidTaskStringGoodFormat_Done":   {"- [ ] TaskName", " "},
-		"ValidTaskStringGoodFormat_Undone": {"- [X] TaskName", "X"},
-		"ValidTaskStringBadFormat_Done":    {"-[]TaskName", " "},
-		"ValidTaskStringBadFormat_Undone":  {"-[X]TaskName", "X"},
-		"InValidTaskString_NoDash":         {"[ ] TaskName", ""},
-		"InValidTaskString_NoBracketStart": {"- ] TaskName", ""},
+		// Success cases
+		"ValidTaskStringGoodFormat_Done":   {"- [ ] TaskName", " ", false},
+		"ValidTaskStringGoodFormat_Undone": {"- [X] TaskName", "X", false},
+		"ValidTaskStringBadFormat_Done":    {"-[]TaskName", " ", false},
+		"ValidTaskStringBadFormat_Undone":  {"-[X]TaskName", "X", false},
+		// Error cases
+		"InValidTaskString_NoDash":         {"[ ] TaskName", "", true},
+		"InValidTaskString_NoBracketStart": {"- ] TaskName", "", true},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := GetStatusString(tt.in)
+			got, err := GetStatusString(tt.in)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetStatusString() error = %v, wantErr = %v", err, tt.wantErr)
+				return
+			}
 			if got != tt.want {
 				t.Errorf("GetStatusString() = %v, want %v", got, tt.want)
 			}
@@ -26,16 +33,22 @@ func TestGetStatusString(t *testing.T) {
 
 func TestGetGroupTitle(t *testing.T) {
 	tests := map[string]struct {
-		in   string
-		want string
+		in      string
+		want    string
+		wantErr bool
 	}{
-		"ValidGroupStringGoodFormat": {"- GroupTitle", "GroupTitle"},
-		"ValidGroupStringBadFormat":  {"-GroupTitle", "GroupTitle"},
-		"InvalidGroupString_NoDash":  {"GroupTitle", ""},
+		// Success cases
+		"ValidGroupStringGoodFormat": {"- GroupTitle", "GroupTitle", false},
+		"ValidGroupStringBadFormat":  {"-GroupTitle", "GroupTitle", false},
+		// Error cases
+		"InvalidGroupString_NoDash": {"GroupTitle", "", true},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := GetGroupTitle(tt.in)
+			got, err := GetGroupTitle(tt.in)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetGroupTitle() error = %v, wantErr %v", err, tt.wantErr)
+			}
 			if got != tt.want {
 				t.Errorf("GetGroupTitle() = %v, want %v", got, tt.want)
 			}
