@@ -27,11 +27,6 @@ func (f *LineFormatter) TrimPrefix(prefix string) *LineFormatter {
 	return f
 }
 
-func (f *LineFormatter) Replace(old string, new string, n int) *LineFormatter {
-	f.Line = strings.Replace(f.Line, old, new, n)
-	return f
-}
-
 func (f *LineFormatter) TrimSpace() {
 	f.Line = strings.TrimSpace(f.Line)
 }
