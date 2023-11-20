@@ -102,10 +102,12 @@ func TestIsSingleTaskString(t *testing.T) {
 		in   string
 		want bool
 	}{
-		"SingleTask_Done":   {"- [ ] I am SingleTask!", true},
-		"SingleTask_Undone": {"- [X] I am SingleTask!", true},
-		"GroupTask_Done":    {"  - [X] I am SingleTask!", false},
-		"GroupTask_Undone":  {"  - [X] I am SingleTask!", false},
+		"SingleTask_Done":               {"- [ ] I am SingleTask!", true},
+		"SingleTask_Undone":             {"- [X] I am SingleTask!", true},
+		"GroupTask_Done":                {"  - [X] I am SingleTask!", false},
+		"GroupTask_Undone":              {"  - [X] I am SingleTask!", false},
+		"Invalid_Undone_NoBracketStart": {"- X] I am SingleTask!", false},
+		"Invalid_Undone_NoBracketEnd":   {"- [X I am SingleTask!", false},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
