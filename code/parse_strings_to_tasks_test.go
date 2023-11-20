@@ -10,6 +10,16 @@ func TestParseStringsToTasks(t *testing.T) {
 		in   []string
 		want []*Task
 	}{
+		"DoneTasks": {
+			[]string{
+				"- [X]Task1",
+				"- [X]Task2",
+			},
+			[]*Task{
+				{"Task1", true},
+				{"Task2", true},
+			},
+		},
 		"UndoneTasks": {
 			[]string{
 				"- [ ] Task1",
@@ -20,6 +30,16 @@ func TestParseStringsToTasks(t *testing.T) {
 				{"Task2", false},
 			},
 		},
+		"MixPattern": {
+			[]string{
+				"- [ ] Task1",
+				"- [X] Task2",
+			},
+			[]*Task{
+				{"Task1", false},
+				{"Task2", true},
+			},
+		},
 		"DoneTasks_Lowercase": {
 			[]string{
 				"- [x] Task1",
@@ -27,6 +47,17 @@ func TestParseStringsToTasks(t *testing.T) {
 			},
 			[]*Task{
 				{"Task1", true},
+				{"Task2", true},
+			},
+		},
+		"ContainInvalidTaskString": {
+			[]string{
+				"- [ ] Task1",
+				"InvalidTaskString",
+				"- [X] Task2",
+			},
+			[]*Task{
+				{"Task1", false},
 				{"Task2", true},
 			},
 		},
