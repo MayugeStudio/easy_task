@@ -1,95 +1,89 @@
 package code
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
 
-type LineFormatter struct {
-	Line string
-}
-
-func NewLineFormatter(line string) *LineFormatter {
-	return &LineFormatter{Line: line}
-}
-
-func (f *LineFormatter) HasPrefix(prefix string) bool {
-	return strings.HasPrefix(f.Line, prefix)
-}
-
-func (f *LineFormatter) TrimPrefix(prefix string) *LineFormatter {
-	upperPrefix := strings.ToUpper(prefix)
-	lowerPrefix := strings.ToLower(prefix)
-
-	if strings.HasPrefix(f.Line, upperPrefix) {
-		f.Line = strings.TrimPrefix(f.Line, upperPrefix)
-	} else if strings.HasPrefix(f.Line, lowerPrefix) {
-		f.Line = strings.TrimPrefix(f.Line, lowerPrefix)
-	}
-
-	return f
-}
-
-func (f *LineFormatter) TrimSpace() {
-	f.Line = strings.TrimSpace(f.Line)
-}
-
-func (f *LineFormatter) GetStatusString() string {
-	if f.HasPrefix("X") || f.HasPrefix("x") {
-		return "X"
-	}
-	return " "
-}
-
-func IsGroup(s string) bool {
-	s = strings.TrimPrefix(s, "-")
-	s = strings.TrimSpace(s)
-	if strings.HasPrefix(s, "[") {
-		return false
-	}
-	return true
-}
-
-func GetGroupTitle(s string) string {
-	s = strings.TrimPrefix(s, "-")
-	return strings.TrimSpace(s)
-}
-
 func FormatTaskStrings(taskStrings []string) []string {
 	result := make([]string, 0)
+	errs := make([]error, 0)
+	inGroup := false
 	for _, line := range taskStrings {
-		if fl := FormatTaskString(line); fl != "" {
-			result = append(result, fl)
+		var formattedString string
+		var err error
+		if IsGroupTitle(line) {
+			formattedString, err = FormatGroupTitleString(line)
+			inGroup = true
+		} else if inGroup && IsGroupTaskString(line) {
+			formattedString, err = FormatGroupTaskString(line)
+		} else if IsSingleTaskString(line) {
+			formattedString, err = FormatTaskString(line)
+			inGroup = false
+		} else {
+			if !strings.HasPrefix(line, "  ") {
+				inGroup = false
+			}
+			continue
 		}
+		if err != nil {
+			errs = append(errs, err)
+			if errors.Is(err, InvalidIndentError) {
+				inGroup = false
+			}
+			continue
+		}
+		result = append(result, formattedString)
 	}
 	return result
 }
 
-func FormatTaskString(taskString string) string {
-	if !strings.HasPrefix(taskString, "-") {
-		return ""
+func FormatGroupTitleString(s string) (string, error) {
+	title, err := GetGroupTitle(s)
+	if err != nil {
+		return "", err
 	}
-	if IsGroup(taskString) {
-		return fmt.Sprintf("- %s", GetGroupTitle(taskString))
+	return fmt.Sprintf("- %s", title), nil
+}
+
+func FormatGroupTaskString(s string) (string, error) {
+	if !strings.HasPrefix(s, " ") {
+		return "", InvalidIndentError
+	}
+	noSpaceStr := strings.TrimSpace(s)
+	formattedString, err := FormatTaskString(noSpaceStr)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("  %s", formattedString), nil
+}
+
+func FormatTaskString(s string) (string, error) {
+	if !strings.HasPrefix(s, "-") {
+		return "", NoDashError
 	}
 
-	formatter := NewLineFormatter(taskString)
+	formatter := NewLineFormatter(s)
 
 	formatter.TrimPrefix("-").TrimSpace()
 
 	if !formatter.HasPrefix("[") {
-		return ""
+		return "", NoBracketStartError
 	}
 	formatter.TrimPrefix("[").TrimSpace()
 
-	statusStr := formatter.GetStatusString()
+	statusStr, err := GetStatusString(s)
+	if err != nil {
+		return "", err
+	}
 	formatter.TrimPrefix(statusStr).TrimSpace()
 
 	if !formatter.HasPrefix("]") {
-		return ""
+		return "", NoBracketEndError
 	}
 
 	formatter.TrimPrefix("]").TrimSpace()
 
-	return fmt.Sprintf("- [%s] %s", statusStr, formatter.Line)
+	return fmt.Sprintf("- [%s] %s", statusStr, formatter.Line), nil
 }

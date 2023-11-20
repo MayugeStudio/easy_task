@@ -1,6 +1,7 @@
 package code
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -39,5 +40,10 @@ func ParseStringsToTasks(lines []string) []*Task {
 			continue
 		}
 	}
-	return tasks
+	noSpaceLine := strings.TrimSpace(line)
+	if !strings.HasPrefix(noSpaceLine, "-") {
+		fmt.Printf("!strings.HasPrefix(%q, \"-\") == true\n", line)
+		return false
+	}
+	return true
 }
