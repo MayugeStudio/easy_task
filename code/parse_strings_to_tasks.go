@@ -35,10 +35,5 @@ func ParseStringsToTasks(taskStrings []string) []*Task {
 			continue
 		}
 	}
-	noSpaceLine := strings.TrimSpace(line)
-	if !strings.HasPrefix(noSpaceLine, "-") {
-		fmt.Printf("!strings.HasPrefix(%q, \"-\") == true\n", line)
-		return false
-	}
-	return true
+	return tasks
 }
