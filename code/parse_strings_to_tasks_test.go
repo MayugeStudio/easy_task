@@ -11,12 +11,24 @@ func TestParseStringsToTasks(t *testing.T) {
 		want []*Task
 	}{
 		"Success": {
-			[]string{"- [ ] Task1", "- [X] Task2"},
-			[]*Task{{"Task1", false}, {"Task2", true}},
+			[]string{
+				"- [ ] Task1",
+				"- [X] Task2",
+			},
+			[]*Task{
+				{"Task1", false},
+				{"Task2", true},
+			},
 		},
 		"LowerCase_DoneSymbol": {
-			[]string{"- [x] Task1", "- [x] Task2"},
-			[]*Task{{"Task1", true}, {"Task2", true}},
+			[]string{
+				"- [x] Task1",
+				"- [x] Task2",
+			},
+			[]*Task{
+				{"Task1", true},
+				{"Task2", true},
+			},
 		},
 	}
 	for testName, tt := range tests {
