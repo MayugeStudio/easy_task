@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestParseStringsToTasks(t *testing.T) {
+func TestParseStringsToTasks_OnlyTask(t *testing.T) {
 	tests := map[string]struct {
 		in   []string
 		want []*Task
