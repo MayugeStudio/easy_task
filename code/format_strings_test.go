@@ -209,6 +209,7 @@ func TestFormatTaskString(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
+
 		// Success cases
 		"Undone_Valid":                 {"- [ ] Buy the milk.", validStringUndone, false},
 		"Undone_BadIndentStartBracket": {"-[] Buy the milk.", validStringUndone, false},
