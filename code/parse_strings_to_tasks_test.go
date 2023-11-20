@@ -10,17 +10,17 @@ func TestParseStringsToTasks(t *testing.T) {
 		in   []string
 		want []*Task
 	}{
-		"Success": {
+		"UndoneTasks": {
 			[]string{
 				"- [ ] Task1",
-				"- [X] Task2",
+				"- [ ] Task2",
 			},
 			[]*Task{
 				{"Task1", false},
-				{"Task2", true},
+				{"Task2", false},
 			},
 		},
-		"LowerCase_DoneSymbol": {
+		"DoneTasks_Lowercase": {
 			[]string{
 				"- [x] Task1",
 				"- [x] Task2",
