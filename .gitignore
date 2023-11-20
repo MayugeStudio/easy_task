@@ -1,6 +1,3 @@
 .idea/
 todo*
 bin/
-venv/
-scripts/pict/out/
-scripts/pict/*.txt
