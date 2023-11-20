@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-func ConvertPointerSliceToValueSlice[T any](S []*T) []T {
-	result := make([]T, 0)
+func ConvertTaskPtrSliceToTaskValueSlice(S []*Task) []Task {
+	result := make([]Task, 0)
 	for _, p := range S {
 		result = append(result, *p)
 	}
@@ -74,8 +74,8 @@ func TestParseStringsToTasks_OnlyTask(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			got := ParseStringsToTasks(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
-				gotV := ConvertPointerSliceToValueSlice(got)
-				wantV := ConvertPointerSliceToValueSlice(tt.want)
+				gotV := ConvertTaskPtrSliceToTaskValueSlice(got)
+				wantV := ConvertTaskPtrSliceToTaskValueSlice(tt.want)
 				t.Errorf("ParseStringsToTasks() = %v, want %v", gotV, wantV)
 			}
 		})
@@ -158,8 +158,8 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			got := ParseStringsToTasks(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
-				gotV := ConvertPointerSliceToValueSlice(got)
-				wantV := ConvertPointerSliceToValueSlice(tt.want)
+				gotV := ConvertTaskPtrSliceToTaskValueSlice(got)
+				wantV := ConvertTaskPtrSliceToTaskValueSlice(tt.want)
 				t.Errorf("ParseStringsToTasks() = %v, want %v", gotV, wantV)
 			}
 		})
