@@ -1,10 +1,22 @@
 package code
 
-import "strings"
+import (
+	"errors"
+	"fmt"
+	"strings"
+)
 
-func GetStatusString(taskString string) string {
+var (
+	SyntaxError         = errors.New("format error")
+	NoDashError         = fmt.Errorf("%w: no dash", SyntaxError)
+	NoBracketStartError = fmt.Errorf("%w: no bracket start", SyntaxError)
+	NoBracketEndError   = fmt.Errorf("%w: no bracket end", SyntaxError)
+	NoValidIndentError  = fmt.Errorf("%w: no valid indent", SyntaxError)
+)
+
+func GetStatusString(taskString string) (string, error) {
 	if !strings.HasPrefix(taskString, "-") {
-		return ""
+		return "", NoDashError
 	}
 
 	f := NewLineFormatter(taskString)
@@ -12,22 +24,22 @@ func GetStatusString(taskString string) string {
 	f.TrimPrefix("-").TrimSpace()
 
 	if !f.HasPrefix("[") {
-		return ""
+		return "", NoBracketStartError
 	}
 	f.TrimPrefix("[").TrimSpace()
 
 	if f.HasPrefix("X") || f.HasPrefix("x") {
-		return "X"
+		return "X", nil
 	}
-	return " "
+	return " ", nil
 }
 
-func GetGroupTitle(s string) string {
+func GetGroupTitle(s string) (string, error) {
 	if !strings.HasPrefix(s, "-") {
-		return ""
+		return "", fmt.Errorf("%w: invalid group title %q", SyntaxError, s)
 	}
 	s = strings.TrimPrefix(s, "-")
-	return strings.TrimSpace(s)
+	return strings.TrimSpace(s), nil
 }
 
 func IsGroupTitle(s string) bool {
