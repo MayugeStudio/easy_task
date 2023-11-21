@@ -1,4 +1,4 @@
-package src
+package logic
 
 import (
 	"easy_task/src/domain"

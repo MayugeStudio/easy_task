@@ -1,4 +1,4 @@
-package src
+package logic
 
 import (
 	"fmt"
@@ -200,7 +200,6 @@ func TestFormatTaskStrings_MultiGroup(t *testing.T) {
 		})
 	}
 }
-
 
 func TestFormatTaskString(t *testing.T) {
 	validStringDone := "- [X] Buy the milk."
