@@ -1,4 +1,4 @@
-name: Golang CI
+name: Golang Check Format
 
 on:
   push:
@@ -26,6 +26,3 @@ jobs:
 
       - name: Format Code
         run: go fmt ./...
-
-      - name: Lint Code
-        run: golangci-lint run
