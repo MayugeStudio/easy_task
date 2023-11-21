@@ -201,6 +201,7 @@ func TestFormatTaskStrings_MultiGroup(t *testing.T) {
 	}
 }
 
+
 func TestFormatTaskString(t *testing.T) {
 	validStringDone := "- [X] Buy the milk."
 	validStringUndone := "- [ ] Buy the milk."
@@ -209,7 +210,6 @@ func TestFormatTaskString(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-
 		// Success cases
 		"Undone_Valid":                 {"- [ ] Buy the milk.", validStringUndone, false},
 		"Undone_BadIndentStartBracket": {"-[] Buy the milk.", validStringUndone, false},
@@ -241,7 +241,6 @@ func TestFormatTaskString(t *testing.T) {
 
 func TestFormatGroupTaskString(t *testing.T) {
 	validGroupString := "  - [ ] Buy the milk."
-
 	tests := map[string]struct {
 		in      string
 		want    string
