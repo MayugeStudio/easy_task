@@ -128,10 +128,7 @@ func isGroupTitle(s string) bool {
 	}
 	l := line.New(s)
 	l = l.TrimPrefix("-").TrimSpace()
-	if l.HasPrefix("[") {
-		return false
-	}
-	return true
+	return !l.HasPrefix("[")
 }
 
 func isGroupTaskString(s string) bool {
