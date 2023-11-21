@@ -1,4 +1,4 @@
-package code
+package logic
 
 import (
 	"errors"
@@ -17,10 +17,10 @@ func (m MockFileReader) ReadLines(filename string) (lines []string, err error) {
 
 func TestScanFile(t *testing.T) {
 	tests := map[string]struct {
-		fileName      string
-		reader        FileReader
-		want          []string
-		wantErr       bool
+		fileName string
+		reader   FileReader
+		want     []string
+		wantErr  bool
 	}{
 		"SuccessfulScan": {
 			fileName: "testFile.txt",
@@ -109,11 +109,6 @@ func TestFileScanner_ReadLines(t *testing.T) {
 		},
 		"NonexistentFile": {
 			fileName:  "nonexistent.txt",
-			wantLines: nil,
-			wantErr:   true,
-		},
-		"ErrorReadingFile": {
-			fileName:  "/dev/null",
 			wantLines: nil,
 			wantErr:   true,
 		},

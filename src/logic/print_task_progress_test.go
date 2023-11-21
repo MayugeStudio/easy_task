@@ -1,18 +1,19 @@
-package code
+package logic
 
 import (
 	"bytes"
+	"easy_task/src/domain"
 	"testing"
 )
 
 func TestPrintTaskProgress(t *testing.T) {
 	tests := map[string]struct {
-		in      []*Task
+		in      []*domain.Task
 		wantW   string
 		wantErr bool
 	}{
 		"100%": {
-			[]*Task{
+			[]*domain.Task{
 				{"Task1", true},
 				{"Task2", true},
 			},
@@ -20,7 +21,7 @@ func TestPrintTaskProgress(t *testing.T) {
 			false,
 		},
 		"50%": {
-			[]*Task{
+			[]*domain.Task{
 				{"Task1", true},
 				{"Task2", false},
 			},
@@ -28,7 +29,7 @@ func TestPrintTaskProgress(t *testing.T) {
 			false,
 		},
 		"25%": {
-			[]*Task{
+			[]*domain.Task{
 				{"Task1", true},
 				{"Task2", false},
 				{"Task3", false},
@@ -38,7 +39,7 @@ func TestPrintTaskProgress(t *testing.T) {
 			false,
 		},
 		"0%": {
-			[]*Task{
+			[]*domain.Task{
 				{"Task1", false},
 				{"Task2", false},
 			},

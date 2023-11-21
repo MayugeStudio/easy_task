@@ -1,4 +1,4 @@
-package code
+package logic
 
 import "testing"
 

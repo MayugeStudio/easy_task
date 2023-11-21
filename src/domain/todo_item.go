@@ -1,4 +1,4 @@
-package code
+package domain
 
 type TodoItemContainer struct {
 	taskContainer  *TaskContainer

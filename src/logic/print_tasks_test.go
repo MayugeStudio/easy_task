@@ -1,25 +1,26 @@
-package code
+package logic
 
 import (
 	"bytes"
+	"easy_task/src/domain"
 	"testing"
 )
 
 func TestPrintTasks(t *testing.T) {
 	tests := map[string]struct {
-		in      []*Task
+		in      []*domain.Task
 		wantW   string
 		wantErr bool
 	}{
 		"Success_1Task": {
-			[]*Task{
+			[]*domain.Task{
 				{"Task1", false},
 			},
 			"[ ] Task1\n",
 			false,
 		},
 		"Success_3Tasks": {
-			[]*Task{
+			[]*domain.Task{
 				{"Task1", false},
 				{"Task2", true},
 				{"Task3", true},
@@ -28,7 +29,7 @@ func TestPrintTasks(t *testing.T) {
 			false,
 		},
 		"Success_10Tasks": {
-			[]*Task{
+			[]*domain.Task{
 				{"0Hi", false},
 				{"1BuyTheMilk", false},
 				{"2MaxLengthName", false},
@@ -61,7 +62,7 @@ func TestPrintTasks(t *testing.T) {
 
 func Test_printTask(t *testing.T) {
 	type input struct {
-		task              *Task
+		task              *domain.Task
 		maxTaskNameLength int
 	}
 	tests := map[string]struct {
@@ -70,12 +71,12 @@ func Test_printTask(t *testing.T) {
 		wantErr bool
 	}{
 		"Success_Done": {
-			input{&Task{"TaskTitle", true}, 10},
+			input{&domain.Task{"TaskTitle", true}, 10},
 			"[X] TaskTitle \n",
 			false,
 		},
 		"Success_Undone": {
-			input{&Task{"TaskTitle", false}, 10},
+			input{&domain.Task{"TaskTitle", false}, 10},
 			"[ ] TaskTitle \n",
 			false,
 		},
@@ -97,11 +98,11 @@ func Test_printTask(t *testing.T) {
 
 func Test_getMaxTaskNameLength(t *testing.T) {
 	tests := map[string]struct {
-		in   []*Task
+		in   []*domain.Task
 		want int
 	}{
 		"Success_Length5": {
-			[]*Task{
+			[]*domain.Task{
 				{"12", false},
 				{"123", false},
 				{"12345", false},
@@ -109,7 +110,7 @@ func Test_getMaxTaskNameLength(t *testing.T) {
 			5,
 		},
 		"Success_Length10": {
-			[]*Task{
+			[]*domain.Task{
 				{"1234567890", false},
 				{"1234567", false},
 				{"123", false},
@@ -117,7 +118,7 @@ func Test_getMaxTaskNameLength(t *testing.T) {
 			10,
 		},
 		"Success_Length20": {
-			[]*Task{
+			[]*domain.Task{
 				{"12345678901234567890", false},
 				{"123456789012", false},
 				{"123", false},
