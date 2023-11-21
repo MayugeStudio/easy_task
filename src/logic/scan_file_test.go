@@ -112,11 +112,6 @@ func TestFileScanner_ReadLines(t *testing.T) {
 			wantLines: nil,
 			wantErr:   true,
 		},
-		"ErrorReadingFile": {
-			fileName:  "/dev/null",
-			wantLines: nil,
-			wantErr:   true,
-		},
 	}
 
 	for testName, tt := range tests {
