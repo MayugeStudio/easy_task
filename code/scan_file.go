@@ -6,13 +6,13 @@ import (
 )
 
 type FileReader interface {
-	ReadLines(filename string) (lines []string, err error)
+	ReadLines(fileName string) (lines []string, err error)
 }
 
 type FileScanner struct{}
 
-func (fs FileScanner) ReadLines(filename string) (lines []string, err error) {
-	file, openErr := os.Open(filename)
+func (fs FileScanner) ReadLines(fileName string) (lines []string, err error) {
+	file, openErr := os.Open(fileName)
 	if openErr != nil {
 		return nil, openErr
 	}

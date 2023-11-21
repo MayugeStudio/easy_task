@@ -19,8 +19,6 @@ func TestScanFile(t *testing.T) {
 	tests := map[string]struct {
 		fileName      string
 		reader        FileReader
-		mockFileLines []string
-		mockFileErr   error
 		want          []string
 		wantErr       bool
 	}{
