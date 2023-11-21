@@ -1,11 +1,13 @@
 package code
 
 type Group struct {
+	title string
 	tasks []*Task
 }
 
-func NewGroup() *Group {
+func NewGroup(title string) *Group {
 	return &Group{
+		title: title,
 		tasks: make([]*Task, 0),
 	}
 }
