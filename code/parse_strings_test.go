@@ -212,6 +212,104 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 	}
 }
 
+func TestParseStringsToTasks_MultiGroupTask(t *testing.T) {
+	tests := map[string]struct {
+		in   []string
+		want []*Group
+	}{
+		"MixPattern_Multi": {
+			[]string{
+				"- TaskGroup1",
+				"  - [ ]Task1",
+				"  - [X]Task2",
+				"- TaskGroup2",
+				"  - [ ]Task1",
+				"  - [X]Task2",
+			},
+			[]*Group{
+				{
+					"TaskGroup1",
+					[]*Task{
+						{"Task1", false},
+						{"Task2", true},
+					},
+				},
+				{
+					"TaskGroup2",
+					[]*Task{
+						{"Task1", false},
+						{"Task2", true},
+					},
+				},
+			},
+		},
+		"ContainInvalidTaskString": {
+			[]string{
+				"- TaskGroup1",
+				"  - [ ]Task1",
+				"  InvalidTaskString",
+				"  - [X]Task2",
+				"- TaskGroup2",
+				"  - [ ]Task1",
+				"  InvalidTaskString",
+				"  - [X]Task2",
+			},
+			[]*Group{
+				{
+					"TaskGroup1",
+					[]*Task{
+						{"Task1", false},
+						{"Task2", true},
+					},
+				},
+				{
+					"TaskGroup2",
+					[]*Task{
+						{"Task1", false},
+						{"Task2", true},
+					},
+				},
+			},
+		},
+		"ContainInvalidTaskString_BadIndent": {
+			[]string{
+				"- TaskGroup1",
+				"  - [ ]Task1",
+				"InvalidTaskString",
+				"  - [X]Task2",
+				"- TaskGroup2",
+				"  - [ ]Task1",
+				"InvalidTaskString",
+				"  - [X]Task2",
+			},
+			[]*Group{
+				{
+					"TaskGroup1",
+					[]*Task{
+						{"Task1", false},
+					},
+				},
+				{
+					"TaskGroup2",
+					[]*Task{
+						{"Task1", false},
+					},
+				},
+			},
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			got := ParseStringsToTasks(tt.in)
+			if !reflect.DeepEqual(got.GetGroups(), tt.want) {
+				gotV := ConvertGroupPtrSliceToGroupValueSlice(got.GetGroups())
+				wantV := ConvertGroupPtrSliceToGroupValueSlice(tt.want)
+				t.Errorf("ParseStringsToTasks() = %v, want %v", gotV, wantV)
+			}
+		})
+	}
+}
+
 func Test_parseSingleTaskString(t *testing.T) {
 	tests := map[string]struct {
 		in   string
