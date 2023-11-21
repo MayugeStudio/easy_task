@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"easy_task/src/logic/line"
 	"errors"
 	"fmt"
 	"strings"
@@ -19,16 +20,16 @@ func GetStatusString(taskString string) (string, error) {
 		return "", NoDashError
 	}
 
-	f := NewLineFormatter(taskString)
+	l := line.New(taskString)
 
-	f.TrimPrefix("-").TrimSpace()
+	l = l.TrimPrefix("-").TrimSpace()
 
-	if !f.HasPrefix("[") {
+	if !l.HasPrefix("[") {
 		return "", NoBracketStartError
 	}
-	f.TrimPrefix("[").TrimSpace()
+	l = l.TrimPrefix("[").TrimSpace()
 
-	if f.HasPrefix("X") || f.HasPrefix("x") {
+	if l.HasPrefix("X") || l.HasPrefix("x") {
 		return "X", nil
 	}
 	return " ", nil
@@ -46,9 +47,9 @@ func IsGroupTitle(s string) bool {
 	if !strings.HasPrefix(s, "-") {
 		return false
 	}
-	f := NewLineFormatter(s)
-	f.TrimPrefix("-").TrimSpace()
-	if f.HasPrefix("[") {
+	l := line.New(s)
+	l = l.TrimPrefix("-").TrimSpace()
+	if l.HasPrefix("[") {
 		return false
 	}
 	return true
@@ -58,23 +59,23 @@ func IsGroupTaskString(s string) bool {
 	if !strings.HasPrefix(s, " ") {
 		return false
 	}
-	f := NewLineFormatter(strings.TrimSpace(s))
+	l := line.New(strings.TrimSpace(s))
 
-	if !f.HasPrefix("-") {
+	if !l.HasPrefix("-") {
 		return false
 	}
-	f.TrimPrefix("-").TrimSpace()
+	l = l.TrimPrefix("-").TrimSpace()
 
-	if !f.HasPrefix("[") {
+	if !l.HasPrefix("[") {
 		return false
 	}
-	f.TrimPrefix("[").TrimSpace()
+	l = l.TrimPrefix("[").TrimSpace()
 
-	if f.HasPrefix("X") || f.HasPrefix("x") {
-		f.TrimPrefix("X").TrimSpace()
+	if l.HasPrefix("X") || l.HasPrefix("x") {
+		l = l.TrimPrefix("X").TrimSpace()
 	}
 
-	if !f.HasPrefix("]") {
+	if !l.HasPrefix("]") {
 		return false
 	}
 
@@ -86,19 +87,19 @@ func IsSingleTaskString(s string) bool {
 		return false
 	}
 
-	f := NewLineFormatter(s)
-	f.TrimPrefix("-").TrimSpace()
+	l := line.New(s)
+	l = l.TrimPrefix("-").TrimSpace()
 
-	if !f.HasPrefix("[") {
+	if !l.HasPrefix("[") {
 		return false
 	}
-	f.TrimPrefix("[").TrimSpace()
+	l = l.TrimPrefix("[").TrimSpace()
 
-	if f.HasPrefix("X") || f.HasPrefix("x") {
-		f.TrimPrefix("X").TrimSpace()
+	if l.HasPrefix("X") || l.HasPrefix("x") {
+		l = l.TrimPrefix("X").TrimSpace()
 	}
 
-	if !f.HasPrefix("]") {
+	if !l.HasPrefix("]") {
 		return false
 	}
 
