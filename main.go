@@ -1,184 +1,42 @@
 package main
 
 import (
-	"bufio"
-	"errors"
+	"easy_task/code"
 	"fmt"
 	"os"
-	"strings"
 )
 
-type TokenType string
-
-const (
-	DoneSymbol     = "X"
-	UndoneSymbol   = " "
-	ProgressSymbol = "#"
-)
-
-const DefaultProgressBarLength = 40.0
-
-var InvalidSyntax = errors.New("invalid file structure")
-
-type Task struct {
-	Title  string
-	IsDone bool
-}
-
-type TaskPtr *Task
-
-func NewTask() TaskPtr {
-	return &Task{
-		Title:  "",
-		IsDone: false,
-	}
-}
+var out = os.Stdout
 
 func main() {
 	args := os.Args[1:]
 	if len(args) != 1 {
-		fmt.Printf("Usage: tst [filename]")
+		printUsage()
 		os.Exit(1)
+	}
+	if args[0] == "-h" || args[0] == "--help" {
+		printUsage()
+		os.Exit(0)
 	}
 	fileName := args[0]
-	lines := scanFile(fileName)
-	tasks, msgSlice := parseLines(lines)
-	printErrorMessages(msgSlice)
-	printTasks(tasks)
-	printTaskProgress(tasks)
-}
-
-func scanFile(fileName string) []string {
-	file, openErr := os.Open(fileName)
-	if openErr != nil {
-		fmt.Println("Error opening file:", openErr)
+	lines, scanErr := code.ScanFile(fileName)
+	if scanErr != nil {
+		fmt.Printf("scanning file: %v\n", scanErr)
 		os.Exit(1)
 	}
-	defer func(f *os.File) {
-		if err := f.Close(); err != nil {
-			fmt.Printf("Error closing file: %s\n", err.Error())
-			os.Exit(1)
-		}
-	}(file)
-
-	scanner := bufio.NewScanner(file)
-	lines := make([]string, 0)
-	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
-	}
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file: ", err)
+	todoItemContainer := code.ParseStringsToTasks(lines)
+	if err := code.PrintTasks(out, todoItemContainer.GetTasks()); err != nil {
+		fmt.Printf("printing tasks: %v\n", err)
 		os.Exit(1)
 	}
-	return lines
-}
-
-func parseLines(lines []string) ([]TaskPtr, []string) {
-	tasks := make([]TaskPtr, 0)
-	errMsgSlice := make([]string, 0)
-	for i, line := range lines {
-		pLine, skip := toProcessedLineFromRawLine(line)
-		if skip {
-			continue
-		}
-		tokens, err := processedLineToTokens(pLine)
-		if err != nil {
-			msg := fmt.Sprintf("Error in preprocessing task: %s\n", err.Error())
-			msg += fmt.Sprintf("  > in line - %d\n", i+1)
-			msg += fmt.Sprintf("     > %q", line)
-			errMsgSlice = append(errMsgSlice, msg)
-			continue
-		}
-		task := parseLine(tokens)
-		tasks = append(tasks, task)
-	}
-	return tasks, errMsgSlice
-}
-
-func parseLine(tokens []string) TaskPtr {
-	task := NewTask()
-parsing:
-	for {
-		token := strings.ToUpper(tokens[0])
-		switch TokenType(token) {
-		case "X":
-			task.IsDone = true
-		default:
-			task.Title = strings.Join(tokens, " ")
-			break parsing
-		}
-		tokens = tokens[1:]
-	}
-	return task
-}
-
-func toProcessedLineFromRawLine(line string) (processedLine string, skip bool) {
-	if !strings.HasPrefix(line, "-") {
-		return "", true
-	}
-	line = strings.TrimPrefix(line, "-")
-	line = strings.ReplaceAll(line, "[", "")
-	line = strings.ReplaceAll(line, "]", "")
-	return line, false
-}
-
-func processedLineToTokens(processedLine string) ([]string, error) {
-	tokens := strings.Fields(processedLine)
-	if len(tokens) == 0 {
-		return nil, InvalidSyntax // 'X TaskTitle' or '  TaskTitle'
-	}
-	return tokens, nil
-}
-
-func printErrorMessages(messages []string) {
-	if len(messages) == 0 {
-		return
-	}
-	for _, message := range messages {
-		fmt.Print(message)
-	}
-	fmt.Printf("\n")
-}
-
-func getMaxTaskNameLength(tasks []TaskPtr) int {
-	maxLength := 0
-	for _, task := range tasks {
-		if len(task.Title) > maxLength {
-			maxLength = len(task.Title)
-		}
-	}
-	return maxLength
-}
-
-func printTasks(tasks []TaskPtr) {
-	maxTaskNameLength := getMaxTaskNameLength(tasks)
-	for _, task := range tasks {
-		printTask(task, maxTaskNameLength)
+	if err := code.PrintTaskProgress(out, todoItemContainer.GetTasks()); err != nil {
+		fmt.Printf("printing task progress: %v\n", err)
+		os.Exit(1)
 	}
 }
 
-func printTask(task TaskPtr, maxTaskNameLength int) {
-	var doneStr string
-	if task.IsDone {
-		doneStr = DoneSymbol
-	} else {
-		doneStr = UndoneSymbol
-	}
-	fmt.Printf("[%s] %-*s\n", doneStr, maxTaskNameLength, task.Title)
-}
-
-func printTaskProgress(tasks []TaskPtr) {
-	progressBarLength := DefaultProgressBarLength
-	taskNum := float64(len(tasks))
-	doneTaskNum := 0.0
-	for _, task := range tasks {
-		if task.IsDone {
-			doneTaskNum++
-		}
-	}
-	doneTaskRatio := doneTaskNum / taskNum
-	doneTaskStrLength := int(doneTaskRatio * progressBarLength)
-	doneTaskStr := strings.Repeat(ProgressSymbol, doneTaskStrLength)
-	undoneTaskStr := strings.Repeat(" ", int(progressBarLength)-doneTaskStrLength)
-	fmt.Printf("[%s%s]%d%%", doneTaskStr, undoneTaskStr, int(doneTaskRatio*100))
+func printUsage() {
+	fmt.Printf("Usage:\n")
+	fmt.Printf("\ttst %-12s\t%s", "[filename]", "Displays the task in passed filename.\n")
+	fmt.Printf("\ttst %-12s\t%s", "[-h | --help]", "Show this message.\n")
 }
