@@ -17,3 +17,17 @@ func (g *Group) AddTask(t *Task) {
 func (g *Group) GetTasks() []*Task {
 	return g.tasks
 }
+
+type GroupContainer struct {
+	groups []*Group
+}
+
+func NewGroupContainer() *GroupContainer {
+	return &GroupContainer{
+		groups: make([]*Group, 0),
+	}
+}
+
+func (c *GroupContainer) AddGroup(g *Group) {
+	c.groups = append(c.groups, g)
+}
