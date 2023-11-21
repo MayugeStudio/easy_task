@@ -33,9 +33,9 @@ func TestLineFormatter_HasPrefix(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			f := Line(tt.in)
+			line := Line(tt.line)
 
-			got := f.HasPrefix(tt.in)
+			got := line.HasPrefix(tt.in)
 			if got != tt.want {
 				t.Errorf("HasPrefix() = %v, want %v", got, tt.want)
 			}
