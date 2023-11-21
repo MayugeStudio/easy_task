@@ -8,11 +8,11 @@ import (
 )
 
 var (
-	SyntaxError         = errors.New("format error")
-	NoDashError         = fmt.Errorf("%w: no dash", SyntaxError)
-	NoBracketStartError = fmt.Errorf("%w: no bracket start", SyntaxError)
-	NoBracketEndError   = fmt.Errorf("%w: no bracket end", SyntaxError)
-	InvalidIndentError  = fmt.Errorf("%w: no valid indent", SyntaxError)
+	errSyntax         = errors.New("format error")
+	errNoDash         = fmt.Errorf("%w: no dash", errSyntax)
+	errNoBracketStart = fmt.Errorf("%w: no bracket start", errSyntax)
+	errNoBracketEnd   = fmt.Errorf("%w: no bracket end", errSyntax)
+	errInvalidIndent  = fmt.Errorf("%w: no valid indent", errSyntax)
 )
 
 func FormatTaskStrings(taskStrings []string) []string {
@@ -55,7 +55,7 @@ func formatGroupTitleString(s string) (string, error) {
 
 func formatGroupTaskString(s string) (string, error) {
 	if !strings.HasPrefix(s, " ") {
-		return "", InvalidIndentError
+		return "", errInvalidIndent
 	}
 	noSpaceStr := strings.TrimSpace(s)
 	formattedString, err := formatTaskString(noSpaceStr)
@@ -67,7 +67,7 @@ func formatGroupTaskString(s string) (string, error) {
 
 func formatTaskString(s string) (string, error) {
 	if !strings.HasPrefix(s, "-") {
-		return "", NoDashError
+		return "", errNoDash
 	}
 
 	l := line.New(s)
@@ -75,7 +75,7 @@ func formatTaskString(s string) (string, error) {
 	l = l.TrimPrefix("-").TrimSpace()
 
 	if !l.HasPrefix("[") {
-		return "", NoBracketStartError
+		return "", errNoBracketStart
 	}
 	l = l.TrimPrefix("[").TrimSpace()
 
@@ -86,7 +86,7 @@ func formatTaskString(s string) (string, error) {
 	l = l.TrimPrefix(statusStr).TrimSpace()
 
 	if !l.HasPrefix("]") {
-		return "", NoBracketEndError
+		return "", errNoBracketEnd
 	}
 
 	l = l.TrimPrefix("]").TrimSpace()
@@ -96,7 +96,7 @@ func formatTaskString(s string) (string, error) {
 
 func getStatusString(taskString string) (string, error) {
 	if !strings.HasPrefix(taskString, "-") {
-		return "", NoDashError
+		return "", errNoDash
 	}
 
 	l := line.New(taskString)
@@ -104,7 +104,7 @@ func getStatusString(taskString string) (string, error) {
 	l = l.TrimPrefix("-").TrimSpace()
 
 	if !l.HasPrefix("[") {
-		return "", NoBracketStartError
+		return "", errNoBracketStart
 	}
 	l = l.TrimPrefix("[").TrimSpace()
 
@@ -116,7 +116,7 @@ func getStatusString(taskString string) (string, error) {
 
 func getGroupTitle(s string) (string, error) {
 	if !strings.HasPrefix(s, "-") {
-		return "", fmt.Errorf("%w: invalid group title %q", SyntaxError, s)
+		return "", fmt.Errorf("%w: invalid group title %q", errSyntax, s)
 	}
 	s = strings.TrimPrefix(s, "-")
 	return strings.TrimSpace(s), nil
