@@ -2,31 +2,29 @@ package logic
 
 import "strings"
 
-type LineFormatter struct {
-	Line string
+type LineFormatter string
+
+func NewLineFormatter(line string) LineFormatter {
+	return LineFormatter(line)
 }
 
-func NewLineFormatter(line string) *LineFormatter {
-	return &LineFormatter{Line: line}
+func (l LineFormatter) HasPrefix(prefix string) bool {
+	return strings.HasPrefix(l.toString(), prefix)
 }
 
-func (f *LineFormatter) HasPrefix(prefix string) bool {
-	return strings.HasPrefix(f.Line, prefix)
-}
-
-func (f *LineFormatter) TrimPrefix(prefix string) *LineFormatter {
+func (l LineFormatter) TrimPrefix(prefix string) LineFormatter {
 	upperPrefix := strings.ToUpper(prefix)
 	lowerPrefix := strings.ToLower(prefix)
 
-	if strings.HasPrefix(f.Line, upperPrefix) {
-		f.Line = strings.TrimPrefix(f.Line, upperPrefix)
-	} else if strings.HasPrefix(f.Line, lowerPrefix) {
-		f.Line = strings.TrimPrefix(f.Line, lowerPrefix)
-	}
-
-	return f
+	line := LineFormatter(strings.TrimPrefix(l.toString(), upperPrefix))
+	line = LineFormatter(strings.TrimPrefix(line.toString(), lowerPrefix))
+	return line
 }
 
-func (f *LineFormatter) TrimSpace() {
-	f.Line = strings.TrimSpace(f.Line)
+func (l LineFormatter) TrimSpace() LineFormatter {
+	return LineFormatter(strings.TrimSpace(l.toString()))
+}
+
+func (l LineFormatter) toString() string {
+	return string(l)
 }
