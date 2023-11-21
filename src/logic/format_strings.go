@@ -38,9 +38,6 @@ func FormatTaskStrings(taskStrings []string) []string {
 		}
 		if err != nil {
 			errs = append(errs, err)
-			if errors.Is(err, InvalidIndentError) {
-				inGroup = false
-			}
 			continue
 		}
 		result = append(result, formattedString)
