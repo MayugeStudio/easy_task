@@ -1,19 +1,19 @@
-package src
+package domain
 
 type Group struct {
-	title string
-	tasks []*Task
+	Title string
+	Tasks []*Task
 }
 
 func NewGroup(title string) *Group {
 	return &Group{
-		title: title,
-		tasks: make([]*Task, 0),
+		Title: title,
+		Tasks: make([]*Task, 0),
 	}
 }
 
 func (g *Group) AddTask(t *Task) {
-	g.tasks = append(g.tasks, t)
+	g.Tasks = append(g.Tasks, t)
 }
 
 type GroupContainer struct {

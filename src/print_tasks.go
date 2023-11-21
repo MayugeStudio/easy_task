@@ -1,6 +1,7 @@
 package src
 
 import (
+	"easy_task/src/domain"
 	"fmt"
 	"io"
 )
@@ -10,7 +11,7 @@ const (
 	UndoneSymbol = " "
 )
 
-func PrintTasks(w io.Writer, tasks []*Task) error {
+func PrintTasks(w io.Writer, tasks []*domain.Task) error {
 	maxTaskNameLength := getMaxTaskNameLength(tasks)
 	for _, task := range tasks {
 		if err := printTask(w, task, maxTaskNameLength); err != nil {
@@ -20,7 +21,7 @@ func PrintTasks(w io.Writer, tasks []*Task) error {
 	return nil
 }
 
-func printTask(w io.Writer, task *Task, maxTaskNameLength int) error {
+func printTask(w io.Writer, task *domain.Task, maxTaskNameLength int) error {
 	var doneStr string
 	if task.IsDone {
 		doneStr = DoneSymbol
@@ -33,7 +34,7 @@ func printTask(w io.Writer, task *Task, maxTaskNameLength int) error {
 	return nil
 }
 
-func getMaxTaskNameLength(tasks []*Task) int {
+func getMaxTaskNameLength(tasks []*domain.Task) int {
 	maxLength := 0
 	for _, task := range tasks {
 		if len(task.Title) > maxLength {

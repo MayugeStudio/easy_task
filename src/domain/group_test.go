@@ -1,4 +1,4 @@
-package src
+package domain
 
 import (
 	"reflect"
@@ -12,7 +12,7 @@ func TestNewGroup(t *testing.T) {
 	}{
 		"Success": {
 			"GroupTitle",
-			&Group{title: "GroupTitle", tasks: make([]*Task, 0)},
+			&Group{Title: "GroupTitle", Tasks: make([]*Task, 0)},
 		},
 	}
 	for testName, tt := range tests {
@@ -40,12 +40,12 @@ func TestGroup_AddTask(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			g := &Group{
-				title: tt.title,
-				tasks: make([]*Task, 0),
+				Title: tt.title,
+				Tasks: make([]*Task, 0),
 			}
 
 			g.AddTask(tt.in)
-			got := g.tasks
+			got := g.Tasks
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewGroup() = %v, want %v", got, tt.want)
 			}
@@ -81,8 +81,8 @@ func TestGroupContainer_AddGroup(t *testing.T) {
 	}{
 		"Success": {
 			[]*Group{},
-			&Group{title: "NewGroup"},
-			[]*Group{{title: "NewGroup"}},
+			&Group{Title: "NewGroup"},
+			[]*Group{{Title: "NewGroup"}},
 		},
 	}
 	for testName, tt := range tests {

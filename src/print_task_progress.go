@@ -1,6 +1,7 @@
 package src
 
 import (
+	"easy_task/src/domain"
 	"fmt"
 	"io"
 	"strings"
@@ -9,7 +10,7 @@ import (
 const ProgressSymbol = "#"
 const DefaultProgressBarLength = 40.0
 
-func PrintTaskProgress(w io.Writer, tasks []*Task) error {
+func PrintTaskProgress(w io.Writer, tasks []*domain.Task) error {
 	if len(tasks) == 0 {
 		return nil
 	}
