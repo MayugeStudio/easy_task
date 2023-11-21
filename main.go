@@ -19,7 +19,7 @@ func main() {
 		os.Exit(0)
 	}
 	fileName := args[0]
-	lines, scanErr := code.ScanFile(fileName)
+	lines, scanErr := code.ScanFile(fileName, code.FileScanner{})
 	if scanErr != nil {
 		fmt.Printf("scanning file: %v\n", scanErr)
 		os.Exit(1)
