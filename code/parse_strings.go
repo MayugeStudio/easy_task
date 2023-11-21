@@ -13,6 +13,8 @@ func ParseStringsToTasks(taskStrings []string) *TodoItemContainer {
 		}
 
 		if IsGroupTitle(str) {
+			group := parseGroupTaskTitle(str)
+			todoItemContainer.AddGroup(group)
 			continue
 		}
 
@@ -48,4 +50,11 @@ func parseSingleTaskString(str string) *Task {
 	}
 	task := NewTask(title, isDone)
 	return task
+}
+
+func parseGroupTaskTitle(str string) *Group {
+	str = strings.TrimPrefix(str, "-")
+	str = strings.TrimSpace(str)
+	g := NewGroup(str)
+	return g
 }

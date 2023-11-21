@@ -103,6 +103,7 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 			},
 			[]*Group{
 				{
+					"TaskGroup",
 					[]*Task{
 						{"Task1", true},
 						{"Task2", true},
@@ -118,6 +119,7 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 			},
 			[]*Group{
 				{
+					"TaskGroup",
 					[]*Task{
 						{"Task1", true},
 						{"Task2", true},
@@ -133,6 +135,7 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 			},
 			[]*Group{
 				{
+					"TaskGroup",
 					[]*Task{
 						{"Task1", false},
 						{"Task2", false},
@@ -148,6 +151,7 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 			},
 			[]*Group{
 				{
+					"TaskGroup",
 					[]*Task{
 						{"Task1", false},
 						{"Task2", true},
@@ -164,6 +168,7 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 			},
 			[]*Group{
 				{
+					"TaskGroup",
 					[]*Task{
 						{"Task1", false},
 						{"Task2", true},
@@ -180,6 +185,7 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 			},
 			[]*Group{
 				{
+					"TaskGroup",
 					[]*Task{
 						{"Task1", false},
 					},
@@ -194,6 +200,58 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 				gotV := ConvertGroupPtrSliceToGroupValueSlice(got.GetGroups())
 				wantV := ConvertGroupPtrSliceToGroupValueSlice(tt.want)
 				t.Errorf("ParseStringsToTasks() = %v, want %v", gotV, wantV)
+			}
+		})
+	}
+}
+
+func Test_parseSingleTaskString(t *testing.T) {
+	tests := map[string]struct {
+		in   string
+		want *Task
+	}{"ValidSingleTaskString_Done": {
+		"- [X] TaskName",
+		&Task{
+			Title:  "TaskName",
+			IsDone: true,
+		},
+	},
+		"ValidSingleTaskString_Undone": {
+			"- [ ] TaskName",
+			&Task{
+				Title:  "TaskName",
+				IsDone: false,
+			},
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			got := parseSingleTaskString(tt.in)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("parseSingleTaskString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_parseGroupTaskTitle(t *testing.T) {
+	tests := map[string]struct {
+		in   string
+		want *Group
+	}{
+		"ValidGroupTitle": {
+			"- GroupName",
+			&Group{
+				title: "GroupName",
+				tasks: make([]*Task, 0),
+			},
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			got := parseGroupTaskTitle(tt.in)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("parseGroupTaskTitle() = %v, want %v", got, tt.want)
 			}
 		})
 	}
