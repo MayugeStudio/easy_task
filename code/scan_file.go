@@ -17,9 +17,7 @@ func (fs FileScanner) ReadLines(filename string) (lines []string, err error) {
 		return nil, openErr
 	}
 	defer func(f *os.File) {
-		if closeErr := f.Close(); closeErr != nil && err == nil {
-			err = closeErr
-		}
+		_ = f.Close()
 	}(file)
 
 	scanner := bufio.NewScanner(file)
