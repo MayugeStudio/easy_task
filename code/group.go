@@ -16,10 +16,6 @@ func (g *Group) AddTask(t *Task) {
 	g.tasks = append(g.tasks, t)
 }
 
-func (g *Group) GetTasks() []*Task {
-	return g.tasks
-}
-
 type GroupContainer struct {
 	groups []*Group
 }
