@@ -201,7 +201,7 @@ func TestFormatTaskStrings_MultiGroup(t *testing.T) {
 	}
 }
 
-func TestFormatTaskString(t *testing.T) {
+func Test_formatTaskString(t *testing.T) {
 	validStringDone := "- [X] Buy the milk."
 	validStringUndone := "- [ ] Buy the milk."
 	tests := map[string]struct {
@@ -227,7 +227,7 @@ func TestFormatTaskString(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, err := FormatTaskString(tt.in)
+			got, err := formatTaskString(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FormatTaskString() error = %v, wantErr = %v", err, tt.wantErr)
 			}
@@ -238,7 +238,7 @@ func TestFormatTaskString(t *testing.T) {
 	}
 }
 
-func TestFormatGroupTaskString(t *testing.T) {
+func Test_formatGroupTaskString(t *testing.T) {
 	validGroupString := "  - [ ] Buy the milk."
 	tests := map[string]struct {
 		in      string
@@ -255,7 +255,7 @@ func TestFormatGroupTaskString(t *testing.T) {
 
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, err := FormatGroupTaskString(tt.in)
+			got, err := formatGroupTaskString(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FormatGroupTaskString() error = %v, wantErr = %v", err, tt.wantErr)
 			}
@@ -266,7 +266,7 @@ func TestFormatGroupTaskString(t *testing.T) {
 	}
 }
 
-func TestFormatGroupTitleString(t *testing.T) {
+func Test_formatGroupTitleString(t *testing.T) {
 	tests := map[string]struct {
 		in      string
 		want    string
@@ -280,7 +280,7 @@ func TestFormatGroupTitleString(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, err := FormatGroupTitleString(tt.in)
+			got, err := formatGroupTitleString(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FormatGroupTitleString() error = %v, wantErr = %v", err, tt.wantErr)
 			}
@@ -291,7 +291,7 @@ func TestFormatGroupTitleString(t *testing.T) {
 	}
 }
 
-func TestGetStatusString(t *testing.T) {
+func Test_getStatusString(t *testing.T) {
 	tests := map[string]struct {
 		in      string
 		want    string
@@ -308,7 +308,7 @@ func TestGetStatusString(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, err := GetStatusString(tt.in)
+			got, err := getStatusString(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetStatusString() error = %v, wantErr = %v", err, tt.wantErr)
 				return
@@ -320,7 +320,7 @@ func TestGetStatusString(t *testing.T) {
 	}
 }
 
-func TestGetGroupTitle(t *testing.T) {
+func Test_getGroupTitle(t *testing.T) {
 	tests := map[string]struct {
 		in      string
 		want    string
@@ -334,7 +334,7 @@ func TestGetGroupTitle(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, err := GetGroupTitle(tt.in)
+			got, err := getGroupTitle(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetGroupTitle() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -345,7 +345,7 @@ func TestGetGroupTitle(t *testing.T) {
 	}
 }
 
-func TestIsGroupTitle(t *testing.T) {
+func Test_isGroupTitle(t *testing.T) {
 	tests := map[string]struct {
 		in   string
 		want bool
@@ -357,7 +357,7 @@ func TestIsGroupTitle(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := IsGroupTitle(tt.in)
+			got := isGroupTitle(tt.in)
 			if got != tt.want {
 				t.Errorf("IsGroupTitle() = %v, want %v", got, tt.want)
 			}
@@ -365,7 +365,7 @@ func TestIsGroupTitle(t *testing.T) {
 	}
 }
 
-func TestIsGroupTaskString(t *testing.T) {
+func Test_isGroupTaskString(t *testing.T) {
 	tests := map[string]struct {
 		in   string
 		want bool
@@ -378,7 +378,7 @@ func TestIsGroupTaskString(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := IsGroupTaskString(tt.in)
+			got := isGroupTaskString(tt.in)
 			if got != tt.want {
 				t.Errorf("IsGroupTaskString() = %v, want %v", got, tt.want)
 			}
@@ -386,7 +386,7 @@ func TestIsGroupTaskString(t *testing.T) {
 	}
 }
 
-func TestIsSingleTaskString(t *testing.T) {
+func Test_isSingleTaskString(t *testing.T) {
 	tests := map[string]struct {
 		in   string
 		want bool
@@ -400,7 +400,7 @@ func TestIsSingleTaskString(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			if got := IsSingleTaskString(tt.in); got != tt.want {
+			if got := isSingleTaskString(tt.in); got != tt.want {
 				t.Errorf("IsSingleTaskString() = %v, want %v", got, tt.want)
 			}
 		})
