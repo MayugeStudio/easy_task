@@ -1,7 +1,9 @@
 package code
 
 import (
+	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -13,12 +15,17 @@ func ConvertTaskPtrSliceToTaskValueSlice(S []*Task) []Task {
 	return result
 }
 
-func ConvertGroupPtrSliceToGroupValueSlice(S []*Group) []Group {
-	result := make([]Group, 0)
+func ConvertGroupPtrSliceToGroupValueSlice(S []*Group) string {
+	var b strings.Builder
 	for _, p := range S {
-		result = append(result, *p)
+		b.WriteRune('[')
+		b.WriteString("Title: " + p.title)
+		b.WriteString("  ")
+		b.WriteString("tasks: " + fmt.Sprintf("%v", ConvertTaskPtrSliceToTaskValueSlice(p.tasks)))
+		b.WriteRune(']')
+		b.WriteString("\n")
 	}
-	return result
+	return b.String()
 }
 
 func TestParseStringsToTasks_OnlyTask(t *testing.T) {
@@ -196,7 +203,7 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			got := ParseStringsToTasks(tt.in)
-			if !reflect.DeepEqual(got, tt.want) {
+			if !reflect.DeepEqual(got.GetGroups(), tt.want) {
 				gotV := ConvertGroupPtrSliceToGroupValueSlice(got.GetGroups())
 				wantV := ConvertGroupPtrSliceToGroupValueSlice(tt.want)
 				t.Errorf("ParseStringsToTasks() = %v, want %v", gotV, wantV)
@@ -252,6 +259,36 @@ func Test_parseGroupTaskTitle(t *testing.T) {
 			got := parseGroupTaskTitle(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("parseGroupTaskTitle() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_parseGroupTaskString(t *testing.T) {
+	tests := map[string]struct {
+		in   string
+		want *Task
+	}{
+		"ValidGroupTaskString_Done": {
+			"  - [X] GroupTaskString",
+			&Task{
+				Title:  "GroupTaskString",
+				IsDone: true,
+			},
+		},
+		"ValidGroupTaskString_Undone": {
+			"  - [ ] GroupTaskString",
+			&Task{
+				Title:  "GroupTaskString",
+				IsDone: false,
+			},
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			got := parseGroupTaskString(tt.in)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("parseGroupTaskString() = %v, want %v", got, tt.want)
 			}
 		})
 	}
