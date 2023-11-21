@@ -8,7 +8,7 @@ func ParseStringsToTasks(taskStrings []string) *TodoItemContainer {
 	var group *Group
 	for _, str := range taskStrings {
 		if IsSingleTaskString(str) {
-			task := parseSingleTaskString(str)
+			task := parseTaskString(str)
 			todoItemContainer.AddTask(task)
 			continue
 		}
@@ -20,7 +20,8 @@ func ParseStringsToTasks(taskStrings []string) *TodoItemContainer {
 		}
 
 		if IsGroupTaskString(str) {
-			task := parseGroupTaskString(str)
+			str = strings.TrimSpace(str)
+			task := parseTaskString(str)
 			if group != nil {
 				group.AddTask(task)
 			}
@@ -30,7 +31,7 @@ func ParseStringsToTasks(taskStrings []string) *TodoItemContainer {
 	return todoItemContainer
 }
 
-func parseSingleTaskString(str string) *Task {
+func parseTaskString(str string) *Task {
 	title := ""
 	isDone := false
 	str = strings.TrimPrefix(str, "-")
@@ -55,27 +56,4 @@ func parseGroupTaskTitle(str string) *Group {
 	str = strings.TrimSpace(str)
 	g := NewGroup(str)
 	return g
-}
-
-func parseGroupTaskString(str string) *Task {
-	title := ""
-	isDone := false
-
-	str = strings.TrimSpace(str)
-	str = strings.TrimPrefix(str, "-")
-	str = strings.Replace(str, "[", "", 1)
-	str = strings.Replace(str, "]", "", 1)
-	str = strings.TrimSpace(str)
-
-	if strings.HasPrefix(str, "X") {
-		isDone = true
-		if strings.HasPrefix(str, "X") {
-			str = strings.TrimPrefix(str, "X")
-		}
-		str = strings.TrimSpace(str)
-	}
-
-	title = str
-	task := NewTask(title, isDone)
-	return task
 }
