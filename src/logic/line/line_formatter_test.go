@@ -54,8 +54,8 @@ func TestLineFormatter_TrimPrefix(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			f := Line(tt.line)
-			got := f.TrimPrefix(tt.in)
+			line := Line(tt.line)
+			got := line.TrimPrefix(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("TrimPrefix() = %v, want %v", got, tt.want)
 			}
@@ -73,8 +73,8 @@ func TestLineFormatter_TrimSpace(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			f := Line(tt.line)
-			got := f.TrimSpace()
+			line := Line(tt.line)
+			got := line.TrimSpace()
 			if got != tt.want {
 				t.Errorf("TrimSpace() = %v, want %v", got, tt.want)
 			}
