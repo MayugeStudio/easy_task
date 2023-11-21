@@ -7,20 +7,28 @@ import (
 	"strings"
 )
 
-func FormatTaskStrings(taskStrings []string) []string {
+var (
+	errSyntax         = errors.New("format error")
+	errNoDash         = fmt.Errorf("%w: no dash", errSyntax)
+	errNoBracketStart = fmt.Errorf("%w: no bracket start", errSyntax)
+	errNoBracketEnd   = fmt.Errorf("%w: no bracket end", errSyntax)
+	errInvalidIndent  = fmt.Errorf("%w: no valid indent", errSyntax)
+)
+
+func FormatTaskStrings(taskStrings []string) ([]string, []error) {
 	result := make([]string, 0)
 	errs := make([]error, 0)
 	inGroup := false
 	for _, str := range taskStrings {
 		var formattedString string
 		var err error
-		if IsGroupTitle(str) {
-			formattedString, err = FormatGroupTitleString(str)
+		if isGroupTitle(str) {
+			formattedString, err = formatGroupTitleString(str)
 			inGroup = true
-		} else if inGroup && IsGroupTaskString(str) {
-			formattedString, err = FormatGroupTaskString(str)
-		} else if IsSingleTaskString(str) {
-			formattedString, err = FormatTaskString(str)
+		} else if inGroup && isGroupTaskString(str) {
+			formattedString, err = formatGroupTaskString(str)
+		} else if isSingleTaskString(str) {
+			formattedString, err = formatTaskString(str)
 			inGroup = false
 		} else {
 			if !strings.HasPrefix(str, "  ") {
@@ -30,39 +38,36 @@ func FormatTaskStrings(taskStrings []string) []string {
 		}
 		if err != nil {
 			errs = append(errs, err)
-			if errors.Is(err, InvalidIndentError) {
-				inGroup = false
-			}
 			continue
 		}
 		result = append(result, formattedString)
 	}
-	return result
+	return result, errs
 }
 
-func FormatGroupTitleString(s string) (string, error) {
-	title, err := GetGroupTitle(s)
+func formatGroupTitleString(s string) (string, error) {
+	title, err := getGroupTitle(s)
 	if err != nil {
 		return "", err
 	}
 	return fmt.Sprintf("- %s", title), nil
 }
 
-func FormatGroupTaskString(s string) (string, error) {
+func formatGroupTaskString(s string) (string, error) {
 	if !strings.HasPrefix(s, " ") {
-		return "", InvalidIndentError
+		return "", errInvalidIndent
 	}
 	noSpaceStr := strings.TrimSpace(s)
-	formattedString, err := FormatTaskString(noSpaceStr)
+	formattedString, err := formatTaskString(noSpaceStr)
 	if err != nil {
 		return "", err
 	}
 	return fmt.Sprintf("  %s", formattedString), nil
 }
 
-func FormatTaskString(s string) (string, error) {
+func formatTaskString(s string) (string, error) {
 	if !strings.HasPrefix(s, "-") {
-		return "", NoDashError
+		return "", errNoDash
 	}
 
 	l := line.New(s)
@@ -70,21 +75,109 @@ func FormatTaskString(s string) (string, error) {
 	l = l.TrimPrefix("-").TrimSpace()
 
 	if !l.HasPrefix("[") {
-		return "", NoBracketStartError
+		return "", errNoBracketStart
 	}
 	l = l.TrimPrefix("[").TrimSpace()
 
-	statusStr, err := GetStatusString(s)
+	statusStr, err := getStatusString(s)
 	if err != nil {
 		return "", err
 	}
 	l = l.TrimPrefix(statusStr).TrimSpace()
 
 	if !l.HasPrefix("]") {
-		return "", NoBracketEndError
+		return "", errNoBracketEnd
 	}
 
 	l = l.TrimPrefix("]").TrimSpace()
 
 	return fmt.Sprintf("- [%s] %s", statusStr, l), nil
+}
+
+func getStatusString(taskString string) (string, error) {
+	if !strings.HasPrefix(taskString, "-") {
+		return "", errNoDash
+	}
+
+	l := line.New(taskString)
+
+	l = l.TrimPrefix("-").TrimSpace()
+
+	if !l.HasPrefix("[") {
+		return "", errNoBracketStart
+	}
+	l = l.TrimPrefix("[").TrimSpace()
+
+	if l.HasPrefix("X") || l.HasPrefix("x") {
+		return "X", nil
+	}
+	return " ", nil
+}
+
+func getGroupTitle(s string) (string, error) {
+	if !strings.HasPrefix(s, "-") {
+		return "", fmt.Errorf("%w: invalid group title %q", errSyntax, s)
+	}
+	s = strings.TrimPrefix(s, "-")
+	return strings.TrimSpace(s), nil
+}
+
+func isGroupTitle(s string) bool {
+	if !strings.HasPrefix(s, "-") {
+		return false
+	}
+	l := line.New(s)
+	l = l.TrimPrefix("-").TrimSpace()
+	return !l.HasPrefix("[")
+}
+
+func isGroupTaskString(s string) bool {
+	if !strings.HasPrefix(s, " ") {
+		return false
+	}
+	l := line.New(strings.TrimSpace(s))
+
+	if !l.HasPrefix("-") {
+		return false
+	}
+	l = l.TrimPrefix("-").TrimSpace()
+
+	if !l.HasPrefix("[") {
+		return false
+	}
+	l = l.TrimPrefix("[").TrimSpace()
+
+	if l.HasPrefix("X") || l.HasPrefix("x") {
+		l = l.TrimPrefix("X").TrimSpace()
+	}
+
+	if !l.HasPrefix("]") {
+		return false
+	}
+
+	return true
+}
+
+func isSingleTaskString(s string) bool {
+	if !strings.HasPrefix(s, "-") {
+		return false
+	}
+
+	l := line.New(s)
+	l = l.TrimPrefix("-").TrimSpace()
+
+	if !l.HasPrefix("[") {
+		return false
+	}
+	l = l.TrimPrefix("[").TrimSpace()
+
+	if l.HasPrefix("X") || l.HasPrefix("x") {
+		l = l.TrimPrefix("X").TrimSpace()
+	}
+
+	if !l.HasPrefix("]") {
+		return false
+	}
+
+	return true
 }

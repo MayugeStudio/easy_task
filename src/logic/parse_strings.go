@@ -7,22 +7,22 @@ import (
 
 func ParseStringsToTasks(taskStrings []string) *domain.TodoItemContainer {
 	todoItemContainer := domain.NewTodoItemContainer()
-	taskStrings = FormatTaskStrings(taskStrings)
+	taskStrings, _ = FormatTaskStrings(taskStrings)
 	var group *domain.Group
 	for _, str := range taskStrings {
-		if IsSingleTaskString(str) {
+		if isSingleTaskString(str) {
 			task := parseTaskString(str)
 			todoItemContainer.AddTask(task)
 			continue
 		}
 
-		if IsGroupTitle(str) {
+		if isGroupTitle(str) {
 			group = parseGroupTaskTitle(str)
 			todoItemContainer.AddGroup(group)
 			continue
 		}
 
-		if IsGroupTaskString(str) {
+		if isGroupTaskString(str) {
 			str = strings.TrimSpace(str)
 			task := parseTaskString(str)
 			if group != nil {
