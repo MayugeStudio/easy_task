@@ -2,15 +2,19 @@ package code
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 )
 
-func ScanFile(fileName string) (lines []string, err error) {
-	file, openErr := os.Open(fileName)
+type FileReader interface {
+	ReadLines(filename string) (lines []string, err error)
+}
+
+type FileScanner struct{}
+
+func (fs FileScanner) ReadLines(filename string) (lines []string, err error) {
+	file, openErr := os.Open(filename)
 	if openErr != nil {
-		fmt.Println("Error opening file:", openErr)
-		os.Exit(1)
+		return nil, openErr
 	}
 	defer func(f *os.File) {
 		if closeErr := f.Close(); closeErr != nil && err == nil {
@@ -26,4 +30,8 @@ func ScanFile(fileName string) (lines []string, err error) {
 		return nil, scanErr
 	}
 	return lines, nil
+}
+
+func ScanFile(fileName string, reader FileReader) (lines []string, err error) {
+	return reader.ReadLines(fileName)
 }
