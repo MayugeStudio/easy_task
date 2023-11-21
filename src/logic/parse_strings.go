@@ -7,7 +7,7 @@ import (
 
 func ParseStringsToTasks(taskStrings []string) *domain.TodoItemContainer {
 	todoItemContainer := domain.NewTodoItemContainer()
-	taskStrings = FormatTaskStrings(taskStrings)
+	taskStrings, _ = FormatTaskStrings(taskStrings)
 	var group *domain.Group
 	for _, str := range taskStrings {
 		if isSingleTaskString(str) {

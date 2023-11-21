@@ -15,7 +15,7 @@ var (
 	errInvalidIndent  = fmt.Errorf("%w: no valid indent", errSyntax)
 )
 
-func FormatTaskStrings(taskStrings []string) []string {
+func FormatTaskStrings(taskStrings []string) ([]string, []error) {
 	result := make([]string, 0)
 	errs := make([]error, 0)
 	inGroup := false
@@ -42,7 +42,7 @@ func FormatTaskStrings(taskStrings []string) []string {
 		}
 		result = append(result, formattedString)
 	}
-	return result
+	return result, errs
 }
 
 func formatGroupTitleString(s string) (string, error) {
