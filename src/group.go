@@ -1,4 +1,4 @@
-package code
+package src
 
 type Group struct {
 	title string
