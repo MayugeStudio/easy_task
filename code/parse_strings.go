@@ -67,12 +67,10 @@ func parseGroupTaskString(str string) *Task {
 	str = strings.Replace(str, "]", "", 1)
 	str = strings.TrimSpace(str)
 
-	if strings.HasPrefix(str, "X") || strings.HasPrefix(str, "x") {
+	if strings.HasPrefix(str, "X") {
 		isDone = true
 		if strings.HasPrefix(str, "X") {
 			str = strings.TrimPrefix(str, "X")
-		} else if strings.HasPrefix(str, "x") {
-			str = strings.TrimPrefix(str, "x")
 		}
 		str = strings.TrimSpace(str)
 	}
