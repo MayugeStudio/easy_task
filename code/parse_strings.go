@@ -2,8 +2,8 @@ package code
 
 import "strings"
 
-func ParseStringsToTasks(taskStrings []string) []*Task {
-	tasks := make([]*Task, 0)
+func ParseStringsToTasks(taskStrings []string) *TodoItemContainer {
+	todoItemContainer := NewTodoItemContainer()
 	taskStrings = FormatTaskStrings(taskStrings)
 	for _, str := range taskStrings {
 		str = strings.TrimPrefix(str, "-")
@@ -29,7 +29,7 @@ func ParseStringsToTasks(taskStrings []string) []*Task {
 			}
 		}
 		task := NewTask(title, isDone)
-		tasks = append(tasks, task)
+		todoItemContainer.AddTask(task)
 	}
-	return tasks
+	return todoItemContainer
 }

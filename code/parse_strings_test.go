@@ -13,6 +13,14 @@ func ConvertTaskPtrSliceToTaskValueSlice(S []*Task) []Task {
 	return result
 }
 
+func ConvertGroupPtrSliceToGroupValueSlice(S []*Group) []Group {
+	result := make([]Group, 0)
+	for _, p := range S {
+		result = append(result, *p)
+	}
+	return result
+}
+
 func TestParseStringsToTasks_OnlyTask(t *testing.T) {
 	tests := map[string]struct {
 		in   []string
@@ -73,18 +81,19 @@ func TestParseStringsToTasks_OnlyTask(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			got := ParseStringsToTasks(tt.in)
-			if !reflect.DeepEqual(got, tt.want) {
-				gotV := ConvertTaskPtrSliceToTaskValueSlice(got)
+			if !reflect.DeepEqual(got.GetTasks(), tt.want) {
+				gotV := ConvertTaskPtrSliceToTaskValueSlice(got.GetTasks())
 				wantV := ConvertTaskPtrSliceToTaskValueSlice(tt.want)
 				t.Errorf("ParseStringsToTasks() = %v, want %v", gotV, wantV)
 			}
 		})
 	}
 }
+
 func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 	tests := map[string]struct {
 		in   []string
-		want []*Task
+		want []*Group
 	}{
 		"DoneTasks": {
 			[]string{
@@ -92,9 +101,13 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 				"  - [X]Task1",
 				"  - [X]Task2",
 			},
-			[]*Task{
-				{"Task1", true},
-				{"Task2", true},
+			[]*Group{
+				{
+					[]*Task{
+						{"Task1", true},
+						{"Task2", true},
+					},
+				},
 			},
 		},
 		"DoneTasks_Lowercase": {
@@ -103,9 +116,13 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 				"  - [x]Task1",
 				"  - [x]Task2",
 			},
-			[]*Task{
-				{"Task1", true},
-				{"Task2", true},
+			[]*Group{
+				{
+					[]*Task{
+						{"Task1", true},
+						{"Task2", true},
+					},
+				},
 			},
 		},
 		"UndoneTasks": {
@@ -114,9 +131,13 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 				"  - [ ]Task1",
 				"  - [ ]Task2",
 			},
-			[]*Task{
-				{"Task1", false},
-				{"Task2", false},
+			[]*Group{
+				{
+					[]*Task{
+						{"Task1", false},
+						{"Task2", false},
+					},
+				},
 			},
 		},
 		"MixPattern": {
@@ -125,9 +146,13 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 				"  - [ ]Task1",
 				"  - [X]Task2",
 			},
-			[]*Task{
-				{"Task1", false},
-				{"Task2", true},
+			[]*Group{
+				{
+					[]*Task{
+						{"Task1", false},
+						{"Task2", true},
+					},
+				},
 			},
 		},
 		"ContainInvalidTaskString": {
@@ -137,9 +162,13 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 				"  InvalidTaskString",
 				"  - [X]Task2",
 			},
-			[]*Task{
-				{"Task1", false},
-				{"Task2", true},
+			[]*Group{
+				{
+					[]*Task{
+						{"Task1", false},
+						{"Task2", true},
+					},
+				},
 			},
 		},
 		"ContainInvalidTaskString_BadIndent": {
@@ -149,8 +178,12 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 				"InvalidTaskString",
 				"  - [X]Task2",
 			},
-			[]*Task{
-				{"Task1", false},
+			[]*Group{
+				{
+					[]*Task{
+						{"Task1", false},
+					},
+				},
 			},
 		},
 	}
@@ -158,8 +191,8 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			got := ParseStringsToTasks(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
-				gotV := ConvertTaskPtrSliceToTaskValueSlice(got)
-				wantV := ConvertTaskPtrSliceToTaskValueSlice(tt.want)
+				gotV := ConvertGroupPtrSliceToGroupValueSlice(got.GetGroups())
+				wantV := ConvertGroupPtrSliceToGroupValueSlice(tt.want)
 				t.Errorf("ParseStringsToTasks() = %v, want %v", gotV, wantV)
 			}
 		})
