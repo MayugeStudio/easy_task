@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"easy_task/src/logic/line"
 	"errors"
 	"fmt"
 	"strings"
@@ -10,19 +11,19 @@ func FormatTaskStrings(taskStrings []string) []string {
 	result := make([]string, 0)
 	errs := make([]error, 0)
 	inGroup := false
-	for _, line := range taskStrings {
+	for _, str := range taskStrings {
 		var formattedString string
 		var err error
-		if IsGroupTitle(line) {
-			formattedString, err = FormatGroupTitleString(line)
+		if IsGroupTitle(str) {
+			formattedString, err = FormatGroupTitleString(str)
 			inGroup = true
-		} else if inGroup && IsGroupTaskString(line) {
-			formattedString, err = FormatGroupTaskString(line)
-		} else if IsSingleTaskString(line) {
-			formattedString, err = FormatTaskString(line)
+		} else if inGroup && IsGroupTaskString(str) {
+			formattedString, err = FormatGroupTaskString(str)
+		} else if IsSingleTaskString(str) {
+			formattedString, err = FormatTaskString(str)
 			inGroup = false
 		} else {
-			if !strings.HasPrefix(line, "  ") {
+			if !strings.HasPrefix(str, "  ") {
 				inGroup = false
 			}
 			continue
@@ -64,26 +65,26 @@ func FormatTaskString(s string) (string, error) {
 		return "", NoDashError
 	}
 
-	formatter := NewLineFormatter(s)
+	l := line.New(s)
 
-	formatter.TrimPrefix("-").TrimSpace()
+	l = l.TrimPrefix("-").TrimSpace()
 
-	if !formatter.HasPrefix("[") {
+	if !l.HasPrefix("[") {
 		return "", NoBracketStartError
 	}
-	formatter.TrimPrefix("[").TrimSpace()
+	l = l.TrimPrefix("[").TrimSpace()
 
 	statusStr, err := GetStatusString(s)
 	if err != nil {
 		return "", err
 	}
-	formatter.TrimPrefix(statusStr).TrimSpace()
+	l = l.TrimPrefix(statusStr).TrimSpace()
 
-	if !formatter.HasPrefix("]") {
+	if !l.HasPrefix("]") {
 		return "", NoBracketEndError
 	}
 
-	formatter.TrimPrefix("]").TrimSpace()
+	l = l.TrimPrefix("]").TrimSpace()
 
-	return fmt.Sprintf("- [%s] %s", statusStr, formatter.Line), nil
+	return fmt.Sprintf("- [%s] %s", statusStr, l), nil
 }
