@@ -1,6 +1,7 @@
 package main
 
 import (
+	"easy_task/src/app"
 	"easy_task/src/logic"
 	"fmt"
 	"os"
@@ -19,20 +20,9 @@ func main() {
 		os.Exit(0)
 	}
 	fileName := args[0]
-	lines, scanErr := logic.ScanFile(fileName, logic.FileScanner{})
-	if scanErr != nil {
-		fmt.Printf("scanning file: %v\n", scanErr)
-		os.Exit(1)
-	}
-	todoItemContainer := logic.ParseStringsToTasks(lines)
-	if err := logic.PrintTasks(out, todoItemContainer.GetTasks()); err != nil {
-		fmt.Printf("printing tasks: %v\n", err)
-		os.Exit(1)
-	}
-	if err := logic.PrintTaskProgress(out, todoItemContainer.GetTasks()); err != nil {
-		fmt.Printf("printing task progress: %v\n", err)
-		os.Exit(1)
-	}
+	outString, exitCode := app.PrintTodoItem(out, fileName, logic.FileScanner{})
+	fmt.Print(outString)
+	os.Exit(exitCode)
 }
 
 func printUsage() {
