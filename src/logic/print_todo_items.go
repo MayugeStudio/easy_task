@@ -71,10 +71,6 @@ func getGroupString(group *domain.Group) string {
 }
 
 func getProgressString(progress, length float64) string {
-	if progress == 0 {
-		progressBar := strings.Repeat(" ", int(length))
-		return fmt.Sprintf("[%s]%d%%", progressBar, 0)
-	}
 	barLength := int(progress * length)
 	doneStr := strings.Repeat(progressSymbol, barLength)
 	undoneStr := strings.Repeat(" ", int(length)-barLength)
