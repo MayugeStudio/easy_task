@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-func ParseStringsToTasks(taskStrings []string) *domain.TodoItemContainer {
-	todoItemContainer := domain.NewTodoItemContainer()
+func ParseStringsToTasks(taskStrings []string) *domain.TodoList {
+	todoItemContainer := domain.NewTodoList()
 	taskStrings, _ = FormatTaskStrings(taskStrings)
 	var group *domain.Group
 	for _, str := range taskStrings {

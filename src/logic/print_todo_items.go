@@ -35,7 +35,7 @@ func PrintGroups(w io.Writer, groups []*domain.Group) error {
 	return nil
 }
 
-func PrintProgress(w io.Writer, todoItems *domain.TodoItemContainer) error {
+func PrintProgress(w io.Writer, todoItems *domain.TodoList) error {
 	progress := calculateProgress(todoItems)
 	progressString := getProgressString(progress, defaultProgressBarLength)
 	if _, err := fmt.Fprint(w, progressString); err != nil {
@@ -87,7 +87,7 @@ func getMaxTaskNameLength(tasks []*domain.Task) int {
 	return maxLength
 }
 
-func calculateProgress(items *domain.TodoItemContainer) float64 {
+func calculateProgress(items *domain.TodoList) float64 {
 	tasks := items.GetTasks()
 	groups := items.GetGroups()
 

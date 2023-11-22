@@ -7,10 +7,10 @@ import (
 
 func TestNewTodoItemContainer(t *testing.T) {
 	tests := map[string]struct {
-		want *TodoItemContainer
+		want *TodoList
 	}{
 		"Success": {
-			&TodoItemContainer{
+			&TodoList{
 				make([]*Task, 0),
 				make([]*Group, 0),
 				0,
@@ -19,9 +19,9 @@ func TestNewTodoItemContainer(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := NewTodoItemContainer()
+			got := NewTodoList()
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewTodoItemContainer() = %v, want %v", got, tt.want)
+				t.Errorf("NewTodoList() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -50,7 +50,7 @@ func TestTodoItemContainer_AddTask(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			c := &TodoItemContainer{
+			c := &TodoList{
 				tt.fields.tasks,
 				tt.fields.groups,
 				tt.fields.doneTaskCount,
@@ -58,7 +58,7 @@ func TestTodoItemContainer_AddTask(t *testing.T) {
 			c.AddTask(tt.in)
 			got := c.tasks
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("TodoItemContainer() groups = %v, want %v", got, tt.want)
+				t.Errorf("TodoList() groups = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -87,7 +87,7 @@ func TestTodoItemContainer_AddGroup(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			c := &TodoItemContainer{
+			c := &TodoList{
 				tasks:         tt.fields.tasks,
 				groups:        tt.fields.groups,
 				doneTaskCount: tt.fields.doneTaskCount,
@@ -95,7 +95,7 @@ func TestTodoItemContainer_AddGroup(t *testing.T) {
 			c.AddGroup(tt.in)
 			got := c.groups
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("TodoItemContainer() groups = %v, want %v", got, tt.want)
+				t.Errorf("TodoList() groups = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -146,7 +146,7 @@ func TestTodoItemContainer_GetTasks(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			c := &TodoItemContainer{
+			c := &TodoList{
 				tasks:         tt.fields.tasks,
 				groups:        tt.fields.groups,
 				doneTaskCount: tt.fields.doneTaskCount,
@@ -208,7 +208,7 @@ func TestTodoItemContainer_GetGroups(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			c := &TodoItemContainer{
+			c := &TodoList{
 				tasks:         tt.fields.tasks,
 				groups:        tt.fields.groups,
 				doneTaskCount: tt.fields.doneTaskCount,
