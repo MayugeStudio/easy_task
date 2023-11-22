@@ -6,8 +6,8 @@ import (
 	"io"
 )
 
-func PrintTodoItem(w io.Writer, fileName string) (string, int) {
-	lines, scanErr := logic.ScanFile(fileName, logic.FileScanner{})
+func PrintTodoItem(w io.Writer, fileName string, reader logic.FileReader) (string, int) {
+	lines, scanErr := logic.ScanFile(fileName, reader)
 	if scanErr != nil {
 		return fmt.Sprintf("scanning file: %v\n", scanErr), 1
 	}

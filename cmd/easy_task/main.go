@@ -2,6 +2,7 @@ package main
 
 import (
 	"easy_task/src/app"
+	"easy_task/src/logic"
 	"fmt"
 	"os"
 )
@@ -19,7 +20,7 @@ func main() {
 		os.Exit(0)
 	}
 	fileName := args[0]
-	outString, exitCode := app.PrintTodoItem(out, fileName)
+	outString, exitCode := app.PrintTodoItem(out, fileName, logic.FileScanner{})
 	fmt.Print(outString)
 	os.Exit(exitCode)
 }
