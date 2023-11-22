@@ -60,39 +60,71 @@ func TestPrintTasks(t *testing.T) {
 	}
 }
 
-func Test_getTaskString(t *testing.T) {
-	type input struct {
-		task      *domain.Task
-		maxLength int
-	}
+func TestPrintGroups(t *testing.T) {
 	tests := map[string]struct {
-		in   input
-		want string
+		in      []*domain.Group
+		wantW   string
+		wantErr bool
 	}{
-		"Success_Done": {
-			input{
-				&domain.Task{
-					"TaskTitle", true,
+		"Success_1Group": {
+			[]*domain.Group{
+				{"GroupTitle",
+					[]*domain.Task{
+						{"Task1", false},
+						{"Task2", true},
+					},
 				},
-				10,
 			},
-			"[X] TaskTitle \n",
+			"" +
+				"GroupTitle\n" +
+				"  [ ] Task1\n" +
+				"  [X] Task2\n",
+			false,
 		},
-		"Success_Undone": {
-			input{
-				&domain.Task{
-					"TaskTitle", false,
+		"Success_3Group": {
+			[]*domain.Group{
+				{"GroupTitle1",
+					[]*domain.Task{
+						{"Task1", false},
+						{"Task2", true},
+					},
 				},
-				10,
+				{"GroupTitle2",
+					[]*domain.Task{
+						{"Task1", false},
+						{"Task2", false},
+					},
+				},
+				{"GroupTitle3",
+					[]*domain.Task{
+						{"Task1", true},
+						{"Task2", true},
+					},
+				},
 			},
-			"[ ] TaskTitle \n",
+			"" +
+				"GroupTitle1\n" +
+				"  [ ] Task1\n" +
+				"  [X] Task2\n" +
+				"GroupTitle2\n" +
+				"  [ ] Task1\n" +
+				"  [ ] Task2\n" +
+				"GroupTitle3\n" +
+				"  [X] Task1\n" +
+				"  [X] Task2\n",
+			false,
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := getTaskString(tt.in.task, tt.in.maxLength)
-			if got != tt.want {
-				t.Errorf("getTaskString() gotW = %v, want %v", got, tt.want)
+			w := &bytes.Buffer{}
+			err := PrintGroups(w, tt.in)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("PrintGroups() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if gotW := w.String(); gotW != tt.wantW {
+				t.Errorf("PrintGroups() gotW = %v, want %v", gotW, tt.wantW)
 			}
 		})
 	}

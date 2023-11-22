@@ -4,6 +4,7 @@ import (
 	"easy_task/src/domain"
 	"fmt"
 	"io"
+	"strings"
 )
 
 const (
@@ -22,6 +23,28 @@ func PrintTasks(w io.Writer, tasks []*domain.Task) error {
 	return nil
 }
 
+func PrintGroups(w io.Writer, groups []*domain.Group) error {
+	for _, group := range groups {
+		groupString := getGroupString(group)
+		if _, err := fmt.Fprint(w, groupString); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func getGroupString(group *domain.Group) string {
+	var b strings.Builder
+	maxLength := getMaxTaskNameLength(group.Tasks)
+	titleString := fmt.Sprintf("%s\n", group.Title)
+	b.WriteString(titleString)
+
+	for _, task := range group.Tasks {
+		taskString := fmt.Sprintf("  %s\n", getTaskString(task, maxLength))
+		b.WriteString(taskString)
+	}
+	return b.String()
+}
 
 func getTaskString(task *domain.Task, maxLength int) string {
 	var doneStr string
