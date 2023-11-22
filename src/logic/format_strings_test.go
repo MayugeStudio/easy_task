@@ -202,22 +202,20 @@ func TestFormatTaskStrings_MultiGroup(t *testing.T) {
 }
 
 func Test_formatTaskString(t *testing.T) {
-	validStringDone := "- [X] Buy the milk."
-	validStringUndone := "- [ ] Buy the milk."
 	tests := map[string]struct {
 		in      string
 		want    string
 		wantErr bool
 	}{
 		// Success cases
-		"Undone_Valid":                 {in: "- [ ] Buy the milk.", want: validStringUndone},
-		"Undone_BadIndentStartBracket": {in: "-[] Buy the milk.", want: validStringUndone},
-		"Undone_BadIndentEndBracket":   {in: "- []Buy the milk.", want: validStringUndone},
-		"Done_Valid":                   {in: "- [X] Buy the milk.", want: validStringDone},
-		"Done_BadIndentStartEnd":       {in: "-[X]Buy the milk.", want: validStringDone},
-		"Done_Valid_Lower":             {in: "- [x] Buy the milk.", want: validStringDone},
-		"Done_NoSpaceInBracket_Lower":  {in: "- [x] Buy the milk.", want: validStringDone},
-		"Done_BadIndentStartEnd_Lower": {in: "-[x]Buy the milk.", want: validStringDone},
+		"Undone_Valid":                 {in: "- [ ] Buy the milk.", want: "- [ ] Buy the milk."},
+		"Undone_BadIndentStartBracket": {in: "-[] Buy the milk.", want: "- [ ] Buy the milk."},
+		"Undone_BadIndentEndBracket":   {in: "- []Buy the milk.", want: "- [ ] Buy the milk."},
+		"Done_Valid":                   {in: "- [X] Buy the milk.", want: "- [X] Buy the milk."},
+		"Done_BadIndentStartEnd":       {in: "-[X]Buy the milk.", want: "- [X] Buy the milk."},
+		"Done_Valid_Lower":             {in: "- [x] Buy the milk.", want: "- [X] Buy the milk."},
+		"Done_NoSpaceInBracket_Lower":  {in: "- [x] Buy the milk.", want: "- [X] Buy the milk."},
+		"Done_BadIndentStartEnd_Lower": {in: "-[x]Buy the milk.", want: "- [X] Buy the milk."},
 		"Done_NoDash":                  {in: "[X] No Dash.", wantErr: true},
 		// Error cases
 		"Done_NoBracketStart": {in: "- X] No BracketStart.", wantErr: true},
@@ -240,15 +238,14 @@ func Test_formatTaskString(t *testing.T) {
 }
 
 func Test_formatGroupTaskString(t *testing.T) {
-	validGroupString := "  - [ ] Buy the milk."
 	tests := map[string]struct {
 		in      string
 		want    string
 		wantErr bool
 	}{
 		// Success cases
-		"Valid":     {in: "  - [ ] Buy the milk.", want: validGroupString},
-		"OneIndent": {in: " - [ ] Buy the milk.", want: validGroupString},
+		"Valid":     {in: "  - [ ] Buy the milk.", want: "  - [ ] Buy the milk."},
+		"OneIndent": {in: " - [ ] Buy the milk.", want: "  - [ ] Buy the milk."},
 		// Error cases
 		"NoIndent":      {in: "- [ ] Buy the milk.", wantErr: true},
 		"InvalidFormat": {in: "  - Buy the milk.", wantErr: true},

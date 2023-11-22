@@ -2,7 +2,6 @@ package app
 
 import (
 	"bytes"
-	"easy_task/src/logic"
 	"fmt"
 	"testing"
 )
@@ -22,46 +21,35 @@ func (w ErrorWriter) Write(_ []byte) (n int, err error) {
 }
 
 func TestPrintTodoItem(t *testing.T) {
-	type input struct {
-		reader logic.FileReader
-	}
 	tests := map[string]struct {
-		in      input
+		in      []string
 		wantW   string
 		wantErr bool
 	}{
 		"4Tasks": {
-			input{
-				MockReader{
-					[]string{
-						"- [ ] Task1",
-						"- [ ] Task2",
-						"- [X] Task3",
-						"- [X] Task4",
-					},
-				},
+			in: []string{
+				"- [ ] Task1",
+				"- [ ] Task2",
+				"- [X] Task3",
+				"- [X] Task4",
 			},
-			"" +
+			wantW: "" +
 				"[ ] Task1\n" +
 				"[ ] Task2\n" +
 				"[X] Task3\n" +
 				"[X] Task4\n" +
 				"[####################                    ]50%",
-			false,
+			wantErr: false,
 		},
 		"2Tasks1Group": {
-			input{
-				MockReader{
-					[]string{
-						"- [ ] Task1",
-						"- [X] Task2",
-						"- GroupTitle",
-						"  - [ ] GroupTask1",
-						"  - [X] GroupTask2",
-					},
-				},
+			in: []string{
+				"- [ ] Task1",
+				"- [X] Task2",
+				"- GroupTitle",
+				"  - [ ] GroupTask1",
+				"  - [X] GroupTask2",
 			},
-			"" +
+			wantW: "" +
 				"[ ] Task1\n" +
 				"[X] Task2\n" +
 				"GroupTitle\n" +
@@ -69,27 +57,23 @@ func TestPrintTodoItem(t *testing.T) {
 				"  [X] GroupTask2\n" +
 				"  [##########          ]50%\n" +
 				"[####################                    ]50%",
-			false,
+			wantErr: false,
 		},
 		"5Tasks2Group": {
-			input{
-				MockReader{
-					[]string{
-						"- [X] Task1",
-						"- [X] Task2",
-						"- [X] Task3",
-						"- [ ] Task4",
-						"- [ ] Task5",
-						"- GroupTitle1",
-						"  - [X] GroupTask1",
-						"  - [X] GroupTask2",
-						"- GroupTitle2",
-						"  - [ ] GroupTask1",
-						"  - [ ] GroupTask2",
-					},
-				},
+			in: []string{
+				"- [X] Task1",
+				"- [X] Task2",
+				"- [X] Task3",
+				"- [ ] Task4",
+				"- [ ] Task5",
+				"- GroupTitle1",
+				"  - [X] GroupTask1",
+				"  - [X] GroupTask2",
+				"- GroupTitle2",
+				"  - [ ] GroupTask1",
+				"  - [ ] GroupTask2",
 			},
-			"" +
+			wantW: "" +
 				"[X] Task1\n" +
 				"[X] Task2\n" +
 				"[X] Task3\n" +
@@ -104,13 +88,13 @@ func TestPrintTodoItem(t *testing.T) {
 				"  [ ] GroupTask2\n" +
 				"  [                    ]0%\n" +
 				"[######################                  ]55%",
-			false,
+			wantErr: false,
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			w := &bytes.Buffer{}
-			got := PrintTodoItem(w, "", tt.in.reader)
+			got := PrintTodoItem(w, "", MockReader{lines: tt.in})
 			if gotW := w.String(); gotW != tt.wantW {
 				t.Errorf("PrintTodoItem() gotW = %v, want %v", gotW, tt.wantW)
 			}
@@ -122,31 +106,24 @@ func TestPrintTodoItem(t *testing.T) {
 }
 
 func TestPrintTodoItem_Error(t *testing.T) {
-	type input struct {
-		reader logic.FileReader
-	}
 	tests := map[string]struct {
-		in      input
+		in      []string
 		wantErr bool
 	}{
 		"Tasks": {
-			input{
-				MockReader{
-					[]string{
-						"- [ ] Task1",
-						"- [ ] Task2",
-						"- [X] Task3",
-						"- [X] Task4",
-					},
-				},
+			in: []string{
+				"- [ ] Task1",
+				"- [ ] Task2",
+				"- [X] Task3",
+				"- [X] Task4",
 			},
-			true,
+			wantErr: true,
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			w := &ErrorWriter{}
-			got := PrintTodoItem(w, "", tt.in.reader)
+			got := PrintTodoItem(w, "", MockReader{lines: tt.in})
 			if (got != nil) != tt.wantErr {
 				t.Errorf("PrintTodoItem() got = %v, want %v", got, tt.wantErr)
 			}

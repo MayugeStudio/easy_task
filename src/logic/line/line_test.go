@@ -10,7 +10,7 @@ func TestNewLineFormatter(t *testing.T) {
 		line string
 		want Line
 	}{
-		"Success": {"AAA-BBB", Line("AAA-BBB")},
+		"Success": {line: "AAA-BBB", want: Line("AAA-BBB")},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -28,8 +28,8 @@ func TestLineFormatter_HasPrefix(t *testing.T) {
 		in   string
 		want bool
 	}{
-		"HasPrefix_True":  {"AAA-BBB", "AAA", true},
-		"HasPrefix_False": {"AAA-BBB", "BBB", false},
+		"HasPrefix_True":  {line: "AAA-BBB", in: "AAA", want: true},
+		"HasPrefix_False": {line: "AAA-BBB", in: "BBB", want: false},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -49,8 +49,8 @@ func TestLineFormatter_TrimPrefix(t *testing.T) {
 		in   string
 		want Line
 	}{
-		"TrimPrefix_ExistPrefix":    {"AAA-BBB", "AAA", "-BBB"},
-		"TrimPrefix_NotExistPrefix": {"AAA-BBB", "CCC", "AAA-BBB"},
+		"TrimPrefix_ExistPrefix":    {line: "AAA-BBB", in: "AAA", want: "-BBB"},
+		"TrimPrefix_NotExistPrefix": {line: "AAA-BBB", in: "CCC", want: "AAA-BBB"},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -68,8 +68,8 @@ func TestLineFormatter_TrimSpace(t *testing.T) {
 		line string
 		want Line
 	}{
-		"TrimSpace_Space":          {"  AAA-BBB  ", "AAA-BBB"},
-		"TrimSpace_EscapeSequence": {"\nAAA-BBB\n", "AAA-BBB"},
+		"TrimSpace_Space":          {line: "  AAA-BBB  ", want: "AAA-BBB"},
+		"TrimSpace_EscapeSequence": {line: "\nAAA-BBB\n", want: "AAA-BBB"},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
