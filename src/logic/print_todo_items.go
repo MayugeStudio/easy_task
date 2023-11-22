@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	DoneSymbol   = "X"
-	UndoneSymbol = " "
+	doneSymbol   = "X"
+	undoneSymbol = " "
 )
 
 func PrintTasks(w io.Writer, tasks []*domain.Task) error {
@@ -49,9 +49,9 @@ func getGroupString(group *domain.Group) string {
 func getTaskString(task *domain.Task, maxLength int) string {
 	var doneStr string
 	if task.IsDone {
-		doneStr = DoneSymbol
+		doneStr = doneSymbol
 	} else {
-		doneStr = UndoneSymbol
+		doneStr = undoneSymbol
 	}
 	return fmt.Sprintf("[%s] %-*s", doneStr, maxLength, task.Title)
 }
