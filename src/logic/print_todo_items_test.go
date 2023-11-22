@@ -3,6 +3,7 @@ package logic
 import (
 	"bytes"
 	"easy_task/src/domain"
+	"reflect"
 	"testing"
 )
 
@@ -666,6 +667,59 @@ func Test_calculateDoneTaskNum(t *testing.T) {
 			got := calculateDoneTaskNum(tt.in)
 			if got != tt.want {
 				t.Errorf("calculateDoneTaskNum() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_flattenGroupTasks(t *testing.T) {
+	tests := map[string]struct {
+		in   []*domain.Group
+		want []*domain.Task
+	}{
+		"0Task": {
+			in: []*domain.Group{
+				{
+					Title: "Group1",
+					Tasks: []*domain.Task{},
+				},
+				{
+					Title: "Group2",
+					Tasks: []*domain.Task{},
+				},
+			},
+			want: []*domain.Task{},
+		},
+		"4Tasks": {
+			in: []*domain.Group{
+				{
+					Title: "Group1",
+					Tasks: []*domain.Task{
+						{"T1", false},
+						{"T2", false},
+					},
+				},
+				{
+					Title: "Group2",
+					Tasks: []*domain.Task{
+						{"T3", true},
+						{"T4", true},
+					},
+				},
+			},
+			want: []*domain.Task{
+				{"T1", false},
+				{"T2", false},
+				{"T3", true},
+				{"T4", true},
+			},
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			got := flattenGroupTasks(tt.in)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("flattenGroupTasks() = %v, want %v", got, tt.want)
 			}
 		})
 	}
