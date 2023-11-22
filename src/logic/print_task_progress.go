@@ -7,14 +7,14 @@ import (
 	"strings"
 )
 
-const ProgressSymbol = "#"
-const DefaultProgressBarLength = 40.0
+const progressSymbol = "#"
+const defaultProgressBarLength = 40.0
 
 func PrintTaskProgress(w io.Writer, tasks []*domain.Task) error {
 	if len(tasks) == 0 {
 		return nil
 	}
-	taskProgressString := getTaskProgressString(tasks, DefaultProgressBarLength)
+	taskProgressString := getTaskProgressString(tasks, defaultProgressBarLength)
 	if _, err := fmt.Fprint(w, taskProgressString); err != nil {
 		return err
 	}
@@ -31,7 +31,7 @@ func getTaskProgressString(tasks []*domain.Task, length float64) string {
 	}
 	doneTaskRatio := doneTaskNum / taskNum
 	doneTaskStrLength := int(doneTaskRatio * length)
-	doneTaskStr := strings.Repeat(ProgressSymbol, doneTaskStrLength)
+	doneTaskStr := strings.Repeat(progressSymbol, doneTaskStrLength)
 	undoneTaskStr := strings.Repeat(" ", int(length)-doneTaskStrLength)
 	return fmt.Sprintf("[%s%s]%d%%", doneTaskStr, undoneTaskStr, int(doneTaskRatio*100))
 }
