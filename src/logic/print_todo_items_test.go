@@ -134,7 +134,7 @@ func TestPrintGroups(t *testing.T) {
 	}
 }
 
-func TestPrintTaskProgress(t *testing.T) {
+func TestPrintProgress(t *testing.T) {
 	tests := map[string]struct {
 		in      []*domain.Task
 		wantW   string
@@ -183,13 +183,13 @@ func TestPrintTaskProgress(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			w := &bytes.Buffer{}
-			err := PrintTaskProgress(w, tt.in)
+			err := PrintProgress(w, tt.in)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PrintTaskProgress() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("PrintProgress() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if gotW := w.String(); gotW != tt.wantW {
-				t.Errorf("PrintTaskProgress() gotW = %v, want %v", gotW, tt.wantW)
+				t.Errorf("PrintProgress() gotW = %v, want %v", gotW, tt.wantW)
 			}
 		})
 	}

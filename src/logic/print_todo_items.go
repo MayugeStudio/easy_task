@@ -35,7 +35,7 @@ func PrintGroups(w io.Writer, groups []*domain.Group) error {
 	return nil
 }
 
-func PrintTaskProgress(w io.Writer, tasks []*domain.Task) error {
+func PrintProgress(w io.Writer, tasks []*domain.Task) error {
 	taskProgressString := getTaskProgressString(tasks, defaultProgressBarLength)
 	if _, err := fmt.Fprint(w, taskProgressString); err != nil {
 		return err
