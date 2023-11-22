@@ -54,7 +54,8 @@ func TestPrintTasks(t *testing.T) {
 				t.Errorf("PrintTasks() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if gotW := w.String(); gotW != tt.wantW {
+			gotW := w.String()
+			if gotW != tt.wantW {
 				t.Errorf("PrintTasks() gotW = %v, want %v", gotW, tt.wantW)
 			}
 		})
