@@ -127,7 +127,7 @@ func TestPrintProgress(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			w := &bytes.Buffer{}
-			c := domain.NewTodoItemContainer()
+			c := domain.NewTodoList()
 			for _, task := range tt.in {
 				c.AddTask(task)
 			}
@@ -401,7 +401,7 @@ func Test_calculateProgress(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			c := domain.NewTodoItemContainer()
+			c := domain.NewTodoList()
 			for _, task := range tt.in.tasks {
 				c.AddTask(task)
 			}
