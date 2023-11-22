@@ -6,17 +6,17 @@ import (
 	"io"
 )
 
-func PrintTodoItem(w io.Writer, fileName string, reader logic.FileReader) (string, int) {
+func PrintTodoItem(w io.Writer, fileName string, reader logic.FileReader) error {
 	lines, scanErr := logic.ScanFile(fileName, reader)
 	if scanErr != nil {
-		return fmt.Sprintf("scanning file: %v\n", scanErr), 1
+		return fmt.Errorf("scanning file: %w", scanErr)
 	}
 	todoItemContainer := logic.ParseStringsToTasks(lines)
 	if err := logic.PrintTasks(w, todoItemContainer.GetTasks()); err != nil {
-		return fmt.Sprintf("printing tasks: %v\n", err), 1
+		return fmt.Errorf("printing tasks: %w", err)
 	}
 	if err := logic.PrintTaskProgress(w, todoItemContainer.GetTasks()); err != nil {
-		return fmt.Sprintf("printing task progress: %v\n", err), 1
+		return fmt.Errorf("printing task progress: %w", err)
 	}
-	return "", 0
+	return nil
 }

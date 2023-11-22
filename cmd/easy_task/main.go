@@ -20,9 +20,12 @@ func main() {
 		os.Exit(0)
 	}
 	fileName := args[0]
-	outString, exitCode := app.PrintTodoItem(out, fileName, logic.FileScanner{})
-	fmt.Print(outString)
-	os.Exit(exitCode)
+	err := app.PrintTodoItem(out, fileName, logic.FileScanner{})
+	if err != nil {
+		fmt.Printf("error: %v\n", err)
+		os.Exit(1)
+	}
+	os.Exit(0)
 }
 
 func printUsage() {
