@@ -15,17 +15,3 @@ func NewGroup(title string) *Group {
 func (g *Group) AddTask(t *Task) {
 	g.Tasks = append(g.Tasks, t)
 }
-
-type GroupContainer struct {
-	groups []*Group
-}
-
-func NewGroupContainer() *GroupContainer {
-	return &GroupContainer{
-		groups: make([]*Group, 0),
-	}
-}
-
-func (c *GroupContainer) AddGroup(g *Group) {
-	c.groups = append(c.groups, g)
-}

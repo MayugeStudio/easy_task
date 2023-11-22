@@ -11,8 +11,9 @@ func TestNewTodoItemContainer(t *testing.T) {
 	}{
 		"Success": {
 			&TodoItemContainer{
-				NewTaskContainer(),
-				NewGroupContainer(),
+				make([]*Task, 0),
+				make([]*Group, 0),
+				0,
 			},
 		},
 	}
@@ -28,8 +29,9 @@ func TestNewTodoItemContainer(t *testing.T) {
 
 func TestTodoItemContainer_AddTask(t *testing.T) {
 	type fields struct {
-		taskContainer  *TaskContainer
-		groupContainer *GroupContainer
+		tasks         []*Task
+		groups        []*Group
+		doneTaskCount int
 	}
 	tests := map[string]struct {
 		fields fields
@@ -37,7 +39,11 @@ func TestTodoItemContainer_AddTask(t *testing.T) {
 		want   []*Task
 	}{
 		"Success": {
-			fields{NewTaskContainer(), NewGroupContainer()},
+			fields{
+				make([]*Task, 0),
+				make([]*Group, 0),
+				0,
+			},
 			&Task{"TaskTitle", false},
 			[]*Task{{"TaskTitle", false}},
 		},
@@ -45,11 +51,12 @@ func TestTodoItemContainer_AddTask(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			c := &TodoItemContainer{
-				taskContainer:  tt.fields.taskContainer,
-				groupContainer: tt.fields.groupContainer,
+				tt.fields.tasks,
+				tt.fields.groups,
+				tt.fields.doneTaskCount,
 			}
 			c.AddTask(tt.in)
-			got := c.taskContainer.tasks
+			got := c.tasks
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("TodoItemContainer() groups = %v, want %v", got, tt.want)
 			}
@@ -59,8 +66,9 @@ func TestTodoItemContainer_AddTask(t *testing.T) {
 
 func TestTodoItemContainer_AddGroup(t *testing.T) {
 	type fields struct {
-		taskContainer  *TaskContainer
-		groupContainer *GroupContainer
+		tasks         []*Task
+		groups        []*Group
+		doneTaskCount int
 	}
 	tests := map[string]struct {
 		fields fields
@@ -68,7 +76,11 @@ func TestTodoItemContainer_AddGroup(t *testing.T) {
 		want   []*Group
 	}{
 		"Success": {
-			fields{NewTaskContainer(), NewGroupContainer()},
+			fields{
+				make([]*Task, 0),
+				make([]*Group, 0),
+				0,
+			},
 			&Group{"GroupTitle", make([]*Task, 0)},
 			[]*Group{{"GroupTitle", make([]*Task, 0)}},
 		},
@@ -76,11 +88,12 @@ func TestTodoItemContainer_AddGroup(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			c := &TodoItemContainer{
-				taskContainer:  tt.fields.taskContainer,
-				groupContainer: tt.fields.groupContainer,
+				tasks:         tt.fields.tasks,
+				groups:        tt.fields.groups,
+				doneTaskCount: tt.fields.doneTaskCount,
 			}
 			c.AddGroup(tt.in)
-			got := c.groupContainer.groups
+			got := c.groups
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("TodoItemContainer() groups = %v, want %v", got, tt.want)
 			}
@@ -90,36 +103,39 @@ func TestTodoItemContainer_AddGroup(t *testing.T) {
 
 func TestTodoItemContainer_GetTasks(t *testing.T) {
 	type fields struct {
-		taskContainer  *TaskContainer
-		groupContainer *GroupContainer
+		tasks         []*Task
+		groups        []*Group
+		doneTaskCount int
 	}
 	tests := map[string]struct {
 		fields fields
 		want   []*Task
 	}{
 		"Success_ZeroTask": {
-			fields{NewTaskContainer(), NewGroupContainer()},
+			fields{
+				make([]*Task, 0),
+				make([]*Group, 0),
+				0,
+			},
 			[]*Task{},
 		},
 		"Success_OneTask": {
 			fields{
-				&TaskContainer{
-					tasks: []*Task{{"Task1", false}},
-				},
-				NewGroupContainer(),
+				tasks:         []*Task{{"Task1", false}},
+				groups:        make([]*Group, 0),
+				doneTaskCount: 0,
 			},
 			[]*Task{{"Task1", false}},
 		},
 		"Success_ThreeTasks": {
 			fields{
-				&TaskContainer{
-					tasks: []*Task{
-						{"Task1", false},
-						{"Task2", false},
-						{"Task3", true},
-					},
+				tasks: []*Task{
+					{"Task1", false},
+					{"Task2", false},
+					{"Task3", true},
 				},
-				NewGroupContainer(),
+				groups:        []*Group{},
+				doneTaskCount: 0,
 			},
 			[]*Task{
 				{"Task1", false},
@@ -131,8 +147,9 @@ func TestTodoItemContainer_GetTasks(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			c := &TodoItemContainer{
-				taskContainer:  tt.fields.taskContainer,
-				groupContainer: tt.fields.groupContainer,
+				tasks:         tt.fields.tasks,
+				groups:        tt.fields.groups,
+				doneTaskCount: tt.fields.doneTaskCount,
 			}
 			got := c.GetTasks()
 			if !reflect.DeepEqual(got, tt.want) {
@@ -144,8 +161,9 @@ func TestTodoItemContainer_GetTasks(t *testing.T) {
 
 func TestTodoItemContainer_GetGroups(t *testing.T) {
 	type fields struct {
-		taskContainer  *TaskContainer
-		groupContainer *GroupContainer
+		tasks         []*Task
+		groups        []*Group
+		doneTaskCount int
 	}
 	tests := map[string]struct {
 		fields fields
@@ -153,17 +171,19 @@ func TestTodoItemContainer_GetGroups(t *testing.T) {
 	}{
 		"Success_ZeroGroup": {
 			fields{
-				NewTaskContainer(),
-				NewGroupContainer(),
+				make([]*Task, 0),
+				make([]*Group, 0),
+				0,
 			},
 			[]*Group{},
 		},
 		"Success_OneGroup": {
 			fields{
-				NewTaskContainer(),
-				&GroupContainer{groups: []*Group{
+				make([]*Task, 0),
+				[]*Group{
 					{"Group1", make([]*Task, 0)},
-				}},
+				},
+				0,
 			},
 			[]*Group{
 				{"Group1", make([]*Task, 0)},
@@ -171,12 +191,13 @@ func TestTodoItemContainer_GetGroups(t *testing.T) {
 		},
 		"Success_ThreeGroups": {
 			fields{
-				NewTaskContainer(),
-				&GroupContainer{groups: []*Group{
+				make([]*Task, 0),
+				[]*Group{
 					{"Group1", make([]*Task, 0)},
 					{"Group2", make([]*Task, 0)},
 					{"Group3", make([]*Task, 0)},
-				}},
+				},
+				0,
 			},
 			[]*Group{
 				{"Group1", make([]*Task, 0)},
@@ -188,8 +209,9 @@ func TestTodoItemContainer_GetGroups(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			c := &TodoItemContainer{
-				taskContainer:  tt.fields.taskContainer,
-				groupContainer: tt.fields.groupContainer,
+				tasks:         tt.fields.tasks,
+				groups:        tt.fields.groups,
+				doneTaskCount: tt.fields.doneTaskCount,
 			}
 			got := c.GetGroups()
 			if !reflect.DeepEqual(got, tt.want) {
