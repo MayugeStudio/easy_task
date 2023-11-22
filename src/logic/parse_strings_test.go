@@ -35,55 +35,24 @@ func TestParseStringsToTasks_OnlyTask(t *testing.T) {
 		want []*domain.Task
 	}{
 		"DoneTasks": {
-			[]string{
-				"- [X]Task1",
-				"- [X]Task2",
-			},
-			[]*domain.Task{
-				{"Task1", true},
-				{"Task2", true},
-			},
+			in:   []string{"- [X]Task1", "- [X]Task2"},
+			want: []*domain.Task{{"Task1", true}, {"Task2", true}},
 		},
 		"DoneTasks_Lowercase": {
-			[]string{
-				"- [x] Task1",
-				"- [x] Task2",
-			},
-			[]*domain.Task{
-				{"Task1", true},
-				{"Task2", true},
-			},
+			in:   []string{"- [x] Task1", "- [x] Task2"},
+			want: []*domain.Task{{"Task1", true}, {"Task2", true}},
 		},
 		"UndoneTasks": {
-			[]string{
-				"- [ ] Task1",
-				"- [ ] Task2",
-			},
-			[]*domain.Task{
-				{"Task1", false},
-				{"Task2", false},
-			},
+			in:   []string{"- [ ] Task1", "- [ ] Task2"},
+			want: []*domain.Task{{"Task1", false}, {"Task2", false}},
 		},
 		"MixPattern": {
-			[]string{
-				"- [ ] Task1",
-				"- [X] Task2",
-			},
-			[]*domain.Task{
-				{"Task1", false},
-				{"Task2", true},
-			},
+			in:   []string{"- [ ] Task1", "- [X] Task2"},
+			want: []*domain.Task{{"Task1", false}, {"Task2", true}},
 		},
 		"ContainInvalidTaskString": {
-			[]string{
-				"- [ ] Task1",
-				"InvalidTaskString",
-				"- [X] Task2",
-			},
-			[]*domain.Task{
-				{"Task1", false},
-				{"Task2", true},
-			},
+			in:   []string{"- [ ] Task1", "InvalidTaskString", "- [X] Task2"},
+			want: []*domain.Task{{"Task1", false}, {"Task2", true}},
 		},
 	}
 	for testName, tt := range tests {
@@ -104,100 +73,45 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 		want []*domain.Group
 	}{
 		"DoneTasks": {
-			[]string{
-				"- TaskGroup",
-				"  - [X]Task1",
-				"  - [X]Task2",
-			},
-			[]*domain.Group{
-				{
-					"TaskGroup",
-					[]*domain.Task{
-						{"Task1", true},
-						{"Task2", true},
-					},
-				},
-			},
+			in: []string{"- TaskGroup", "  - [X]Task1", "  - [X]Task2"},
+			want: []*domain.Group{{
+				Title: "TaskGroup",
+				Tasks: []*domain.Task{{"Task1", true}, {"Task2", true}},
+			}},
 		},
 		"DoneTasks_Lowercase": {
-			[]string{
-				"- TaskGroup",
-				"  - [x]Task1",
-				"  - [x]Task2",
-			},
-			[]*domain.Group{
-				{
-					"TaskGroup",
-					[]*domain.Task{
-						{"Task1", true},
-						{"Task2", true},
-					},
-				},
-			},
+			in: []string{"- TaskGroup", "  - [x]Task1", "  - [x]Task2"},
+			want: []*domain.Group{{
+				Title: "TaskGroup",
+				Tasks: []*domain.Task{{"Task1", true}, {"Task2", true}},
+			}},
 		},
 		"UndoneTasks": {
-			[]string{
-				"- TaskGroup",
-				"  - [ ]Task1",
-				"  - [ ]Task2",
-			},
-			[]*domain.Group{
-				{
-					"TaskGroup",
-					[]*domain.Task{
-						{"Task1", false},
-						{"Task2", false},
-					},
-				},
+			in: []string{"- TaskGroup", "  - [ ]Task1", "  - [ ]Task2"},
+			want: []*domain.Group{{
+				Title: "TaskGroup",
+				Tasks: []*domain.Task{{"Task1", false}, {"Task2", false}}},
 			},
 		},
 		"MixPattern": {
-			[]string{
-				"- TaskGroup",
-				"  - [ ]Task1",
-				"  - [X]Task2",
-			},
-			[]*domain.Group{
-				{
-					"TaskGroup",
-					[]*domain.Task{
-						{"Task1", false},
-						{"Task2", true},
-					},
-				},
+			in: []string{"- TaskGroup", "  - [ ]Task1", "  - [X]Task2"},
+			want: []*domain.Group{{
+				Title: "TaskGroup",
+				Tasks: []*domain.Task{{"Task1", false}, {"Task2", true}}},
 			},
 		},
 		"ContainInvalidTaskString": {
-			[]string{
-				"- TaskGroup",
-				"  - [ ]Task1",
-				"  InvalidTaskString",
-				"  - [X]Task2",
-			},
-			[]*domain.Group{
-				{
-					"TaskGroup",
-					[]*domain.Task{
-						{"Task1", false},
-						{"Task2", true},
-					},
-				},
+			in: []string{"- TaskGroup", "  - [ ]Task1", "  InvalidTaskString", "  - [X]Task2"},
+			want: []*domain.Group{{
+				Title: "TaskGroup",
+				Tasks: []*domain.Task{{"Task1", false}, {"Task2", true}}},
 			},
 		},
 		"ContainInvalidTaskString_BadIndent": {
-			[]string{
-				"- TaskGroup",
-				"  - [ ]Task1",
-				"InvalidTaskString",
-				"  - [X]Task2",
-			},
-			[]*domain.Group{
-				{
-					"TaskGroup",
-					[]*domain.Task{
-						{"Task1", false},
-					},
-				},
+			in: []string{"- TaskGroup", "  - [ ]Task1", "InvalidTaskString", "  - [X]Task2"},
+			want: []*domain.Group{{
+				Title: "TaskGroup",
+				Tasks: []*domain.Task{{"Task1", false}}},
 			},
 		},
 	}
@@ -218,8 +132,8 @@ func TestParseStringsToTasks_MultiGroupTask(t *testing.T) {
 		in   []string
 		want []*domain.Group
 	}{
-		"MixPattern_Multi": {
-			[]string{
+		"MixPattern": {
+			in: []string{
 				"- TaskGroup1",
 				"  - [ ]Task1",
 				"  - [X]Task2",
@@ -227,21 +141,9 @@ func TestParseStringsToTasks_MultiGroupTask(t *testing.T) {
 				"  - [ ]Task1",
 				"  - [X]Task2",
 			},
-			[]*domain.Group{
-				{
-					"TaskGroup1",
-					[]*domain.Task{
-						{"Task1", false},
-						{"Task2", true},
-					},
-				},
-				{
-					"TaskGroup2",
-					[]*domain.Task{
-						{"Task1", false},
-						{"Task2", true},
-					},
-				},
+			want: []*domain.Group{
+				{Title: "TaskGroup1", Tasks: []*domain.Task{{"Task1", false}, {"Task2", true}}},
+				{Title: "TaskGroup2", Tasks: []*domain.Task{{"Task1", false}, {"Task2", true}}},
 			},
 		},
 		"ContainInvalidTaskString": {
@@ -256,20 +158,8 @@ func TestParseStringsToTasks_MultiGroupTask(t *testing.T) {
 				"  - [X]Task2",
 			},
 			[]*domain.Group{
-				{
-					"TaskGroup1",
-					[]*domain.Task{
-						{"Task1", false},
-						{"Task2", true},
-					},
-				},
-				{
-					"TaskGroup2",
-					[]*domain.Task{
-						{"Task1", false},
-						{"Task2", true},
-					},
-				},
+				{"TaskGroup1", []*domain.Task{{"Task1", false}, {"Task2", true}}},
+				{"TaskGroup2", []*domain.Task{{"Task1", false}, {"Task2", true}}},
 			},
 		},
 		"ContainInvalidTaskString_BadIndent": {
@@ -284,18 +174,8 @@ func TestParseStringsToTasks_MultiGroupTask(t *testing.T) {
 				"  - [X]Task2",
 			},
 			[]*domain.Group{
-				{
-					"TaskGroup1",
-					[]*domain.Task{
-						{"Task1", false},
-					},
-				},
-				{
-					"TaskGroup2",
-					[]*domain.Task{
-						{"Task1", false},
-					},
-				},
+				{"TaskGroup1", []*domain.Task{{"Task1", false}}},
+				{"TaskGroup2", []*domain.Task{{"Task1", false}}},
 			},
 		},
 	}
@@ -316,18 +196,12 @@ func Test_parseSingleTaskString(t *testing.T) {
 		in   string
 		want *domain.Task
 	}{"ValidSingleTaskString_Done": {
-		"- [X] TaskName",
-		&domain.Task{
-			Title:  "TaskName",
-			IsDone: true,
-		},
+		in:   "- [X] TaskName",
+		want: &domain.Task{Title: "TaskName", IsDone: true},
 	},
 		"ValidSingleTaskString_Undone": {
-			"- [ ] TaskName",
-			&domain.Task{
-				Title:  "TaskName",
-				IsDone: false,
-			},
+			in:   "- [ ] TaskName",
+			want: &domain.Task{Title: "TaskName", IsDone: false},
 		},
 	}
 	for testName, tt := range tests {
@@ -345,13 +219,7 @@ func Test_parseGroupTaskTitle(t *testing.T) {
 		in   string
 		want *domain.Group
 	}{
-		"ValidGroupTitle": {
-			"- GroupName",
-			&domain.Group{
-				Title: "GroupName",
-				Tasks: make([]*domain.Task, 0),
-			},
-		},
+		"ValidGroupTitle": {in: "- GroupName", want: &domain.Group{Title: "GroupName", Tasks: make([]*domain.Task, 0)}},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
