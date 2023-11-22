@@ -10,11 +10,7 @@ func TestNewTodoList(t *testing.T) {
 		want *TodoList
 	}{
 		"Success": {
-			&TodoList{
-				make([]*Task, 0),
-				make([]*Group, 0),
-				0,
-			},
+			want: &TodoList{tasks: make([]*Task, 0), groups: make([]*Group, 0), doneTaskCount: 0},
 		},
 	}
 	for testName, tt := range tests {
@@ -39,22 +35,14 @@ func TestTodoList_AddTask(t *testing.T) {
 		want   []*Task
 	}{
 		"Success": {
-			fields{
-				make([]*Task, 0),
-				make([]*Group, 0),
-				0,
-			},
-			&Task{"TaskTitle", false},
-			[]*Task{{"TaskTitle", false}},
+			fields: fields{make([]*Task, 0), make([]*Group, 0), 0},
+			in:     &Task{"TaskTitle", false},
+			want:   []*Task{{"TaskTitle", false}},
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			c := &TodoList{
-				tt.fields.tasks,
-				tt.fields.groups,
-				tt.fields.doneTaskCount,
-			}
+			c := &TodoList{tt.fields.tasks, tt.fields.groups, tt.fields.doneTaskCount}
 			c.AddTask(tt.in)
 			got := c.tasks
 			if !reflect.DeepEqual(got, tt.want) {
@@ -76,22 +64,14 @@ func TestTodoList_AddGroup(t *testing.T) {
 		want   []*Group
 	}{
 		"Success": {
-			fields{
-				make([]*Task, 0),
-				make([]*Group, 0),
-				0,
-			},
-			&Group{"GroupTitle", make([]*Task, 0)},
-			[]*Group{{"GroupTitle", make([]*Task, 0)}},
+			fields: fields{make([]*Task, 0), make([]*Group, 0), 0},
+			in:     &Group{"GroupTitle", make([]*Task, 0)},
+			want:   []*Group{{"GroupTitle", make([]*Task, 0)}},
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			c := &TodoList{
-				tasks:         tt.fields.tasks,
-				groups:        tt.fields.groups,
-				doneTaskCount: tt.fields.doneTaskCount,
-			}
+			c := &TodoList{tasks: tt.fields.tasks, groups: tt.fields.groups, doneTaskCount: tt.fields.doneTaskCount}
 			c.AddGroup(tt.in)
 			got := c.groups
 			if !reflect.DeepEqual(got, tt.want) {
@@ -112,45 +92,21 @@ func TestTodoList_GetTasks(t *testing.T) {
 		want   []*Task
 	}{
 		"Success_ZeroTask": {
-			fields{
-				make([]*Task, 0),
-				make([]*Group, 0),
-				0,
-			},
-			[]*Task{},
+			fields: fields{make([]*Task, 0), make([]*Group, 0), 0},
+			want:   []*Task{},
 		},
 		"Success_OneTask": {
-			fields{
-				tasks:         []*Task{{"Task1", false}},
-				groups:        make([]*Group, 0),
-				doneTaskCount: 0,
-			},
-			[]*Task{{"Task1", false}},
+			fields: fields{tasks: []*Task{{"Task1", false}}, groups: make([]*Group, 0), doneTaskCount: 0},
+			want:   []*Task{{"Task1", false}},
 		},
 		"Success_ThreeTasks": {
-			fields{
-				tasks: []*Task{
-					{"Task1", false},
-					{"Task2", false},
-					{"Task3", true},
-				},
-				groups:        []*Group{},
-				doneTaskCount: 0,
-			},
-			[]*Task{
-				{"Task1", false},
-				{"Task2", false},
-				{"Task3", true},
-			},
+			fields: fields{tasks: []*Task{{"Task1", false}, {"Task2", false}, {"Task3", true}}, groups: []*Group{}, doneTaskCount: 0},
+			want:   []*Task{{"Task1", false}, {"Task2", false}, {"Task3", true}},
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			c := &TodoList{
-				tasks:         tt.fields.tasks,
-				groups:        tt.fields.groups,
-				doneTaskCount: tt.fields.doneTaskCount,
-			}
+			c := &TodoList{tasks: tt.fields.tasks, groups: tt.fields.groups, doneTaskCount: tt.fields.doneTaskCount}
 			got := c.GetTasks()
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetTasks() = %v, want %v", got, tt.want)
@@ -170,49 +126,21 @@ func TestTodoList_GetGroups(t *testing.T) {
 		want   []*Group
 	}{
 		"Success_ZeroGroup": {
-			fields{
-				make([]*Task, 0),
-				make([]*Group, 0),
-				0,
-			},
-			[]*Group{},
+			fields: fields{make([]*Task, 0), make([]*Group, 0), 0},
+			want:   []*Group{},
 		},
 		"Success_OneGroup": {
-			fields{
-				make([]*Task, 0),
-				[]*Group{
-					{"Group1", make([]*Task, 0)},
-				},
-				0,
-			},
-			[]*Group{
-				{"Group1", make([]*Task, 0)},
-			},
+			fields: fields{make([]*Task, 0), []*Group{{"Group1", make([]*Task, 0)}}, 0},
+			want:   []*Group{{"Group1", make([]*Task, 0)}},
 		},
 		"Success_ThreeGroups": {
-			fields{
-				make([]*Task, 0),
-				[]*Group{
-					{"Group1", make([]*Task, 0)},
-					{"Group2", make([]*Task, 0)},
-					{"Group3", make([]*Task, 0)},
-				},
-				0,
-			},
-			[]*Group{
-				{"Group1", make([]*Task, 0)},
-				{"Group2", make([]*Task, 0)},
-				{"Group3", make([]*Task, 0)},
-			},
+			fields: fields{make([]*Task, 0), []*Group{{"Group1", make([]*Task, 0)}, {"Group2", make([]*Task, 0)}, {"Group3", make([]*Task, 0)}}, 0},
+			want:   []*Group{{"Group1", make([]*Task, 0)}, {"Group2", make([]*Task, 0)}, {"Group3", make([]*Task, 0)}},
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			c := &TodoList{
-				tasks:         tt.fields.tasks,
-				groups:        tt.fields.groups,
-				doneTaskCount: tt.fields.doneTaskCount,
-			}
+			c := &TodoList{tasks: tt.fields.tasks, groups: tt.fields.groups, doneTaskCount: tt.fields.doneTaskCount}
 			got := c.GetGroups()
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetGroups() = %v, want %v", got, tt.want)
