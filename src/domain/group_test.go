@@ -10,10 +10,7 @@ func TestNewGroup(t *testing.T) {
 		in   string
 		want *Group
 	}{
-		"Success": {
-			"GroupTitle",
-			&Group{Title: "GroupTitle", Tasks: make([]*Task, 0)},
-		},
+		"Success": {in: "GroupTitle", want: &Group{Title: "GroupTitle", Tasks: make([]*Task, 0)}},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -31,18 +28,11 @@ func TestGroup_AddTask(t *testing.T) {
 		in    *Task
 		want  []*Task
 	}{
-		"Success": {
-			"GroupTitle",
-			&Task{"TaskTitle", false},
-			[]*Task{{"TaskTitle", false}},
-		},
+		"Success": {title: "GroupTitle", in: &Task{"TaskTitle", false}, want: []*Task{{"TaskTitle", false}}},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			g := &Group{
-				Title: tt.title,
-				Tasks: make([]*Task, 0),
-			}
+			g := &Group{Title: tt.title, Tasks: make([]*Task, 0)}
 
 			g.AddTask(tt.in)
 			got := g.Tasks
