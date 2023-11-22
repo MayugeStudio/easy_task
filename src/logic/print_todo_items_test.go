@@ -627,3 +627,46 @@ func Test_calculateTaskProgress(t *testing.T) {
 		})
 	}
 }
+
+func Test_calculateDoneTaskNum(t *testing.T) {
+	tests := map[string]struct {
+		in   []*domain.Task
+		want int
+	}{
+		"0DoneTask": {
+			in: []*domain.Task{
+				{"T1", false},
+				{"T2", false},
+				{"T3", false},
+			},
+			want: 0,
+		},
+		"1DoneTask": {
+			in: []*domain.Task{
+				{"T1", true},
+				{"T2", false},
+				{"T3", false},
+			},
+			want: 1,
+		},
+		"3DoneTasks": {
+			in: []*domain.Task{
+				{"T1", true},
+				{"T2", true},
+				{"T3", true},
+				{"T4", false},
+				{"T5", false},
+				{"T6", false},
+			},
+			want: 3,
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			got := calculateDoneTaskNum(tt.in)
+			if got != tt.want {
+				t.Errorf("calculateDoneTaskNum() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
