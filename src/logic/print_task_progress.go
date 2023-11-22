@@ -14,7 +14,14 @@ func PrintTaskProgress(w io.Writer, tasks []*domain.Task) error {
 	if len(tasks) == 0 {
 		return nil
 	}
-	progressBarLength := DefaultProgressBarLength
+	taskProgressString := getTaskProgressString(tasks, DefaultProgressBarLength)
+	if _, err := fmt.Fprint(w, taskProgressString); err != nil {
+		return err
+	}
+	return nil
+}
+
+func getTaskProgressString(tasks []*domain.Task, length float64) string {
 	taskNum := float64(len(tasks))
 	doneTaskNum := 0.0
 	for _, task := range tasks {
@@ -23,11 +30,8 @@ func PrintTaskProgress(w io.Writer, tasks []*domain.Task) error {
 		}
 	}
 	doneTaskRatio := doneTaskNum / taskNum
-	doneTaskStrLength := int(doneTaskRatio * progressBarLength)
+	doneTaskStrLength := int(doneTaskRatio * length)
 	doneTaskStr := strings.Repeat(ProgressSymbol, doneTaskStrLength)
-	undoneTaskStr := strings.Repeat(" ", int(progressBarLength)-doneTaskStrLength)
-	if _, err := fmt.Fprintf(w, "[%s%s]%d%%", doneTaskStr, undoneTaskStr, int(doneTaskRatio*100)); err != nil {
-		return err
-	}
-	return nil
+	undoneTaskStr := strings.Repeat(" ", int(length)-doneTaskStrLength)
+	return fmt.Sprintf("[%s%s]%d%%", doneTaskStr, undoneTaskStr, int(doneTaskRatio*100))
 }
