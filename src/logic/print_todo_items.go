@@ -12,9 +12,9 @@ const (
 )
 
 func PrintTasks(w io.Writer, tasks []*domain.Task) error {
-	maxTaskNameLength := getMaxTaskNameLength(tasks)
+	maxLength := getMaxTaskNameLength(tasks)
 	for _, task := range tasks {
-		taskString := getTaskString(task, maxTaskNameLength)
+		taskString := getTaskString(task, maxLength)
 		if _, err := fmt.Fprint(w, taskString); err != nil {
 			return err
 		}
