@@ -31,7 +31,7 @@ func TestPrintTodoItem(t *testing.T) {
 		wantErr bool
 	}{
 		"4Tasks": {
-			input{
+			in: input{
 				MockReader{
 					[]string{
 						"- [ ] Task1",
@@ -41,16 +41,16 @@ func TestPrintTodoItem(t *testing.T) {
 					},
 				},
 			},
-			"" +
+			wantW: "" +
 				"[ ] Task1\n" +
 				"[ ] Task2\n" +
 				"[X] Task3\n" +
 				"[X] Task4\n" +
 				"[####################                    ]50%",
-			false,
+			wantErr: false,
 		},
 		"2Tasks1Group": {
-			input{
+			in: input{
 				MockReader{
 					[]string{
 						"- [ ] Task1",
@@ -61,7 +61,7 @@ func TestPrintTodoItem(t *testing.T) {
 					},
 				},
 			},
-			"" +
+			wantW: "" +
 				"[ ] Task1\n" +
 				"[X] Task2\n" +
 				"GroupTitle\n" +
@@ -69,10 +69,10 @@ func TestPrintTodoItem(t *testing.T) {
 				"  [X] GroupTask2\n" +
 				"  [##########          ]50%\n" +
 				"[####################                    ]50%",
-			false,
+			wantErr: false,
 		},
 		"5Tasks2Group": {
-			input{
+			in: input{
 				MockReader{
 					[]string{
 						"- [X] Task1",
@@ -89,7 +89,7 @@ func TestPrintTodoItem(t *testing.T) {
 					},
 				},
 			},
-			"" +
+			wantW: "" +
 				"[X] Task1\n" +
 				"[X] Task2\n" +
 				"[X] Task3\n" +
@@ -104,7 +104,7 @@ func TestPrintTodoItem(t *testing.T) {
 				"  [ ] GroupTask2\n" +
 				"  [                    ]0%\n" +
 				"[######################                  ]55%",
-			false,
+			wantErr: false,
 		},
 	}
 	for testName, tt := range tests {
@@ -130,7 +130,7 @@ func TestPrintTodoItem_Error(t *testing.T) {
 		wantErr bool
 	}{
 		"Tasks": {
-			input{
+			in: input{
 				MockReader{
 					[]string{
 						"- [ ] Task1",
@@ -140,7 +140,7 @@ func TestPrintTodoItem_Error(t *testing.T) {
 					},
 				},
 			},
-			true,
+			wantErr: true,
 		},
 	}
 	for testName, tt := range tests {
