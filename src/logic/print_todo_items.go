@@ -18,8 +18,8 @@ func PrintTasks(w io.Writer, tasks []*domain.Task) error {
 	maxLength := getMaxTaskNameLength(tasks)
 	for _, task := range tasks {
 		taskString := getTaskString(task, maxLength)
-		if _, err := fmt.Fprintf(w, "%s\n", taskString); err != nil {
-			return err
+		if _, err := fmt.Fprintln(w, taskString); err != nil {
+			return fmt.Errorf("printing task: %w", err)
 		}
 	}
 	return nil
