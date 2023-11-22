@@ -50,9 +50,7 @@ func TestPrintGroups(t *testing.T) {
 		wantErr bool
 	}{
 		"Success_1Group": {
-			in: []*domain.Group{
-				{"GroupTitle", []*domain.Task{{"Task1", false}, {"Task2", true}}},
-			},
+			in: []*domain.Group{{"GroupTitle", []*domain.Task{{"Task1", false}, {"Task2", true}}}},
 			wantW: "" +
 				"GroupTitle\n" +
 				"  [ ] Task1\n" +
@@ -152,14 +150,8 @@ func Test_getTaskString(t *testing.T) {
 		in   input
 		want string
 	}{
-		"Success_Done": {
-			in:   input{task: &domain.Task{Title: "TaskTitle", IsDone: true}, maxLength: 10},
-			want: "[X] TaskTitle ",
-		},
-		"Success_Undone": {
-			in:   input{task: &domain.Task{Title: "TaskTitle", IsDone: false}, maxLength: 10},
-			want: "[ ] TaskTitle ",
-		},
+		"Success_Done":   {in: input{task: &domain.Task{Title: "TaskTitle", IsDone: true}, maxLength: 10}, want: "[X] TaskTitle "},
+		"Success_Undone": {in: input{task: &domain.Task{Title: "TaskTitle", IsDone: false}, maxLength: 10}, want: "[ ] TaskTitle "},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -178,10 +170,7 @@ func Test_getGroupString(t *testing.T) {
 	}{
 
 		"100%": {
-			in: &domain.Group{
-				Title: "GroupTitle",
-				Tasks: []*domain.Task{{"Task1", true}, {"Task2", true}},
-			},
+			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{{"Task1", true}, {"Task2", true}}},
 			want: "" +
 				"GroupTitle\n" +
 				"  [X] Task1\n" +
@@ -189,10 +178,7 @@ func Test_getGroupString(t *testing.T) {
 				"  [####################]100%\n",
 		},
 		"50%": {
-			in: &domain.Group{
-				Title: "GroupTitle",
-				Tasks: []*domain.Task{{"Task1", true}, {"Task2", false}},
-			},
+			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{{"Task1", true}, {"Task2", false}}},
 			want: "" +
 				"GroupTitle\n" +
 				"  [X] Task1\n" +
@@ -201,10 +187,7 @@ func Test_getGroupString(t *testing.T) {
 		},
 
 		"0%": {
-			in: &domain.Group{
-				Title: "GroupTitle",
-				Tasks: []*domain.Task{{"Task1", false}, {"Task2", false}},
-			},
+			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{{"Task1", false}, {"Task2", false}}},
 			want: "" +
 				"GroupTitle\n" +
 				"  [ ] Task1\n" +
