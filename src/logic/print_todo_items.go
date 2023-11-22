@@ -14,24 +14,23 @@ const (
 func PrintTasks(w io.Writer, tasks []*domain.Task) error {
 	maxTaskNameLength := getMaxTaskNameLength(tasks)
 	for _, task := range tasks {
-		if err := printTask(w, task, maxTaskNameLength); err != nil {
+		taskString := getTaskString(task, maxTaskNameLength)
+		if _, err := fmt.Fprint(w, taskString); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func printTask(w io.Writer, task *domain.Task, maxTaskNameLength int) error {
+
+func getTaskString(task *domain.Task, maxLength int) string {
 	var doneStr string
 	if task.IsDone {
 		doneStr = DoneSymbol
 	} else {
 		doneStr = UndoneSymbol
 	}
-	if _, err := fmt.Fprintf(w, "[%s] %-*s\n", doneStr, maxTaskNameLength, task.Title); err != nil {
-		return err
-	}
-	return nil
+	return fmt.Sprintf("[%s] %-*s\n", doneStr, maxLength, task.Title)
 }
 
 func getMaxTaskNameLength(tasks []*domain.Task) int {

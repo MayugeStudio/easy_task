@@ -60,37 +60,77 @@ func TestPrintTasks(t *testing.T) {
 	}
 }
 
-func Test_printTask(t *testing.T) {
+func Test_getTaskString(t *testing.T) {
 	type input struct {
-		task              *domain.Task
-		maxTaskNameLength int
+		task      *domain.Task
+		maxLength int
 	}
 	tests := map[string]struct {
-		in      input
-		wantW   string
-		wantErr bool
+		in   input
+		want string
 	}{
 		"Success_Done": {
-			input{&domain.Task{"TaskTitle", true}, 10},
+			input{
+				&domain.Task{
+					"TaskTitle", true,
+				},
+				10,
+			},
 			"[X] TaskTitle \n",
-			false,
 		},
 		"Success_Undone": {
-			input{&domain.Task{"TaskTitle", false}, 10},
+			input{
+				&domain.Task{
+					"TaskTitle", false,
+				},
+				10,
+			},
 			"[ ] TaskTitle \n",
-			false,
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			w := &bytes.Buffer{}
-			err := printTask(w, tt.in.task, tt.in.maxTaskNameLength)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("printTask() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			got := getTaskString(tt.in.task, tt.in.maxLength)
+			if got != tt.want {
+				t.Errorf("getTaskString() gotW = %v, want %v", got, tt.want)
 			}
-			if gotW := w.String(); gotW != tt.wantW {
-				t.Errorf("printTask() gotW = %v, want %v", gotW, tt.wantW)
+		})
+	}
+}
+
+func Test_getTaskString(t *testing.T) {
+	type input struct {
+		task      *domain.Task
+		maxLength int
+	}
+	tests := map[string]struct {
+		in   input
+		want string
+	}{
+		"Success_Done": {
+			input{
+				&domain.Task{
+					"TaskTitle", true,
+				},
+				10,
+			},
+			"[X] TaskTitle \n",
+		},
+		"Success_Undone": {
+			input{
+				&domain.Task{
+					"TaskTitle", false,
+				},
+				10,
+			},
+			"[ ] TaskTitle \n",
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			got := getTaskString(tt.in.task, tt.in.maxLength)
+			if got != tt.want {
+				t.Errorf("getTaskString() gotW = %v, want %v", got, tt.want)
 			}
 		})
 	}
