@@ -71,6 +71,41 @@ func TestPrintTodoItem(t *testing.T) {
 				"[####################                    ]50%",
 			false,
 		},
+		"5Tasks2Group": {
+			input{
+				MockReader{
+					[]string{
+						"- [X] Task1",
+						"- [X] Task2",
+						"- [X] Task3",
+						"- [ ] Task4",
+						"- [ ] Task5",
+						"- GroupTitle1",
+						"  - [X] GroupTask1",
+						"  - [X] GroupTask2",
+						"- GroupTitle2",
+						"  - [ ] GroupTask1",
+						"  - [ ] GroupTask2",
+					},
+				},
+			},
+			"" +
+				"[X] Task1\n" +
+				"[X] Task2\n" +
+				"[X] Task3\n" +
+				"[ ] Task4\n" +
+				"[ ] Task5\n" +
+				"GroupTitle1\n" +
+				"  [X] GroupTask1\n" +
+				"  [X] GroupTask2\n" +
+				"  [####################]100%\n" +
+				"GroupTitle2\n" +
+				"  [ ] GroupTask1\n" +
+				"  [ ] GroupTask2\n" +
+				"  [                    ]0%\n" +
+				"[######################                  ]55%",
+			false,
+		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {

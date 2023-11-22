@@ -88,7 +88,7 @@ func TestFileScanner_ReadLines(t *testing.T) {
 	}
 
 	defer func(name string) {
-		_ = os.Remove(name)
+		_ = os.Remove(f.Name())
 	}(f.Name())
 
 	data := "line1\nline2\nline3"
@@ -102,16 +102,8 @@ func TestFileScanner_ReadLines(t *testing.T) {
 		wantLines []string
 		wantErr   bool
 	}{
-		"SuccessfulRead": {
-			fileName:  f.Name(),
-			wantLines: []string{"line1", "line2", "line3"},
-			wantErr:   false,
-		},
-		"NonexistentFile": {
-			fileName:  "nonexistent.txt",
-			wantLines: nil,
-			wantErr:   true,
-		},
+		"SuccessfulRead":  {fileName: f.Name(), wantLines: []string{"line1", "line2", "line3"}, wantErr: false},
+		"NonexistentFile": {fileName: "nonexistent.txt", wantLines: nil, wantErr: true},
 	}
 
 	for testName, tt := range tests {

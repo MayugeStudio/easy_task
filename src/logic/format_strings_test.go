@@ -21,35 +21,35 @@ func TestFormatTaskStrings_OnlySingleTasks(t *testing.T) {
 		want []string
 	}{
 		"TaskStrings": {
-			[]string{
+			in: []string{
 				"-[]Bake the bread.",
 				"- [] Fry eggs.",
 				"- []Prepare coffee.",
 			},
-			[]string{
+			want: []string{
 				"- [ ] Bake the bread.",
 				"- [ ] Fry eggs.",
 				"- [ ] Prepare coffee.",
 			},
 		},
 		"ContainsInvalidTaskString": {
-			[]string{
+			in: []string{
 				"- [ ] Bake the bread.",
 				"Invalid TaskString.",
 				"- [ ] Prepare coffee.",
 			},
-			[]string{
+			want: []string{
 				"- [ ] Bake the bread.",
 				"- [ ] Prepare coffee.",
 			},
 		},
 		"AllTaskStringsAreInvalid": {
-			[]string{
+			in: []string{
 				"Bake the bread.",
 				"Fry eggs.",
 				"Prepare coffee.",
 			},
-			[]string{},
+			want: []string{},
 		},
 	}
 	for testName, tt := range tests {
@@ -68,14 +68,14 @@ func TestFormatTaskStrings_OnlyGroupTasks(t *testing.T) {
 		want []string
 	}{
 		"ValidGroupTaskString": {
-			[]string{
+			in: []string{
 				"- Eat breakfast.",
 				// Child task must have Two indentations in the prefix.
 				"  -[X]Bake the bread.",
 				"  - [] Fry eggs.",
 				"  - [ ]Prepare coffee.",
 			},
-			[]string{
+			want: []string{
 				"- Eat breakfast.",
 				"  - [X] Bake the bread.",
 				"  - [ ] Fry eggs.",
@@ -83,58 +83,58 @@ func TestFormatTaskStrings_OnlyGroupTasks(t *testing.T) {
 			},
 		},
 		"ContainsInvalidIndentChildTaskString": {
-			[]string{
+			in: []string{
 				"- Eat breakfast.",
 				"  - [X] Bake the bread.",
 				"Invalid TaskString.",
 				"  - [ ] Prepare coffee.",
 			},
-			[]string{
+			want: []string{
 				"- Eat breakfast.",
 				"  - [X] Bake the bread.",
 			},
 		},
 		"ContainsInvalidChildTaskStringOtherThanInvalidIndent": {
-			[]string{
+			in: []string{
 				"- Eat breakfast.",
 				"  - [X] Bake the bread.",
 				"  Invalid TaskString.",
 				"  - [ ] Prepare coffee.",
 			},
-			[]string{
+			want: []string{
 				"- Eat breakfast.",
 				"  - [X] Bake the bread.",
 				"  - [ ] Prepare coffee.",
 			},
 		},
 		"AllTaskStringsAreInvalid": {
-			[]string{
+			in: []string{
 				"- Eat breakfast.",
 				"  Bake the bread.",
 				"  Fry eggs.",
 				"  Prepare coffee.",
 			},
-			[]string{
+			want: []string{
 				"- Eat breakfast.",
 			},
 		},
 		"InvalidGroupTitleWithUndoneTasks": {
-			[]string{
+			in: []string{
 				"Eat breakfast.",
 				"  - [ ] Bake the bread.",
 				"  - [ ] Fry eggs.",
 				"  - [ ] Prepare coffee.",
 			},
-			[]string{},
+			want: []string{},
 		},
 		"InvalidGroupTitleWithDoneTasks": {
-			[]string{
+			in: []string{
 				"Eat breakfast.",
 				"  - [X] Bake the bread.",
 				"  - [X] Fry eggs.",
 				"  - [X] Prepare coffee.",
 			},
-			[]string{},
+			want: []string{},
 		},
 	}
 	for testName, tt := range tests {
@@ -153,7 +153,7 @@ func TestFormatTaskStrings_MultiGroup(t *testing.T) {
 		want []string
 	}{
 		"ValidGroupTaskString": {
-			[]string{
+			in: []string{
 				"- Eat breakfast.",
 				"  -[X] Bake the bread.",
 				"  -[]Fry eggs.",
@@ -162,7 +162,7 @@ func TestFormatTaskStrings_MultiGroup(t *testing.T) {
 				"  -[X]Watch english TV show.",
 				"  - []Memorize english words.",
 			},
-			[]string{
+			want: []string{
 				"- Eat breakfast.",
 				"  - [X] Bake the bread.",
 				"  - [ ] Fry eggs.",
@@ -210,26 +210,27 @@ func Test_formatTaskString(t *testing.T) {
 		wantErr bool
 	}{
 		// Success cases
-		"Undone_Valid":                 {"- [ ] Buy the milk.", validStringUndone, false},
-		"Undone_BadIndentStartBracket": {"-[] Buy the milk.", validStringUndone, false},
-		"Undone_BadIndentEndBracket":   {"- []Buy the milk.", validStringUndone, false},
-		"Done_Valid":                   {"- [X] Buy the milk.", validStringDone, false},
-		"Done_BadIndentStartEnd":       {"-[X]Buy the milk.", validStringDone, false},
-		"Done_Valid_Lower":             {"- [x] Buy the milk.", validStringDone, false},
-		"Done_NoSpaceInBracket_Lower":  {"- [x] Buy the milk.", validStringDone, false},
-		"Done_BadIndentStartEnd_Lower": {"-[x]Buy the milk.", validStringDone, false},
-		"Done_NoDash":                  {"[X] No Dash.", "", true},
+		"Undone_Valid":                 {in: "- [ ] Buy the milk.", want: validStringUndone},
+		"Undone_BadIndentStartBracket": {in: "-[] Buy the milk.", want: validStringUndone},
+		"Undone_BadIndentEndBracket":   {in: "- []Buy the milk.", want: validStringUndone},
+		"Done_Valid":                   {in: "- [X] Buy the milk.", want: validStringDone},
+		"Done_BadIndentStartEnd":       {in: "-[X]Buy the milk.", want: validStringDone},
+		"Done_Valid_Lower":             {in: "- [x] Buy the milk.", want: validStringDone},
+		"Done_NoSpaceInBracket_Lower":  {in: "- [x] Buy the milk.", want: validStringDone},
+		"Done_BadIndentStartEnd_Lower": {in: "-[x]Buy the milk.", want: validStringDone},
+		"Done_NoDash":                  {in: "[X] No Dash.", wantErr: true},
 		// Error cases
-		"Done_NoBracketStart": {"- X] No BracketStart.", "", true},
-		"Done_NoBracketEnd":   {"- [X No BracketEnd.", "", true},
-		"Done_NoDash_Lower":   {"[x] No Dash.", "", true},
-		"Undone_NoDash":       {"[ ] Buy the milk.", "", true},
+		"Done_NoBracketStart": {in: "- X] No BracketStart.", wantErr: true},
+		"Done_NoBracketEnd":   {in: "- [X No BracketEnd.", wantErr: true},
+		"Done_NoDash_Lower":   {in: "[x] No Dash.", wantErr: true},
+		"Undone_NoDash":       {in: "[ ] Buy the milk.", wantErr: true},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			got, err := formatTaskString(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FormatTaskString() error = %v, wantErr = %v", err, tt.wantErr)
+				return
 			}
 			if got != tt.want {
 				t.Errorf("FormatTaskString() = %q, want %q", got, tt.want)
@@ -246,11 +247,11 @@ func Test_formatGroupTaskString(t *testing.T) {
 		wantErr bool
 	}{
 		// Success cases
-		"Valid":     {"  - [ ] Buy the milk.", validGroupString, false},
-		"OneIndent": {" - [ ] Buy the milk.", validGroupString, false},
+		"Valid":     {in: "  - [ ] Buy the milk.", want: validGroupString},
+		"OneIndent": {in: " - [ ] Buy the milk.", want: validGroupString},
 		// Error cases
-		"NoIndent":      {"- [ ] Buy the milk.", "", true},
-		"InvalidFormat": {"  - Buy the milk.", "", true},
+		"NoIndent":      {in: "- [ ] Buy the milk.", wantErr: true},
+		"InvalidFormat": {in: "  - Buy the milk.", wantErr: true},
 	}
 
 	for testName, tt := range tests {
@@ -258,6 +259,7 @@ func Test_formatGroupTaskString(t *testing.T) {
 			got, err := formatGroupTaskString(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FormatGroupTaskString() error = %v, wantErr = %v", err, tt.wantErr)
+				return
 			}
 			if got != tt.want {
 				t.Errorf("FormatGroupTaskString() = %q, want %q", got, tt.want)
@@ -273,16 +275,17 @@ func Test_formatGroupTitleString(t *testing.T) {
 		wantErr bool
 	}{
 		// Success
-		"Valid":     {"- GroupTitle", "- GroupTitle", false},
-		"BadIndent": {"-GroupTitle", "- GroupTitle", false},
+		"Valid":     {in: "- GroupTitle", want: "- GroupTitle"},
+		"BadIndent": {in: "-GroupTitle", want: "- GroupTitle"},
 		// Error cases
-		"InvalidLine": {"GroupTitle", "", true},
+		"InvalidLine": {in: "GroupTitle", wantErr: true},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			got, err := formatGroupTitleString(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FormatGroupTitleString() error = %v, wantErr = %v", err, tt.wantErr)
+				return
 			}
 			if got != tt.want {
 				t.Errorf("FormatGroupTitleString() = %v, want %v", got, tt.want)
@@ -298,13 +301,13 @@ func Test_getStatusString(t *testing.T) {
 		wantErr bool
 	}{
 		// Success cases
-		"ValidTaskStringGoodFormat_Done":   {"- [ ] TaskName", " ", false},
-		"ValidTaskStringGoodFormat_Undone": {"- [X] TaskName", "X", false},
-		"ValidTaskStringBadFormat_Done":    {"-[]TaskName", " ", false},
-		"ValidTaskStringBadFormat_Undone":  {"-[X]TaskName", "X", false},
+		"ValidTaskStringGoodFormat_Done":   {in: "- [ ] TaskName", want: " "},
+		"ValidTaskStringGoodFormat_Undone": {in: "- [X] TaskName", want: "X"},
+		"ValidTaskStringBadFormat_Done":    {in: "-[]TaskName", want: " "},
+		"ValidTaskStringBadFormat_Undone":  {in: "-[X]TaskName", want: "X"},
 		// Error cases
-		"InValidTaskString_NoDash":         {"[ ] TaskName", "", true},
-		"InValidTaskString_NoBracketStart": {"- ] TaskName", "", true},
+		"InValidTaskString_NoDash":         {in: "[ ] TaskName", wantErr: true},
+		"InValidTaskString_NoBracketStart": {in: "- ] TaskName", wantErr: true},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -327,16 +330,17 @@ func Test_getGroupTitle(t *testing.T) {
 		wantErr bool
 	}{
 		// Success cases
-		"ValidGroupStringGoodFormat": {"- GroupTitle", "GroupTitle", false},
-		"ValidGroupStringBadFormat":  {"-GroupTitle", "GroupTitle", false},
+		"ValidGroupStringGoodFormat": {in: "- GroupTitle", want: "GroupTitle"},
+		"ValidGroupStringBadFormat":  {in: "-GroupTitle", want: "GroupTitle"},
 		// Error cases
-		"InvalidGroupString_NoDash": {"GroupTitle", "", true},
+		"InvalidGroupString_NoDash": {in: "GroupTitle", wantErr: true},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			got, err := getGroupTitle(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetGroupTitle() error = %v, wantErr %v", err, tt.wantErr)
+				return
 			}
 			if got != tt.want {
 				t.Errorf("GetGroupTitle() = %v, want %v", got, tt.want)
@@ -350,10 +354,10 @@ func Test_isGroupTitle(t *testing.T) {
 		in   string
 		want bool
 	}{
-		"ValidGroupTitleString":   {"- GroupTitle", true},
-		"InvalidGroupTitleString": {"GroupTitle", false},
-		"TaskString":              {"- [ ] TaskName", false},
-		"GroupTaskString":         {"  - [ ] TaskName", false},
+		"ValidGroupTitleString":   {in: "- GroupTitle", want: true},
+		"InvalidGroupTitleString": {in: "GroupTitle", want: false},
+		"TaskString":              {in: "- [ ] TaskName", want: false},
+		"GroupTaskString":         {in: "  - [ ] TaskName", want: false},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -370,11 +374,11 @@ func Test_isGroupTaskString(t *testing.T) {
 		in   string
 		want bool
 	}{
-		"ValidGroupTaskString":                  {"  - [ ] TaskName", true},
-		"InvalidGroupTaskString_NoDash":         {"  [ ] TaskName", false},
-		"InvalidGroupTaskString_NoBracketStart": {"  -  ] TaskName", false},
-		"InvalidGroupTaskString_NoBracketEnd":   {"  - [  TaskName", false},
-		"SingleTaskString":                      {"- [ ] TaskName", false},
+		"ValidGroupTaskString":                  {in: "  - [ ] TaskName", want: true},
+		"InvalidGroupTaskString_NoDash":         {in: "  [ ] TaskName", want: false},
+		"InvalidGroupTaskString_NoBracketStart": {in: "  -  ] TaskName", want: false},
+		"InvalidGroupTaskString_NoBracketEnd":   {in: "  - [  TaskName", want: false},
+		"SingleTaskString":                      {in: "- [ ] TaskName", want: false},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -391,16 +395,17 @@ func Test_isSingleTaskString(t *testing.T) {
 		in   string
 		want bool
 	}{
-		"SingleTask_Done":               {"- [ ] I am SingleTask!", true},
-		"SingleTask_Undone":             {"- [X] I am SingleTask!", true},
-		"GroupTask_Done":                {"  - [X] I am SingleTask!", false},
-		"GroupTask_Undone":              {"  - [X] I am SingleTask!", false},
-		"Invalid_Undone_NoBracketStart": {"- X] I am SingleTask!", false},
-		"Invalid_Undone_NoBracketEnd":   {"- [X I am SingleTask!", false},
+		"SingleTask_Done":               {in: "- [ ] I am SingleTask!", want: true},
+		"SingleTask_Undone":             {in: "- [X] I am SingleTask!", want: true},
+		"GroupTask_Done":                {in: "  - [X] I am SingleTask!", want: false},
+		"GroupTask_Undone":              {in: "  - [X] I am SingleTask!", want: false},
+		"Invalid_Undone_NoBracketStart": {in: "- X] I am SingleTask!", want: false},
+		"Invalid_Undone_NoBracketEnd":   {in: "- [X I am SingleTask!", want: false},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			if got := isSingleTaskString(tt.in); got != tt.want {
+			got := isSingleTaskString(tt.in)
+			if got != tt.want {
 				t.Errorf("IsSingleTaskString() = %v, want %v", got, tt.want)
 			}
 		})

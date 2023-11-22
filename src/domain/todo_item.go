@@ -1,6 +1,6 @@
 package domain
 
-type TodoItemContainer struct {
+type TodoItemContainer struct { // TODO: Rename struct
 	tasks         []*Task
 	groups        []*Group
 	doneTaskCount int
