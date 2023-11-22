@@ -46,6 +46,11 @@ func TestPrintTaskProgress(t *testing.T) {
 			"[                                        ]0%",
 			false,
 		},
+		"NonTask": {
+			[]*domain.Task{},
+			"[                                        ]0%",
+			false,
+		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {

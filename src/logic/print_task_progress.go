@@ -11,9 +11,6 @@ const progressSymbol = "#"
 const defaultProgressBarLength = 40.0
 
 func PrintTaskProgress(w io.Writer, tasks []*domain.Task) error {
-	if len(tasks) == 0 {
-		return nil
-	}
 	taskProgressString := getTaskProgressString(tasks, defaultProgressBarLength)
 	if _, err := fmt.Fprint(w, taskProgressString); err != nil {
 		return err
@@ -23,6 +20,10 @@ func PrintTaskProgress(w io.Writer, tasks []*domain.Task) error {
 
 func getTaskProgressString(tasks []*domain.Task, length float64) string {
 	taskNum := float64(len(tasks))
+	if taskNum == 0 {
+		progressBar := strings.Repeat(" ", int(length))
+		return fmt.Sprintf("[%s]%d%%", progressBar, 0)
+	}
 	doneTaskNum := 0.0
 	for _, task := range tasks {
 		if task.IsDone {
