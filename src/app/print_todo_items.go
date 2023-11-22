@@ -18,7 +18,7 @@ func PrintTodoItem(w io.Writer, fileName string, reader logic.FileReader) error 
 	if err := logic.PrintGroups(w, todoItemContainer.GetGroups()); err != nil {
 		return fmt.Errorf("printing groups: %w", err)
 	}
-	if err := logic.PrintProgress(w, todoItemContainer.GetTasks()); err != nil {
+	if err := logic.PrintProgress(w, todoItemContainer); err != nil {
 		return fmt.Errorf("printing progress: %w", err)
 	}
 	return nil

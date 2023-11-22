@@ -183,7 +183,11 @@ func TestPrintProgress(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			w := &bytes.Buffer{}
-			err := PrintProgress(w, tt.in)
+			c := domain.NewTodoItemContainer()
+			for _, task := range tt.in {
+				c.AddTask(task)
+			}
+			err := PrintProgress(w, c)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("PrintProgress() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -273,10 +277,10 @@ func Test_getMaxTaskNameLength(t *testing.T) {
 	}
 }
 
-func Test_getTaskProgressString(t *testing.T) {
+func Test_getProgressString(t *testing.T) {
 	type input struct {
-		tasks  []*domain.Task
-		length float64
+		progress float64
+		length   float64
 	}
 	tests := map[string]struct {
 		in   input
@@ -284,49 +288,28 @@ func Test_getTaskProgressString(t *testing.T) {
 	}{
 		"100%": {
 			input{
-				[]*domain.Task{
-					{"Task1", true},
-					{"Task2", true},
-				},
+				1,
 				40,
 			},
 			"[########################################]100%",
 		},
 		"50%": {
 			input{
-				[]*domain.Task{
-					{"Task1", true},
-					{"Task2", false},
-				},
+				0.5,
 				40,
 			},
 			"[####################                    ]50%",
 		},
 		"25%": {
 			input{
-				[]*domain.Task{
-					{"Task1", true},
-					{"Task2", false},
-					{"Task3", false},
-					{"Task4", false},
-				},
+				0.25,
 				40,
 			},
 			"[##########                              ]25%",
 		},
 		"0%": {
 			input{
-				[]*domain.Task{
-					{"Task1", false},
-					{"Task2", false},
-				},
-				40,
-			},
-			"[                                        ]0%",
-		},
-		"NonTask": {
-			input{
-				[]*domain.Task{},
+				0,
 				40,
 			},
 			"[                                        ]0%",
@@ -334,9 +317,45 @@ func Test_getTaskProgressString(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := getTaskProgressString(tt.in.tasks, tt.in.length)
+			got := getProgressString(tt.in.progress, tt.in.length)
 			if got != tt.want {
-				t.Errorf("getTaskProgressString() = %v, want %v", got, tt.want)
+				t.Errorf("getProgressString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_calculateTaskProgress(t *testing.T) {
+	tests := map[string]struct {
+		in   []*domain.Task
+		want float64
+	}{
+		"100%": {
+			[]*domain.Task{{"T1", true}, {"T2", true}},
+			1.0,
+		},
+		"50%": {
+			[]*domain.Task{{"T1", true}, {"T2", false}},
+			0.5,
+		},
+		"25%": {
+			[]*domain.Task{
+				{"T1", true}, {"T2", false},
+				{"T3", false}, {"T4", false},
+			},
+			0.25,
+		},
+
+		"0%": {
+			[]*domain.Task{{"T1", false}, {"T2", false}},
+			0.0,
+		},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			got := calculateTaskProgress(tt.in)
+			if got != tt.want {
+				t.Errorf("calculateTaskProgress() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -35,9 +35,10 @@ func PrintGroups(w io.Writer, groups []*domain.Group) error {
 	return nil
 }
 
-func PrintProgress(w io.Writer, tasks []*domain.Task) error {
-	taskProgressString := getTaskProgressString(tasks, defaultProgressBarLength)
-	if _, err := fmt.Fprint(w, taskProgressString); err != nil {
+func PrintProgress(w io.Writer, todoItems *domain.TodoItemContainer) error {
+	progress := calculateProgress(todoItems)
+	progressString := getProgressString(progress, defaultProgressBarLength)
+	if _, err := fmt.Fprint(w, progressString); err != nil {
 		return err
 	}
 	return nil
@@ -53,7 +54,8 @@ func getGroupString(group *domain.Group) string {
 		taskString := fmt.Sprintf("  %s\n", getTaskString(task, maxLength))
 		b.WriteString(taskString)
 	}
-	taskProgressString := fmt.Sprintf("  %s\n", getTaskProgressString(group.Tasks, 20))
+	progress := calculateGroupProgress(group)
+	taskProgressString := fmt.Sprintf("  %s\n", getProgressString(progress, 20))
 	b.WriteString(taskProgressString)
 	return b.String()
 }
@@ -78,11 +80,39 @@ func getMaxTaskNameLength(tasks []*domain.Task) int {
 	return maxLength
 }
 
-func getTaskProgressString(tasks []*domain.Task, length float64) string {
-	taskNum := float64(len(tasks))
-	if taskNum == 0 {
+func getProgressString(progress float64, length float64) string {
+	if progress == 0 {
 		progressBar := strings.Repeat(" ", int(length))
 		return fmt.Sprintf("[%s]%d%%", progressBar, 0)
+	}
+	barLength := int(progress * length)
+	doneStr := strings.Repeat(progressSymbol, barLength)
+	undoneStr := strings.Repeat(" ", int(length)-barLength)
+	return fmt.Sprintf("[%s%s]%d%%", doneStr, undoneStr, int(progress*100))
+}
+
+func calculateProgress(todoItems *domain.TodoItemContainer) float64 {
+	taskProgress := calculateTaskProgress(todoItems.GetTasks())
+	sumOfGroupProgress := 0.0
+	groups := todoItems.GetGroups()
+	if len(groups) == 0 {
+		return taskProgress
+	}
+
+	for _, group := range todoItems.GetGroups() {
+		progress := calculateGroupProgress(group)
+		sumOfGroupProgress += progress
+	}
+
+	// Calculate the average of the group progress
+	groupProgressAverage := sumOfGroupProgress / float64(len(todoItems.GetGroups()))
+	return (taskProgress + groupProgressAverage) / 2
+}
+
+func calculateTaskProgress(tasks []*domain.Task) float64 {
+	taskNum := float64(len(tasks))
+	if taskNum == 0 {
+		return 0
 	}
 	doneTaskNum := 0.0
 	for _, task := range tasks {
@@ -90,9 +120,9 @@ func getTaskProgressString(tasks []*domain.Task, length float64) string {
 			doneTaskNum++
 		}
 	}
-	doneTaskRatio := doneTaskNum / taskNum
-	doneTaskStrLength := int(doneTaskRatio * length)
-	doneTaskStr := strings.Repeat(progressSymbol, doneTaskStrLength)
-	undoneTaskStr := strings.Repeat(" ", int(length)-doneTaskStrLength)
-	return fmt.Sprintf("[%s%s]%d%%", doneTaskStr, undoneTaskStr, int(doneTaskRatio*100))
+	return doneTaskNum / taskNum
+}
+
+func calculateGroupProgress(group *domain.Group) float64 {
+	return calculateTaskProgress(group.Tasks)
 }
