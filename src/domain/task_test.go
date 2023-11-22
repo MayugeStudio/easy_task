@@ -14,9 +14,7 @@ func TestNewTask(t *testing.T) {
 		in   args
 		want *Task
 	}{
-		"Success": {
-			args{"TaskTitle", false},
-			&Task{"TaskTitle", false}},
+		"Success": {in: args{"TaskTitle", false}, want: &Task{"TaskTitle", false}},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
