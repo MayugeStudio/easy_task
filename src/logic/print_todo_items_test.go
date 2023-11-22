@@ -78,7 +78,8 @@ func TestPrintGroups(t *testing.T) {
 			"" +
 				"GroupTitle\n" +
 				"  [ ] Task1\n" +
-				"  [X] Task2\n",
+				"  [X] Task2\n" +
+				"  [##########          ]50%\n",
 			false,
 		},
 		"Success_3Group": {
@@ -106,12 +107,15 @@ func TestPrintGroups(t *testing.T) {
 				"GroupTitle1\n" +
 				"  [ ] Task1\n" +
 				"  [X] Task2\n" +
+				"  [##########          ]50%\n" +
 				"GroupTitle2\n" +
 				"  [ ] Task1\n" +
 				"  [ ] Task2\n" +
+				"  [                    ]0%\n" +
 				"GroupTitle3\n" +
 				"  [X] Task1\n" +
-				"  [X] Task2\n",
+				"  [X] Task2\n" +
+				"  [####################]100%\n",
 			false,
 		},
 	}

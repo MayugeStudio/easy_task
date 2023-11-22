@@ -30,7 +30,7 @@ func TestPrintTodoItem(t *testing.T) {
 		wantW   string
 		wantErr bool
 	}{
-		"Tasks": {
+		"4Tasks": {
 			input{
 				MockReader{
 					[]string{
@@ -46,6 +46,28 @@ func TestPrintTodoItem(t *testing.T) {
 				"[ ] Task2\n" +
 				"[X] Task3\n" +
 				"[X] Task4\n" +
+				"[####################                    ]50%",
+			false,
+		},
+		"2Tasks1Group": {
+			input{
+				MockReader{
+					[]string{
+						"- [ ] Task1",
+						"- [X] Task2",
+						"- GroupTitle",
+						"  - [ ] GroupTask1",
+						"  - [X] GroupTask2",
+					},
+				},
+			},
+			"" +
+				"[ ] Task1\n" +
+				"[X] Task2\n" +
+				"GroupTitle\n" +
+				"  [ ] GroupTask1\n" +
+				"  [X] GroupTask2\n" +
+				"  [##########          ]50%\n" +
 				"[####################                    ]50%",
 			false,
 		},

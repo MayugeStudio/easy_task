@@ -43,6 +43,8 @@ func getGroupString(group *domain.Group) string {
 		taskString := fmt.Sprintf("  %s\n", getTaskString(task, maxLength))
 		b.WriteString(taskString)
 	}
+	taskProgressString := fmt.Sprintf("  %s\n", getTaskProgressString(group.Tasks, 20))
+	b.WriteString(taskProgressString)
 	return b.String()
 }
 
