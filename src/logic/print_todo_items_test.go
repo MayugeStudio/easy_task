@@ -114,7 +114,7 @@ func Test_getTaskString(t *testing.T) {
 				},
 				10,
 			},
-			"[X] TaskTitle \n",
+			"[X] TaskTitle ",
 		},
 		"Success_Undone": {
 			input{
@@ -123,7 +123,7 @@ func Test_getTaskString(t *testing.T) {
 				},
 				10,
 			},
-			"[ ] TaskTitle \n",
+			"[ ] TaskTitle ",
 		},
 	}
 	for testName, tt := range tests {

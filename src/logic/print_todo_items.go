@@ -15,7 +15,7 @@ func PrintTasks(w io.Writer, tasks []*domain.Task) error {
 	maxLength := getMaxTaskNameLength(tasks)
 	for _, task := range tasks {
 		taskString := getTaskString(task, maxLength)
-		if _, err := fmt.Fprint(w, taskString); err != nil {
+		if _, err := fmt.Fprintf(w, "%s\n", taskString); err != nil {
 			return err
 		}
 	}
@@ -30,7 +30,7 @@ func getTaskString(task *domain.Task, maxLength int) string {
 	} else {
 		doneStr = UndoneSymbol
 	}
-	return fmt.Sprintf("[%s] %-*s\n", doneStr, maxLength, task.Title)
+	return fmt.Sprintf("[%s] %-*s", doneStr, maxLength, task.Title)
 }
 
 func getMaxTaskNameLength(tasks []*domain.Task) int {
