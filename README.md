@@ -9,21 +9,28 @@ For example, let's say you have a file named `example.md`
 - [ ] Create project tracker
 - [ ] Write Go code
 - [X] Build visualization
+- Learn React
+    - [X] Go to react example site.
+    - [ ] Create simple todo app.
 ```
 
 In command line, simply use:
 
 ```shell
-tct example.md
+etask example.md
 ```
 
 And voilà! It will display:
 
 ```text
 [ ] Create project tracker
-[ ] Write Go code
+[ ] Write Go code         
 [X] Build visualization
-[#############                           ]33%
+Learn React
+  [X] Go to react example site.
+  [ ] Create simple todo app.
+  [##########          ]50%
+[################                        ]40%
 ```
 
 **🚀 Stay tuned for the next update!**
