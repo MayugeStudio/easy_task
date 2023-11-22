@@ -1,29 +1,34 @@
 package domain
 
 type TodoItemContainer struct {
-	taskContainer  *TaskContainer
-	groupContainer *GroupContainer
+	tasks         []*Task
+	groups        []*Group
+	doneTaskCount int
 }
 
 func NewTodoItemContainer() *TodoItemContainer {
 	return &TodoItemContainer{
-		taskContainer:  NewTaskContainer(),
-		groupContainer: NewGroupContainer(),
+		tasks:         make([]*Task, 0),
+		groups:        make([]*Group, 0),
+		doneTaskCount: 0,
 	}
 }
 
 func (c *TodoItemContainer) AddTask(t *Task) {
-	c.taskContainer.AddTask(t)
+	c.tasks = append(c.tasks, t)
+	if t.IsDone {
+		c.doneTaskCount++
+	}
 }
 
 func (c *TodoItemContainer) AddGroup(g *Group) {
-	c.groupContainer.AddGroup(g)
+	c.groups = append(c.groups, g)
 }
 
 func (c *TodoItemContainer) GetTasks() []*Task {
-	return c.taskContainer.tasks
+	return c.tasks
 }
 
 func (c *TodoItemContainer) GetGroups() []*Group {
-	return c.groupContainer.groups
+	return c.groups
 }
