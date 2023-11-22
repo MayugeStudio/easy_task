@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestNewTodoItemContainer(t *testing.T) {
+func TestNewTodoList(t *testing.T) {
 	tests := map[string]struct {
 		want *TodoList
 	}{
@@ -27,7 +27,7 @@ func TestNewTodoItemContainer(t *testing.T) {
 	}
 }
 
-func TestTodoItemContainer_AddTask(t *testing.T) {
+func TestTodoList_AddTask(t *testing.T) {
 	type fields struct {
 		tasks         []*Task
 		groups        []*Group
@@ -64,7 +64,7 @@ func TestTodoItemContainer_AddTask(t *testing.T) {
 	}
 }
 
-func TestTodoItemContainer_AddGroup(t *testing.T) {
+func TestTodoList_AddGroup(t *testing.T) {
 	type fields struct {
 		tasks         []*Task
 		groups        []*Group
@@ -101,7 +101,7 @@ func TestTodoItemContainer_AddGroup(t *testing.T) {
 	}
 }
 
-func TestTodoItemContainer_GetTasks(t *testing.T) {
+func TestTodoList_GetTasks(t *testing.T) {
 	type fields struct {
 		tasks         []*Task
 		groups        []*Group
@@ -159,7 +159,7 @@ func TestTodoItemContainer_GetTasks(t *testing.T) {
 	}
 }
 
-func TestTodoItemContainer_GetGroups(t *testing.T) {
+func TestTodoList_GetGroups(t *testing.T) {
 	type fields struct {
 		tasks         []*Task
 		groups        []*Group
