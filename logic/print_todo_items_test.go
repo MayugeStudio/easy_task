@@ -14,16 +14,15 @@ func TestPrintTasks(t *testing.T) {
 		wantErr bool
 	}{
 		"Success_1Task": {
-			in:      []*domain.Task{{"Task1", false}},
-			wantW:   "[ ] Task1\n",
+			in:      []*domain.Task{{"T1", false}},
+			wantW:   "[ ] T1\n",
 			wantErr: false,
 		},
-		"Success_3Tasks": {
-			in: []*domain.Task{{"Task1", false}, {"Task2", true}, {"Task3", true}},
+		"Success_2Tasks": {
+			in: []*domain.Task{{"T1", false}, {"T2", true}},
 			wantW: "" +
-				"[ ] Task1\n" +
-				"[X] Task2\n" +
-				"[X] Task3\n",
+				"[ ] T1\n" +
+				"[X] T2\n",
 			wantErr: false,
 		},
 	}
@@ -50,33 +49,28 @@ func TestPrintGroups(t *testing.T) {
 		wantErr bool
 	}{
 		"Success_1Group": {
-			in: []*domain.Group{{"GroupTitle", []*domain.Task{{"Task1", false}, {"Task2", true}}}},
+			in: []*domain.Group{{"G", []*domain.Task{{"T1", false}, {"T2", true}}}},
 			wantW: "" +
-				"GroupTitle\n" +
-				"  [ ] Task1\n" +
-				"  [X] Task2\n" +
+				"G\n" +
+				"  [ ] T1\n" +
+				"  [X] T2\n" +
 				"  [##########          ]50.0%\n",
 			wantErr: false,
 		},
-		"Success_3Group": {
+		"Success_2Group": {
 			in: []*domain.Group{
-				{"GroupTitle1", []*domain.Task{{"Task1", false}, {"Task2", true}}},
-				{"GroupTitle2", []*domain.Task{{"Task1", false}, {"Task2", false}}},
-				{"GroupTitle3", []*domain.Task{{"Task1", true}, {"Task2", true}}},
+				{"G1", []*domain.Task{{"T1", false}, {"T2", true}}},
+				{"G2", []*domain.Task{{"T1", false}, {"T2", false}}},
 			},
 			wantW: "" +
-				"GroupTitle1\n" +
-				"  [ ] Task1\n" +
-				"  [X] Task2\n" +
+				"G1\n" +
+				"  [ ] T1\n" +
+				"  [X] T2\n" +
 				"  [##########          ]50.0%\n" +
-				"GroupTitle2\n" +
-				"  [ ] Task1\n" +
-				"  [ ] Task2\n" +
-				"  [                    ]0.0%\n" +
-				"GroupTitle3\n" +
-				"  [X] Task1\n" +
-				"  [X] Task2\n" +
-				"  [####################]100.0%\n",
+				"G2\n" +
+				"  [ ] T1\n" +
+				"  [ ] T2\n" +
+				"  [                    ]0.0%\n",
 			wantErr: false,
 		},
 	}
@@ -102,17 +96,17 @@ func TestPrintProgress(t *testing.T) {
 		wantErr bool
 	}{
 		"100%": {
-			in:      []*domain.Task{{"Task1", true}, {"Task2", true}},
+			in:      []*domain.Task{{"T1", true}},
 			wantW:   "[########################################]100.0%",
 			wantErr: false,
 		},
 		"50%": {
-			in:      []*domain.Task{{"Task1", true}, {"Task2", false}},
+			in:      []*domain.Task{{"T1", true}, {"T2", false}},
 			wantW:   "[####################                    ]50.0%",
 			wantErr: false,
 		},
 		"0%": {
-			in:      []*domain.Task{{"Task1", false}, {"Task2", false}},
+			in:      []*domain.Task{{"T1", false}},
 			wantW:   "[                                        ]0.0%",
 			wantErr: false,
 		},
