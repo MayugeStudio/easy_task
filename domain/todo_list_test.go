@@ -37,8 +37,7 @@ func TestTodoList_AddTask(t *testing.T) {
 	}{
 		"Success": {
 			fields: fields{make([]*Task, 0), make([]*Group, 0), make([]ProgressItem, 0), 0},
-			in:     &Task{"TaskTitle", false},
-			want:   []*Task{{"TaskTitle", false}},
+			in:     &Task{"T", false}, want: []*Task{{"T", false}},
 		},
 	}
 	for testName, tt := range tests {
@@ -66,8 +65,7 @@ func TestTodoList_AddGroup(t *testing.T) {
 	}{
 		"Success": {
 			fields: fields{make([]*Task, 0), make([]*Group, 0), 0},
-			in:     &Group{"GroupTitle", make([]*Task, 0)},
-			want:   []*Group{{"GroupTitle", make([]*Task, 0)}},
+			in:     &Group{"G", make([]*Task, 0)}, want: []*Group{{"G", make([]*Task, 0)}},
 		},
 	}
 	for testName, tt := range tests {
@@ -97,12 +95,12 @@ func TestTodoList_GetTasks(t *testing.T) {
 			want:   []*Task{},
 		},
 		"Success_OneTask": {
-			fields: fields{tasks: []*Task{{"Task1", false}}, groups: make([]*Group, 0), doneTaskCount: 0},
-			want:   []*Task{{"Task1", false}},
+			fields: fields{tasks: []*Task{{"T1", false}}, groups: make([]*Group, 0), doneTaskCount: 0},
+			want:   []*Task{{"T1", false}},
 		},
 		"Success_ThreeTasks": {
-			fields: fields{tasks: []*Task{{"Task1", false}, {"Task2", false}, {"Task3", true}}, groups: []*Group{}, doneTaskCount: 0},
-			want:   []*Task{{"Task1", false}, {"Task2", false}, {"Task3", true}},
+			fields: fields{tasks: []*Task{{Title: "T1", IsDone: false}, {Title: "T2", IsDone: false}, {Title: "T3", IsDone: true}}, groups: []*Group{}, doneTaskCount: 0},
+			want:   []*Task{{Title: "T1", IsDone: false}, {Title: "T2", IsDone: false}, {Title: "T3", IsDone: true}},
 		},
 	}
 	for testName, tt := range tests {
@@ -131,12 +129,12 @@ func TestTodoList_GetGroups(t *testing.T) {
 			want:   []*Group{},
 		},
 		"Success_OneGroup": {
-			fields: fields{make([]*Task, 0), []*Group{{"Group1", make([]*Task, 0)}}, 0},
-			want:   []*Group{{"Group1", make([]*Task, 0)}},
+			fields: fields{make([]*Task, 0), []*Group{{"G1", make([]*Task, 0)}}, 0},
+			want:   []*Group{{"G1", make([]*Task, 0)}},
 		},
 		"Success_ThreeGroups": {
-			fields: fields{make([]*Task, 0), []*Group{{"Group1", make([]*Task, 0)}, {"Group2", make([]*Task, 0)}, {"Group3", make([]*Task, 0)}}, 0},
-			want:   []*Group{{"Group1", make([]*Task, 0)}, {"Group2", make([]*Task, 0)}, {"Group3", make([]*Task, 0)}},
+			fields: fields{make([]*Task, 0), []*Group{{"G1", make([]*Task, 0)}, {"G2", make([]*Task, 0)}, {"G3", make([]*Task, 0)}}, 0},
+			want:   []*Group{{"G1", make([]*Task, 0)}, {"G2", make([]*Task, 0)}, {"G3", make([]*Task, 0)}},
 		},
 	}
 	for testName, tt := range tests {

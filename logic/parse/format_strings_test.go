@@ -207,7 +207,6 @@ func Test_formatTaskString(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		// Success cases
 		"Undone_Valid":                 {in: "- [ ] Buy the milk.", want: "- [ ] Buy the milk."},
 		"Undone_BadIndentStartBracket": {in: "-[] Buy the milk.", want: "- [ ] Buy the milk."},
 		"Undone_BadIndentEndBracket":   {in: "- []Buy the milk.", want: "- [ ] Buy the milk."},
@@ -217,11 +216,10 @@ func Test_formatTaskString(t *testing.T) {
 		"Done_NoSpaceInBracket_Lower":  {in: "- [x] Buy the milk.", want: "- [X] Buy the milk."},
 		"Done_BadIndentStartEnd_Lower": {in: "-[x]Buy the milk.", want: "- [X] Buy the milk."},
 		"Done_NoDash":                  {in: "[X] No Dash.", wantErr: true},
-		// Error cases
-		"Done_NoBracketStart": {in: "- X] No BracketStart.", wantErr: true},
-		"Done_NoBracketEnd":   {in: "- [X No BracketEnd.", wantErr: true},
-		"Done_NoDash_Lower":   {in: "[x] No Dash.", wantErr: true},
-		"Undone_NoDash":       {in: "[ ] Buy the milk.", wantErr: true},
+		"Done_NoBracketStart":          {in: "- X] No BracketStart.", wantErr: true},
+		"Done_NoBracketEnd":            {in: "- [X No BracketEnd.", wantErr: true},
+		"Done_NoDash_Lower":            {in: "[x] No Dash.", wantErr: true},
+		"Undone_NoDash":                {in: "[ ] Buy the milk.", wantErr: true},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -243,10 +241,8 @@ func Test_formatGroupTaskString(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		// Success cases
-		"Valid":     {in: "  - [ ] Buy the milk.", want: "  - [ ] Buy the milk."},
-		"OneIndent": {in: " - [ ] Buy the milk.", want: "  - [ ] Buy the milk."},
-		// Error cases
+		"Valid":         {in: "  - [ ] Buy the milk.", want: "  - [ ] Buy the milk."},
+		"OneIndent":     {in: " - [ ] Buy the milk.", want: "  - [ ] Buy the milk."},
 		"NoIndent":      {in: "- [ ] Buy the milk.", wantErr: true},
 		"InvalidFormat": {in: "  - Buy the milk.", wantErr: true},
 	}
@@ -271,10 +267,8 @@ func Test_formatGroupTitleString(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		// Success
-		"Valid":     {in: "- GroupTitle", want: "- GroupTitle"},
-		"BadIndent": {in: "-GroupTitle", want: "- GroupTitle"},
-		// Error cases
+		"Valid":       {in: "- GroupTitle", want: "- GroupTitle"},
+		"BadIndent":   {in: "-GroupTitle", want: "- GroupTitle"},
 		"InvalidLine": {in: "GroupTitle", wantErr: true},
 	}
 	for testName, tt := range tests {
@@ -297,12 +291,10 @@ func Test_getStatusString(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		// Success cases
 		"ValidTaskStringGoodFormat_Done":   {in: "- [ ] TaskName", want: " "},
 		"ValidTaskStringGoodFormat_Undone": {in: "- [X] TaskName", want: "X"},
 		"ValidTaskStringBadFormat_Done":    {in: "-[]TaskName", want: " "},
 		"ValidTaskStringBadFormat_Undone":  {in: "-[X]TaskName", want: "X"},
-		// Error cases
 		"InValidTaskString_NoDash":         {in: "[ ] TaskName", wantErr: true},
 		"InValidTaskString_NoBracketStart": {in: "- ] TaskName", wantErr: true},
 	}
@@ -326,11 +318,9 @@ func Test_getGroupTitle(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		// Success cases
 		"ValidGroupStringGoodFormat": {in: "- GroupTitle", want: "GroupTitle"},
 		"ValidGroupStringBadFormat":  {in: "-GroupTitle", want: "GroupTitle"},
-		// Error cases
-		"InvalidGroupString_NoDash": {in: "GroupTitle", wantErr: true},
+		"InvalidGroupString_NoDash":  {in: "GroupTitle", wantErr: true},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {

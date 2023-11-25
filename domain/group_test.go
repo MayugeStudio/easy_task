@@ -28,12 +28,11 @@ func TestGroup_AddTask(t *testing.T) {
 		in    *Task
 		want  []*Task
 	}{
-		"Success": {title: "GroupTitle", in: &Task{"TaskTitle", false}, want: []*Task{{"TaskTitle", false}}},
+		"Success": {title: "G", in: &Task{"T", false}, want: []*Task{{"T", false}}},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			g := &Group{Title: tt.title, Tasks: make([]*Task, 0)}
-
 			g.AddTask(tt.in)
 			got := g.Tasks
 			if !reflect.DeepEqual(got, tt.want) {
