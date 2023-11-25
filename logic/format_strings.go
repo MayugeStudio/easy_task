@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/MayugeStudio/easy_task/logic/utils"
+	"github.com/MayugeStudio/easy_task/utils"
 )
 
 var (
