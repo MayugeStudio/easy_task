@@ -11,3 +11,10 @@ func NewTask(title string, isDone bool) *Task {
 		IsDone: isDone,
 	}
 }
+
+func (t *Task) Progress() float64 {
+	if t.IsDone {
+		return 1
+	}
+	return 0
+}
