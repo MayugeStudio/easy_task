@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"easy_task/logic/line"
+	"easy_task/logic/utils"
 	"errors"
 	"fmt"
 	"strings"
@@ -70,7 +70,7 @@ func formatTaskString(s string) (string, error) {
 		return "", errNoDash
 	}
 
-	l := line.New(s)
+	l := utils.New(s)
 
 	l = l.TrimPrefix("-").TrimSpace()
 
@@ -99,7 +99,7 @@ func getStatusString(taskString string) (string, error) {
 		return "", errNoDash
 	}
 
-	l := line.New(taskString)
+	l := utils.New(taskString)
 
 	l = l.TrimPrefix("-").TrimSpace()
 
@@ -126,7 +126,7 @@ func isGroupTitle(s string) bool {
 	if !strings.HasPrefix(s, "-") {
 		return false
 	}
-	l := line.New(s)
+	l := utils.New(s)
 	l = l.TrimPrefix("-").TrimSpace()
 	return !l.HasPrefix("[")
 }
@@ -135,7 +135,7 @@ func isGroupTaskString(s string) bool {
 	if !strings.HasPrefix(s, " ") {
 		return false
 	}
-	l := line.New(strings.TrimSpace(s))
+	l := utils.New(strings.TrimSpace(s))
 
 	if !l.HasPrefix("-") {
 		return false
@@ -163,7 +163,7 @@ func isSingleTaskString(s string) bool {
 		return false
 	}
 
-	l := line.New(s)
+	l := utils.New(s)
 	l = l.TrimPrefix("-").TrimSpace()
 
 	if !l.HasPrefix("[") {
