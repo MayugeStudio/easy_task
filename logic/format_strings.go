@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"easy_task/src/logic/line"
+	"easy_task/logic/line"
 	"errors"
 	"fmt"
 	"strings"

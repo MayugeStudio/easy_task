@@ -1,22 +1,22 @@
 package logic
 
 import (
-	"easy_task/src/domain"
+	domain2 "easy_task/domain"
 	"fmt"
 	"reflect"
 	"strings"
 	"testing"
 )
 
-func ConvertTaskPtrSliceToTaskValueSlice(S []*domain.Task) []domain.Task {
-	result := make([]domain.Task, 0)
+func ConvertTaskPtrSliceToTaskValueSlice(S []*domain2.Task) []domain2.Task {
+	result := make([]domain2.Task, 0)
 	for _, p := range S {
 		result = append(result, *p)
 	}
 	return result
 }
 
-func ConvertGroupPtrSliceToGroupValueSlice(S []*domain.Group) string {
+func ConvertGroupPtrSliceToGroupValueSlice(S []*domain2.Group) string {
 	var b strings.Builder
 	for _, p := range S {
 		b.WriteRune('[')
@@ -32,27 +32,27 @@ func ConvertGroupPtrSliceToGroupValueSlice(S []*domain.Group) string {
 func TestParseStringsToTasks_OnlyTask(t *testing.T) {
 	tests := map[string]struct {
 		in   []string
-		want []*domain.Task
+		want []*domain2.Task
 	}{
 		"DoneTasks": {
 			in:   []string{"- [X]Task1", "- [X]Task2"},
-			want: []*domain.Task{{"Task1", true}, {"Task2", true}},
+			want: []*domain2.Task{{"Task1", true}, {"Task2", true}},
 		},
 		"DoneTasks_Lowercase": {
 			in:   []string{"- [x] Task1", "- [x] Task2"},
-			want: []*domain.Task{{"Task1", true}, {"Task2", true}},
+			want: []*domain2.Task{{"Task1", true}, {"Task2", true}},
 		},
 		"UndoneTasks": {
 			in:   []string{"- [ ] Task1", "- [ ] Task2"},
-			want: []*domain.Task{{"Task1", false}, {"Task2", false}},
+			want: []*domain2.Task{{"Task1", false}, {"Task2", false}},
 		},
 		"MixPattern": {
 			in:   []string{"- [ ] Task1", "- [X] Task2"},
-			want: []*domain.Task{{"Task1", false}, {"Task2", true}},
+			want: []*domain2.Task{{"Task1", false}, {"Task2", true}},
 		},
 		"ContainInvalidTaskString": {
 			in:   []string{"- [ ] Task1", "InvalidTaskString", "- [X] Task2"},
-			want: []*domain.Task{{"Task1", false}, {"Task2", true}},
+			want: []*domain2.Task{{"Task1", false}, {"Task2", true}},
 		},
 	}
 	for testName, tt := range tests {
@@ -70,48 +70,48 @@ func TestParseStringsToTasks_OnlyTask(t *testing.T) {
 func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 	tests := map[string]struct {
 		in   []string
-		want []*domain.Group
+		want []*domain2.Group
 	}{
 		"DoneTasks": {
 			in: []string{"- TaskGroup", "  - [X]Task1", "  - [X]Task2"},
-			want: []*domain.Group{{
+			want: []*domain2.Group{{
 				Title: "TaskGroup",
-				Tasks: []*domain.Task{{"Task1", true}, {"Task2", true}},
+				Tasks: []*domain2.Task{{"Task1", true}, {"Task2", true}},
 			}},
 		},
 		"DoneTasks_Lowercase": {
 			in: []string{"- TaskGroup", "  - [x]Task1", "  - [x]Task2"},
-			want: []*domain.Group{{
+			want: []*domain2.Group{{
 				Title: "TaskGroup",
-				Tasks: []*domain.Task{{"Task1", true}, {"Task2", true}},
+				Tasks: []*domain2.Task{{"Task1", true}, {"Task2", true}},
 			}},
 		},
 		"UndoneTasks": {
 			in: []string{"- TaskGroup", "  - [ ]Task1", "  - [ ]Task2"},
-			want: []*domain.Group{{
+			want: []*domain2.Group{{
 				Title: "TaskGroup",
-				Tasks: []*domain.Task{{"Task1", false}, {"Task2", false}}},
+				Tasks: []*domain2.Task{{"Task1", false}, {"Task2", false}}},
 			},
 		},
 		"MixPattern": {
 			in: []string{"- TaskGroup", "  - [ ]Task1", "  - [X]Task2"},
-			want: []*domain.Group{{
+			want: []*domain2.Group{{
 				Title: "TaskGroup",
-				Tasks: []*domain.Task{{"Task1", false}, {"Task2", true}}},
+				Tasks: []*domain2.Task{{"Task1", false}, {"Task2", true}}},
 			},
 		},
 		"ContainInvalidTaskString": {
 			in: []string{"- TaskGroup", "  - [ ]Task1", "  InvalidTaskString", "  - [X]Task2"},
-			want: []*domain.Group{{
+			want: []*domain2.Group{{
 				Title: "TaskGroup",
-				Tasks: []*domain.Task{{"Task1", false}, {"Task2", true}}},
+				Tasks: []*domain2.Task{{"Task1", false}, {"Task2", true}}},
 			},
 		},
 		"ContainInvalidTaskString_BadIndent": {
 			in: []string{"- TaskGroup", "  - [ ]Task1", "InvalidTaskString", "  - [X]Task2"},
-			want: []*domain.Group{{
+			want: []*domain2.Group{{
 				Title: "TaskGroup",
-				Tasks: []*domain.Task{{"Task1", false}}},
+				Tasks: []*domain2.Task{{"Task1", false}}},
 			},
 		},
 	}
@@ -130,7 +130,7 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 func TestParseStringsToTasks_MultiGroupTask(t *testing.T) {
 	tests := map[string]struct {
 		in   []string
-		want []*domain.Group
+		want []*domain2.Group
 	}{
 		"MixPattern": {
 			in: []string{
@@ -141,9 +141,9 @@ func TestParseStringsToTasks_MultiGroupTask(t *testing.T) {
 				"  - [ ]Task1",
 				"  - [X]Task2",
 			},
-			want: []*domain.Group{
-				{Title: "TaskGroup1", Tasks: []*domain.Task{{"Task1", false}, {"Task2", true}}},
-				{Title: "TaskGroup2", Tasks: []*domain.Task{{"Task1", false}, {"Task2", true}}},
+			want: []*domain2.Group{
+				{Title: "TaskGroup1", Tasks: []*domain2.Task{{"Task1", false}, {"Task2", true}}},
+				{Title: "TaskGroup2", Tasks: []*domain2.Task{{"Task1", false}, {"Task2", true}}},
 			},
 		},
 		"ContainInvalidTaskString": {
@@ -157,9 +157,9 @@ func TestParseStringsToTasks_MultiGroupTask(t *testing.T) {
 				"  InvalidTaskString",
 				"  - [X]Task2",
 			},
-			[]*domain.Group{
-				{"TaskGroup1", []*domain.Task{{"Task1", false}, {"Task2", true}}},
-				{"TaskGroup2", []*domain.Task{{"Task1", false}, {"Task2", true}}},
+			[]*domain2.Group{
+				{"TaskGroup1", []*domain2.Task{{"Task1", false}, {"Task2", true}}},
+				{"TaskGroup2", []*domain2.Task{{"Task1", false}, {"Task2", true}}},
 			},
 		},
 		"ContainInvalidTaskString_BadIndent": {
@@ -173,9 +173,9 @@ func TestParseStringsToTasks_MultiGroupTask(t *testing.T) {
 				"InvalidTaskString",
 				"  - [X]Task2",
 			},
-			[]*domain.Group{
-				{"TaskGroup1", []*domain.Task{{"Task1", false}}},
-				{"TaskGroup2", []*domain.Task{{"Task1", false}}},
+			[]*domain2.Group{
+				{"TaskGroup1", []*domain2.Task{{"Task1", false}}},
+				{"TaskGroup2", []*domain2.Task{{"Task1", false}}},
 			},
 		},
 	}
@@ -194,14 +194,14 @@ func TestParseStringsToTasks_MultiGroupTask(t *testing.T) {
 func Test_parseSingleTaskString(t *testing.T) {
 	tests := map[string]struct {
 		in   string
-		want *domain.Task
+		want *domain2.Task
 	}{"ValidSingleTaskString_Done": {
 		in:   "- [X] TaskName",
-		want: &domain.Task{Title: "TaskName", IsDone: true},
+		want: &domain2.Task{Title: "TaskName", IsDone: true},
 	},
 		"ValidSingleTaskString_Undone": {
 			in:   "- [ ] TaskName",
-			want: &domain.Task{Title: "TaskName", IsDone: false},
+			want: &domain2.Task{Title: "TaskName", IsDone: false},
 		},
 	}
 	for testName, tt := range tests {
@@ -217,9 +217,9 @@ func Test_parseSingleTaskString(t *testing.T) {
 func Test_parseGroupTaskTitle(t *testing.T) {
 	tests := map[string]struct {
 		in   string
-		want *domain.Group
+		want *domain2.Group
 	}{
-		"ValidGroupTitle": {in: "- GroupName", want: &domain.Group{Title: "GroupName", Tasks: make([]*domain.Task, 0)}},
+		"ValidGroupTitle": {in: "- GroupName", want: &domain2.Group{Title: "GroupName", Tasks: make([]*domain2.Task, 0)}},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"easy_task/src/app"
-	"easy_task/src/logic"
+	"easy_task/app"
+	"easy_task/logic"
 	"fmt"
 	"os"
 )
