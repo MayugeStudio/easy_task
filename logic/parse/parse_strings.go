@@ -12,20 +12,20 @@ func StringsToTasks(taskStrings []string) *domain.TodoList {
 	var group *domain.Group
 	for _, str := range taskStrings {
 		if isSingleTaskString(str) {
-			task := parseTaskString(str)
+			task := toTask(str)
 			todoItemContainer.AddTask(task)
 			continue
 		}
 
 		if isGroupTitle(str) {
-			group = parseGroupTaskTitle(str)
+			group = toGroup(str)
 			todoItemContainer.AddGroup(group)
 			continue
 		}
 
 		if isGroupTaskString(str) {
 			str = strings.TrimSpace(str)
-			task := parseTaskString(str)
+			task := toTask(str)
 			if group != nil {
 				group.AddTask(task)
 			}
@@ -35,7 +35,7 @@ func StringsToTasks(taskStrings []string) *domain.TodoList {
 	return todoItemContainer
 }
 
-func parseTaskString(str string) *domain.Task {
+func toTask(str string) *domain.Task {
 	title := ""
 	isDone := false
 	str = strings.TrimPrefix(str, "-")
@@ -55,7 +55,7 @@ func parseTaskString(str string) *domain.Task {
 	return task
 }
 
-func parseGroupTaskTitle(str string) *domain.Group {
+func toGroup(str string) *domain.Group {
 	str = strings.TrimPrefix(str, "-")
 	str = strings.TrimSpace(str)
 	g := domain.NewGroup(str)
