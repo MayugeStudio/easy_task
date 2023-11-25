@@ -36,8 +36,8 @@ func PrintGroups(w io.Writer, groups []*domain.Group) error {
 	return nil
 }
 
-func PrintProgress(w io.Writer, todoItems *domain.TodoList) error {
-	progress := calculateProgress(todoItems)
+func PrintProgress(w io.Writer, todoList *domain.TodoList) error {
+	progress := todoList.Progress()
 	progressString := getProgressString(progress, defaultProgressBarLength)
 	if _, err := fmt.Fprint(w, progressString); err != nil {
 		return err
@@ -65,7 +65,7 @@ func getGroupString(group *domain.Group) string {
 		taskString := fmt.Sprintf("  %s\n", getTaskString(task, maxLength))
 		b.WriteString(taskString)
 	}
-	progress := calculateTaskProgress(group.Tasks)
+	progress := group.Progress()
 	taskProgressString := fmt.Sprintf("  %s\n", getProgressString(progress, 20))
 	b.WriteString(taskProgressString)
 	return b.String()
@@ -86,49 +86,4 @@ func getMaxTaskNameLength(tasks []*domain.Task) int {
 		}
 	}
 	return maxLength
-}
-
-func calculateProgress(items *domain.TodoList) float64 {
-	tasks := items.GetTasks()
-	groups := items.GetGroups()
-
-	if len(tasks) == 0 && len(groups) == 0 {
-		return 0
-	}
-
-	tasks = append(tasks, flattenGroupTasks(groups)...)
-	doneTaskNum := calculateDoneTaskNum(tasks)
-	sumOfTasks := len(tasks)
-
-	return float64(doneTaskNum) / float64(sumOfTasks)
-}
-
-func calculateTaskProgress(tasks []*domain.Task) float64 {
-	if len(tasks) == 0 {
-		return 0
-	}
-	doneTaskNum := calculateDoneTaskNum(tasks)
-	return float64(doneTaskNum) / float64(len(tasks))
-}
-
-func calculateDoneTaskNum(tasks []*domain.Task) int {
-	if len(tasks) == 0 {
-		return 0
-	}
-	doneTaskNum := 0
-	for _, task := range tasks {
-		if task.IsDone {
-			doneTaskNum++
-		}
-	}
-	return doneTaskNum
-}
-
-func flattenGroupTasks(groups []*domain.Group) []*domain.Task {
-	result := make([]*domain.Task, 0)
-	for _, group := range groups {
-		tasks := group.Tasks
-		result = append(result, tasks...)
-	}
-	return result
 }

@@ -87,7 +87,7 @@ func TestPrintTodoItem(t *testing.T) {
 				"  [ ] GroupTask1\n" +
 				"  [ ] GroupTask2\n" +
 				"  [                    ]0%\n" +
-				"[######################                  ]55%",
+				"[######################                  ]57%",
 			wantErr: false,
 		},
 	}
