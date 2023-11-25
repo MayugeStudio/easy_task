@@ -30,7 +30,7 @@ func ConvertGroupPtrSliceToGroupValueSlice(S []*domain.Group) string {
 	return b.String()
 }
 
-func TestParseStringsToTasks_OnlyTask(t *testing.T) {
+func TestStringsToTasks_OnlyTask(t *testing.T) {
 	tests := map[string]struct {
 		in   []string
 		want []*domain.Task
@@ -68,7 +68,7 @@ func TestParseStringsToTasks_OnlyTask(t *testing.T) {
 	}
 }
 
-func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
+func TestStringsToTasks_OnlyGroupTask(t *testing.T) {
 	tests := map[string]struct {
 		in   []string
 		want []*domain.Group
@@ -128,7 +128,7 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 	}
 }
 
-func TestParseStringsToTasks_MultiGroupTask(t *testing.T) {
+func TestStringsToTasks_MultiGroupTask(t *testing.T) {
 	tests := map[string]struct {
 		in   []string
 		want []*domain.Group
@@ -192,7 +192,7 @@ func TestParseStringsToTasks_MultiGroupTask(t *testing.T) {
 	}
 }
 
-func Test_parseSingleTaskString(t *testing.T) {
+func Test_toTask(t *testing.T) {
 	tests := map[string]struct {
 		in   string
 		want *domain.Task
@@ -215,7 +215,7 @@ func Test_parseSingleTaskString(t *testing.T) {
 	}
 }
 
-func Test_parseGroupTaskTitle(t *testing.T) {
+func Test_toGroup(t *testing.T) {
 	tests := map[string]struct {
 		in   string
 		want *domain.Group
