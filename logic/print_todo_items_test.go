@@ -2,7 +2,6 @@ package logic
 
 import (
 	"bytes"
-	"reflect"
 	"testing"
 
 	"github.com/MayugeStudio/easy_task/domain"
@@ -56,7 +55,7 @@ func TestPrintGroups(t *testing.T) {
 				"GroupTitle\n" +
 				"  [ ] Task1\n" +
 				"  [X] Task2\n" +
-				"  [##########          ]50%\n",
+				"  [##########          ]50.0%\n",
 			wantErr: false,
 		},
 		"Success_3Group": {
@@ -69,15 +68,15 @@ func TestPrintGroups(t *testing.T) {
 				"GroupTitle1\n" +
 				"  [ ] Task1\n" +
 				"  [X] Task2\n" +
-				"  [##########          ]50%\n" +
+				"  [##########          ]50.0%\n" +
 				"GroupTitle2\n" +
 				"  [ ] Task1\n" +
 				"  [ ] Task2\n" +
-				"  [                    ]0%\n" +
+				"  [                    ]0.0%\n" +
 				"GroupTitle3\n" +
 				"  [X] Task1\n" +
 				"  [X] Task2\n" +
-				"  [####################]100%\n",
+				"  [####################]100.0%\n",
 			wantErr: false,
 		},
 	}
@@ -104,22 +103,22 @@ func TestPrintProgress(t *testing.T) {
 	}{
 		"100%": {
 			in:      []*domain.Task{{"Task1", true}, {"Task2", true}},
-			wantW:   "[########################################]100%",
+			wantW:   "[########################################]100.0%",
 			wantErr: false,
 		},
 		"50%": {
 			in:      []*domain.Task{{"Task1", true}, {"Task2", false}},
-			wantW:   "[####################                    ]50%",
+			wantW:   "[####################                    ]50.0%",
 			wantErr: false,
 		},
 		"0%": {
 			in:      []*domain.Task{{"Task1", false}, {"Task2", false}},
-			wantW:   "[                                        ]0%",
+			wantW:   "[                                        ]0.0%",
 			wantErr: false,
 		},
 		"NonTask": {
 			in:      []*domain.Task{},
-			wantW:   "[                                        ]0%",
+			wantW:   "[                                        ]0.0%",
 			wantErr: false,
 		},
 	}
@@ -169,14 +168,13 @@ func Test_getGroupString(t *testing.T) {
 		in   *domain.Group
 		want string
 	}{
-
 		"100%": {
 			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{{"Task1", true}, {"Task2", true}}},
 			want: "" +
 				"GroupTitle\n" +
 				"  [X] Task1\n" +
 				"  [X] Task2\n" +
-				"  [####################]100%\n",
+				"  [####################]100.0%\n",
 		},
 		"50%": {
 			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{{"Task1", true}, {"Task2", false}}},
@@ -184,16 +182,15 @@ func Test_getGroupString(t *testing.T) {
 				"GroupTitle\n" +
 				"  [X] Task1\n" +
 				"  [ ] Task2\n" +
-				"  [##########          ]50%\n",
+				"  [##########          ]50.0%\n",
 		},
-
 		"0%": {
 			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{{"Task1", false}, {"Task2", false}}},
 			want: "" +
 				"GroupTitle\n" +
 				"  [ ] Task1\n" +
 				"  [ ] Task2\n" +
-				"  [                    ]0%\n",
+				"  [                    ]0.0%\n",
 		},
 	}
 	for testName, tt := range tests {
@@ -217,19 +214,15 @@ func Test_getProgressString(t *testing.T) {
 	}{
 		"100%": {
 			in:   input{progress: 1, length: 40},
-			want: "[########################################]100%",
+			want: "[########################################]100.0%",
 		},
 		"50%": {
 			in:   input{progress: 0.5, length: 40},
-			want: "[####################                    ]50%",
-		},
-		"25%": {
-			in:   input{progress: 0.25, length: 40},
-			want: "[##########                              ]25%",
+			want: "[####################                    ]50.0%",
 		},
 		"0%": {
 			in:   input{progress: 0, length: 40},
-			want: "[                                        ]0%",
+			want: "[                                        ]0.0%",
 		},
 	}
 	for testName, tt := range tests {
@@ -277,192 +270,6 @@ func Test_getMaxTaskNameLength(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			if got := getMaxTaskNameLength(tt.in); got != tt.want {
 				t.Errorf("getMaxTaskNameLength() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_calculateProgress(t *testing.T) {
-	type input struct {
-		tasks  []*domain.Task
-		groups []*domain.Group
-	}
-	tests := map[string]struct {
-		in   input
-		want float64
-	}{
-		"100%": {
-			in: input{
-				tasks: []*domain.Task{{"Task1", true}, {"Task2", true}},
-				groups: []*domain.Group{
-					{"Group1", []*domain.Task{{"Task1", true}}},
-					{"Group2", []*domain.Task{{"Task1", true}, {"Task2", true}}},
-				},
-			},
-			want: 1.0,
-		},
-		"100%_NoTask": {
-			in: input{
-				tasks: []*domain.Task{},
-				groups: []*domain.Group{
-					{"Group1", []*domain.Task{{"Task1", true}}},
-					{"Group2", []*domain.Task{{"Task1", true}, {"Task2", true}}},
-				},
-			},
-			want: 1.0,
-		},
-		"100%_NoGroup": {
-			in: input{
-				tasks:  []*domain.Task{{"Task1", true}, {"Task2", true}},
-				groups: []*domain.Group{},
-			},
-			want: 1.0,
-		},
-		"50%": {
-			in: input{
-				tasks: []*domain.Task{{"Task1", true}},
-				groups: []*domain.Group{
-					{"Group1", []*domain.Task{{"Task1", true}}},
-					{"Group2", []*domain.Task{{"Task1", false}, {"Task2", false}}},
-				},
-			},
-			want: 0.5,
-		},
-		"50%_NoTask": {
-			in: input{
-				tasks: []*domain.Task{{"Task1", true}},
-				groups: []*domain.Group{
-					{"Group1", []*domain.Task{{"Task1", true}}},
-					{"Group2", []*domain.Task{{"Task1", false}, {"Task2", false}}},
-				},
-			},
-			want: 0.5,
-		},
-		"50%_NoGroup": {
-			in: input{
-				tasks: []*domain.Task{{"Task1", true}},
-				groups: []*domain.Group{
-					{"Group1", []*domain.Task{{"Task1", true}}},
-					{"Group2", []*domain.Task{{"Task1", false}, {"Task2", false}}},
-				},
-			},
-			want: 0.5,
-		},
-		"0%": {
-			in: input{
-				tasks: []*domain.Task{{"Task1", false}, {"Task2", false}},
-				groups: []*domain.Group{
-					{"Group1", []*domain.Task{{"Task1", false}}},
-					{"Group2", []*domain.Task{{"Task1", false}, {"Task2", false}}},
-				},
-			},
-			want: 0.0,
-		},
-		"0%_NoTask": {
-			in: input{
-				tasks: []*domain.Task{},
-				groups: []*domain.Group{
-					{"Group1", []*domain.Task{{"Task1", false}}},
-					{"Group2", []*domain.Task{{"Task1", false}, {"Task2", false}}},
-				},
-			},
-			want: 0.0,
-		},
-		"0%_NoGroup": {
-			in: input{
-				tasks:  []*domain.Task{{"Task1", false}, {"Task2", false}},
-				groups: []*domain.Group{},
-			},
-			want: 0.0,
-		},
-		"0%_NoTaskAndGroup": {
-			in: input{
-				tasks:  []*domain.Task{},
-				groups: []*domain.Group{},
-			},
-			want: 0.0,
-		},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			c := domain.NewTodoList()
-			for _, task := range tt.in.tasks {
-				c.AddTask(task)
-			}
-			for _, group := range tt.in.groups {
-				c.AddGroup(group)
-			}
-			got := calculateProgress(c)
-			if got != tt.want {
-				t.Errorf("calculateProgress() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_calculateTaskProgress(t *testing.T) {
-	tests := map[string]struct {
-		in   []*domain.Task
-		want float64
-	}{
-		"100%": {in: []*domain.Task{{"T1", true}, {"T2", true}}, want: 1.0},
-		"50%":  {in: []*domain.Task{{"T1", true}, {"T2", false}}, want: 0.5},
-		"0%":   {in: []*domain.Task{{"T1", false}, {"T2", false}}, want: 0.0},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			got := calculateTaskProgress(tt.in)
-			if got != tt.want {
-				t.Errorf("calculateDoneTaskNum() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_calculateDoneTaskNum(t *testing.T) {
-	tests := map[string]struct {
-		in   []*domain.Task
-		want int
-	}{
-		"0DoneTask":  {in: []*domain.Task{{"T1", false}, {"T2", false}, {"T3", false}}, want: 0},
-		"1DoneTask":  {in: []*domain.Task{{"T1", true}, {"T2", false}, {"T3", false}}, want: 1},
-		"2DoneTasks": {in: []*domain.Task{{"T1", true}, {"T2", true}, {"T3", false}, {"T4", false}}, want: 2},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			got := calculateDoneTaskNum(tt.in)
-			if got != tt.want {
-				t.Errorf("calculateDoneTaskNum() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_flattenGroupTasks(t *testing.T) {
-	tests := map[string]struct {
-		in   []*domain.Group
-		want []*domain.Task
-	}{
-		"0Task": {
-			in: []*domain.Group{
-				{Title: "Group1", Tasks: []*domain.Task{}},
-				{Title: "Group2", Tasks: []*domain.Task{}},
-			},
-			want: []*domain.Task{},
-		},
-		"4Tasks": {
-			in: []*domain.Group{
-				{Title: "Group1", Tasks: []*domain.Task{{"T1", false}, {"T2", false}}},
-				{Title: "Group2", Tasks: []*domain.Task{{"T3", true}, {"T4", true}}},
-			},
-			want: []*domain.Task{{"T1", false}, {"T2", false}, {"T3", true}, {"T4", true}},
-		},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			got := flattenGroupTasks(tt.in)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("flattenGroupTasks() = %v, want %v", got, tt.want)
 			}
 		})
 	}

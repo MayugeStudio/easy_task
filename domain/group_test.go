@@ -42,3 +42,27 @@ func TestGroup_AddTask(t *testing.T) {
 		})
 	}
 }
+
+func TestGroup_Progress(t *testing.T) {
+	tests := map[string]struct {
+		isDone []bool
+		want   float64
+	}{
+		"100%":   {isDone: []bool{true, true}, want: 1},
+		"50%":    {isDone: []bool{true, false}, want: 0.5},
+		"0%":     {isDone: []bool{false, false}, want: 0},
+		"NoTask": {isDone: []bool{}, want: 0},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			g := &Group{}
+			for _, isDone := range tt.isDone {
+				g.Tasks = append(g.Tasks, &Task{IsDone: isDone})
+			}
+			got := g.Progress()
+			if got != tt.want {
+				t.Errorf("Progress() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
