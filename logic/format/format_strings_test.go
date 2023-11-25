@@ -1,4 +1,4 @@
-package parse
+package format
 
 import (
 	"fmt"
@@ -54,7 +54,7 @@ func TestFormatTaskStrings_OnlySingleTasks(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, _ := formatTaskStrings(tt.in)
+			got, _ := TaskStrings(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
 			}
@@ -139,7 +139,7 @@ func TestFormatTaskStrings_OnlyGroupTasks(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, _ := formatTaskStrings(tt.in)
+			got, _ := TaskStrings(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
 			}
@@ -193,7 +193,7 @@ func TestFormatTaskStrings_MultiGroup(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, _ := formatTaskStrings(tt.in)
+			got, _ := TaskStrings(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
 			}

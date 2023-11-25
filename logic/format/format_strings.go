@@ -1,10 +1,11 @@
-package parse
+package format
 
 import (
 	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/MayugeStudio/easy_task/logic/internal/share"
 	"github.com/MayugeStudio/easy_task/utils"
 )
 
@@ -16,19 +17,19 @@ var (
 	errInvalidIndent  = fmt.Errorf("%w: no valid indent", errSyntax)
 )
 
-func formatTaskStrings(taskStrings []string) ([]string, []error) {
+func TaskStrings(taskStrings []string) ([]string, []error) {
 	result := make([]string, 0)
 	errs := make([]error, 0)
 	inGroup := false
 	for _, str := range taskStrings {
 		var formattedString string
 		var err error
-		if isGroupTitle(str) {
+		if share.IsGroupTitle(str) {
 			formattedString, err = formatGroupTitleString(str)
 			inGroup = true
-		} else if inGroup && isGroupTaskString(str) {
+		} else if inGroup && share.IsGroupTaskString(str) {
 			formattedString, err = formatGroupTaskString(str)
-		} else if isSingleTaskString(str) {
+		} else if share.IsSingleTaskString(str) {
 			formattedString, err = formatTaskString(str)
 			inGroup = false
 		} else {
