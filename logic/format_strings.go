@@ -1,10 +1,11 @@
 package logic
 
 import (
-	"easy_task/logic/utils"
 	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/MayugeStudio/easy_task/logic/utils"
 )
 
 var (

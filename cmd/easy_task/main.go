@@ -1,10 +1,11 @@
 package main
 
 import (
-	"easy_task/app"
-	"easy_task/logic"
 	"fmt"
 	"os"
+
+	"github.com/MayugeStudio/easy_task/app"
+	"github.com/MayugeStudio/easy_task/logic"
 )
 
 var out = os.Stdout

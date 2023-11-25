@@ -1,10 +1,11 @@
 package logic
 
 import (
-	domain2 "easy_task/domain"
 	"fmt"
 	"io"
 	"strings"
+
+	"github.com/MayugeStudio/easy_task/domain"
 )
 
 const (
@@ -14,7 +15,7 @@ const (
 	defaultProgressBarLength = 40.0
 )
 
-func PrintTasks(w io.Writer, tasks []*domain2.Task) error {
+func PrintTasks(w io.Writer, tasks []*domain.Task) error {
 	maxLength := getMaxTaskNameLength(tasks)
 	for _, task := range tasks {
 		taskString := getTaskString(task, maxLength)
@@ -25,7 +26,7 @@ func PrintTasks(w io.Writer, tasks []*domain2.Task) error {
 	return nil
 }
 
-func PrintGroups(w io.Writer, groups []*domain2.Group) error {
+func PrintGroups(w io.Writer, groups []*domain.Group) error {
 	for _, group := range groups {
 		groupString := getGroupString(group)
 		if _, err := fmt.Fprint(w, groupString); err != nil {
@@ -35,7 +36,7 @@ func PrintGroups(w io.Writer, groups []*domain2.Group) error {
 	return nil
 }
 
-func PrintProgress(w io.Writer, todoItems *domain2.TodoList) error {
+func PrintProgress(w io.Writer, todoItems *domain.TodoList) error {
 	progress := calculateProgress(todoItems)
 	progressString := getProgressString(progress, defaultProgressBarLength)
 	if _, err := fmt.Fprint(w, progressString); err != nil {
@@ -44,7 +45,7 @@ func PrintProgress(w io.Writer, todoItems *domain2.TodoList) error {
 	return nil
 }
 
-func getTaskString(task *domain2.Task, maxLength int) string {
+func getTaskString(task *domain.Task, maxLength int) string {
 	var doneStr string
 	if task.IsDone {
 		doneStr = doneSymbol
@@ -54,7 +55,7 @@ func getTaskString(task *domain2.Task, maxLength int) string {
 	return fmt.Sprintf("[%s] %-*s", doneStr, maxLength, task.Title)
 }
 
-func getGroupString(group *domain2.Group) string {
+func getGroupString(group *domain.Group) string {
 	var b strings.Builder
 	maxLength := getMaxTaskNameLength(group.Tasks)
 	titleString := fmt.Sprintf("%s\n", group.Title)
@@ -77,7 +78,7 @@ func getProgressString(progress, length float64) string {
 	return fmt.Sprintf("[%s%s]%d%%", doneStr, undoneStr, int(progress*100))
 }
 
-func getMaxTaskNameLength(tasks []*domain2.Task) int {
+func getMaxTaskNameLength(tasks []*domain.Task) int {
 	maxLength := 0
 	for _, task := range tasks {
 		if len(task.Title) > maxLength {
@@ -87,7 +88,7 @@ func getMaxTaskNameLength(tasks []*domain2.Task) int {
 	return maxLength
 }
 
-func calculateProgress(items *domain2.TodoList) float64 {
+func calculateProgress(items *domain.TodoList) float64 {
 	tasks := items.GetTasks()
 	groups := items.GetGroups()
 
@@ -102,7 +103,7 @@ func calculateProgress(items *domain2.TodoList) float64 {
 	return float64(doneTaskNum) / float64(sumOfTasks)
 }
 
-func calculateTaskProgress(tasks []*domain2.Task) float64 {
+func calculateTaskProgress(tasks []*domain.Task) float64 {
 	if len(tasks) == 0 {
 		return 0
 	}
@@ -110,7 +111,7 @@ func calculateTaskProgress(tasks []*domain2.Task) float64 {
 	return float64(doneTaskNum) / float64(len(tasks))
 }
 
-func calculateDoneTaskNum(tasks []*domain2.Task) int {
+func calculateDoneTaskNum(tasks []*domain.Task) int {
 	if len(tasks) == 0 {
 		return 0
 	}
@@ -123,8 +124,8 @@ func calculateDoneTaskNum(tasks []*domain2.Task) int {
 	return doneTaskNum
 }
 
-func flattenGroupTasks(groups []*domain2.Group) []*domain2.Task {
-	result := make([]*domain2.Task, 0)
+func flattenGroupTasks(groups []*domain.Group) []*domain.Task {
+	result := make([]*domain.Task, 0)
 	for _, group := range groups {
 		tasks := group.Tasks
 		result = append(result, tasks...)

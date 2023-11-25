@@ -1,14 +1,15 @@
 package logic
 
 import (
-	domain2 "easy_task/domain"
 	"strings"
+
+	"github.com/MayugeStudio/easy_task/domain"
 )
 
-func ParseStringsToTasks(taskStrings []string) *domain2.TodoList {
-	todoItemContainer := domain2.NewTodoList()
+func ParseStringsToTasks(taskStrings []string) *domain.TodoList {
+	todoItemContainer := domain.NewTodoList()
 	taskStrings, _ = FormatTaskStrings(taskStrings)
-	var group *domain2.Group
+	var group *domain.Group
 	for _, str := range taskStrings {
 		if isSingleTaskString(str) {
 			task := parseTaskString(str)
@@ -34,7 +35,7 @@ func ParseStringsToTasks(taskStrings []string) *domain2.TodoList {
 	return todoItemContainer
 }
 
-func parseTaskString(str string) *domain2.Task {
+func parseTaskString(str string) *domain.Task {
 	title := ""
 	isDone := false
 	str = strings.TrimPrefix(str, "-")
@@ -50,13 +51,13 @@ func parseTaskString(str string) *domain2.Task {
 
 	title = str
 
-	task := domain2.NewTask(title, isDone)
+	task := domain.NewTask(title, isDone)
 	return task
 }
 
-func parseGroupTaskTitle(str string) *domain2.Group {
+func parseGroupTaskTitle(str string) *domain.Group {
 	str = strings.TrimPrefix(str, "-")
 	str = strings.TrimSpace(str)
-	g := domain2.NewGroup(str)
+	g := domain.NewGroup(str)
 	return g
 }
