@@ -71,7 +71,7 @@ func formatTaskString(s string) (string, error) {
 		return "", errNoDash
 	}
 
-	l := utils.New(s)
+	l := utils.NewLine(s)
 
 	l = l.TrimPrefix("-").TrimSpace()
 
@@ -100,7 +100,7 @@ func getStatusString(taskString string) (string, error) {
 		return "", errNoDash
 	}
 
-	l := utils.New(taskString)
+	l := utils.NewLine(taskString)
 
 	l = l.TrimPrefix("-").TrimSpace()
 
@@ -127,7 +127,7 @@ func isGroupTitle(s string) bool {
 	if !strings.HasPrefix(s, "-") {
 		return false
 	}
-	l := utils.New(s)
+	l := utils.NewLine(s)
 	l = l.TrimPrefix("-").TrimSpace()
 	return !l.HasPrefix("[")
 }
@@ -136,7 +136,7 @@ func isGroupTaskString(s string) bool {
 	if !strings.HasPrefix(s, " ") {
 		return false
 	}
-	l := utils.New(strings.TrimSpace(s))
+	l := utils.NewLine(strings.TrimSpace(s))
 
 	if !l.HasPrefix("-") {
 		return false
@@ -164,7 +164,7 @@ func isSingleTaskString(s string) bool {
 		return false
 	}
 
-	l := utils.New(s)
+	l := utils.NewLine(s)
 	l = l.TrimPrefix("-").TrimSpace()
 
 	if !l.HasPrefix("[") {

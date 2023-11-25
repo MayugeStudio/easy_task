@@ -4,7 +4,7 @@ import "strings"
 
 type Line string
 
-func New(l string) Line {
+func NewLine(l string) Line {
 	return Line(l)
 }
 
