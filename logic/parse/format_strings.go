@@ -1,4 +1,4 @@
-package logic
+package parse
 
 import (
 	"errors"
@@ -16,7 +16,7 @@ var (
 	errInvalidIndent  = fmt.Errorf("%w: no valid indent", errSyntax)
 )
 
-func FormatTaskStrings(taskStrings []string) ([]string, []error) {
+func formatTaskStrings(taskStrings []string) ([]string, []error) {
 	result := make([]string, 0)
 	errs := make([]error, 0)
 	inGroup := false

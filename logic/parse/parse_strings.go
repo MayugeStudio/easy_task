@@ -1,4 +1,4 @@
-package logic
+package parse
 
 import (
 	"strings"
@@ -6,9 +6,9 @@ import (
 	"github.com/MayugeStudio/easy_task/domain"
 )
 
-func ParseStringsToTasks(taskStrings []string) *domain.TodoList {
+func StringsToTasks(taskStrings []string) *domain.TodoList {
 	todoItemContainer := domain.NewTodoList()
-	taskStrings, _ = FormatTaskStrings(taskStrings)
+	taskStrings, _ = formatTaskStrings(taskStrings)
 	var group *domain.Group
 	for _, str := range taskStrings {
 		if isSingleTaskString(str) {
