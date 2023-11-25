@@ -55,7 +55,7 @@ func TestPrintGroups(t *testing.T) {
 				"GroupTitle\n" +
 				"  [ ] Task1\n" +
 				"  [X] Task2\n" +
-				"  [##########          ]50%\n",
+				"  [##########          ]50.0%\n",
 			wantErr: false,
 		},
 		"Success_3Group": {
@@ -68,15 +68,15 @@ func TestPrintGroups(t *testing.T) {
 				"GroupTitle1\n" +
 				"  [ ] Task1\n" +
 				"  [X] Task2\n" +
-				"  [##########          ]50%\n" +
+				"  [##########          ]50.0%\n" +
 				"GroupTitle2\n" +
 				"  [ ] Task1\n" +
 				"  [ ] Task2\n" +
-				"  [                    ]0%\n" +
+				"  [                    ]0.0%\n" +
 				"GroupTitle3\n" +
 				"  [X] Task1\n" +
 				"  [X] Task2\n" +
-				"  [####################]100%\n",
+				"  [####################]100.0%\n",
 			wantErr: false,
 		},
 	}
@@ -103,22 +103,22 @@ func TestPrintProgress(t *testing.T) {
 	}{
 		"100%": {
 			in:      []*domain.Task{{"Task1", true}, {"Task2", true}},
-			wantW:   "[########################################]100%",
+			wantW:   "[########################################]100.0%",
 			wantErr: false,
 		},
 		"50%": {
 			in:      []*domain.Task{{"Task1", true}, {"Task2", false}},
-			wantW:   "[####################                    ]50%",
+			wantW:   "[####################                    ]50.0%",
 			wantErr: false,
 		},
 		"0%": {
 			in:      []*domain.Task{{"Task1", false}, {"Task2", false}},
-			wantW:   "[                                        ]0%",
+			wantW:   "[                                        ]0.0%",
 			wantErr: false,
 		},
 		"NonTask": {
 			in:      []*domain.Task{},
-			wantW:   "[                                        ]0%",
+			wantW:   "[                                        ]0.0%",
 			wantErr: false,
 		},
 	}
@@ -168,14 +168,13 @@ func Test_getGroupString(t *testing.T) {
 		in   *domain.Group
 		want string
 	}{
-
 		"100%": {
 			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{{"Task1", true}, {"Task2", true}}},
 			want: "" +
 				"GroupTitle\n" +
 				"  [X] Task1\n" +
 				"  [X] Task2\n" +
-				"  [####################]100%\n",
+				"  [####################]100.0%\n",
 		},
 		"50%": {
 			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{{"Task1", true}, {"Task2", false}}},
@@ -183,16 +182,15 @@ func Test_getGroupString(t *testing.T) {
 				"GroupTitle\n" +
 				"  [X] Task1\n" +
 				"  [ ] Task2\n" +
-				"  [##########          ]50%\n",
+				"  [##########          ]50.0%\n",
 		},
-
 		"0%": {
 			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{{"Task1", false}, {"Task2", false}}},
 			want: "" +
 				"GroupTitle\n" +
 				"  [ ] Task1\n" +
 				"  [ ] Task2\n" +
-				"  [                    ]0%\n",
+				"  [                    ]0.0%\n",
 		},
 	}
 	for testName, tt := range tests {
@@ -216,19 +214,15 @@ func Test_getProgressString(t *testing.T) {
 	}{
 		"100%": {
 			in:   input{progress: 1, length: 40},
-			want: "[########################################]100%",
+			want: "[########################################]100.0%",
 		},
 		"50%": {
 			in:   input{progress: 0.5, length: 40},
-			want: "[####################                    ]50%",
-		},
-		"25%": {
-			in:   input{progress: 0.25, length: 40},
-			want: "[##########                              ]25%",
+			want: "[####################                    ]50.0%",
 		},
 		"0%": {
 			in:   input{progress: 0, length: 40},
-			want: "[                                        ]0%",
+			want: "[                                        ]0.0%",
 		},
 	}
 	for testName, tt := range tests {

@@ -75,7 +75,7 @@ func getProgressString(progress, length float64) string {
 	barLength := int(progress * length)
 	doneStr := strings.Repeat(progressSymbol, barLength)
 	undoneStr := strings.Repeat(" ", int(length)-barLength)
-	return fmt.Sprintf("[%s%s]%d%%", doneStr, undoneStr, int(progress*100))
+	return fmt.Sprintf("[%s%s]%.1f%%", doneStr, undoneStr, progress*100)
 }
 
 func getMaxTaskNameLength(tasks []*domain.Task) int {
