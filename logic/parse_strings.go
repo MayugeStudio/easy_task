@@ -1,8 +1,9 @@
 package logic
 
 import (
-	"easy_task/src/domain"
 	"strings"
+
+	"github.com/MayugeStudio/easy_task/domain"
 )
 
 func ParseStringsToTasks(taskStrings []string) *domain.TodoList {

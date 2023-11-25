@@ -2,9 +2,10 @@ package logic
 
 import (
 	"bytes"
-	"easy_task/src/domain"
 	"reflect"
 	"testing"
+
+	"github.com/MayugeStudio/easy_task/domain"
 )
 
 func TestPrintTasks(t *testing.T) {

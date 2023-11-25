@@ -1,11 +1,12 @@
 package logic
 
 import (
-	"easy_task/src/domain"
 	"fmt"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/MayugeStudio/easy_task/domain"
 )
 
 func ConvertTaskPtrSliceToTaskValueSlice(S []*domain.Task) []domain.Task {

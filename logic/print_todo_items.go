@@ -1,10 +1,11 @@
 package logic
 
 import (
-	"easy_task/src/domain"
 	"fmt"
 	"io"
 	"strings"
+
+	"github.com/MayugeStudio/easy_task/domain"
 )
 
 const (

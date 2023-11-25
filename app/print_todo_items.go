@@ -1,9 +1,10 @@
 package app
 
 import (
-	"easy_task/src/logic"
 	"fmt"
 	"io"
+
+	"github.com/MayugeStudio/easy_task/logic"
 )
 
 func PrintTodoItem(w io.Writer, fileName string, reader logic.FileReader) error {
