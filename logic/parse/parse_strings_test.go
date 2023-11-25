@@ -1,4 +1,4 @@
-package logic
+package parse
 
 import (
 	"fmt"
@@ -58,11 +58,11 @@ func TestParseStringsToTasks_OnlyTask(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := ParseStringsToTasks(tt.in)
+			got := StringsToTasks(tt.in)
 			if !reflect.DeepEqual(got.GetTasks(), tt.want) {
 				gotV := ConvertTaskPtrSliceToTaskValueSlice(got.GetTasks())
 				wantV := ConvertTaskPtrSliceToTaskValueSlice(tt.want)
-				t.Errorf("ParseStringsToTasks() = %v, want %v", gotV, wantV)
+				t.Errorf("StringsToTasks() = %v, want %v", gotV, wantV)
 			}
 		})
 	}
@@ -118,11 +118,11 @@ func TestParseStringsToTasks_OnlyGroupTask(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := ParseStringsToTasks(tt.in)
+			got := StringsToTasks(tt.in)
 			if !reflect.DeepEqual(got.GetGroups(), tt.want) {
 				gotV := ConvertGroupPtrSliceToGroupValueSlice(got.GetGroups())
 				wantV := ConvertGroupPtrSliceToGroupValueSlice(tt.want)
-				t.Errorf("ParseStringsToTasks() = %v, want %v", gotV, wantV)
+				t.Errorf("StringsToTasks() = %v, want %v", gotV, wantV)
 			}
 		})
 	}
@@ -182,11 +182,11 @@ func TestParseStringsToTasks_MultiGroupTask(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := ParseStringsToTasks(tt.in)
+			got := StringsToTasks(tt.in)
 			if !reflect.DeepEqual(got.GetGroups(), tt.want) {
 				gotV := ConvertGroupPtrSliceToGroupValueSlice(got.GetGroups())
 				wantV := ConvertGroupPtrSliceToGroupValueSlice(tt.want)
-				t.Errorf("ParseStringsToTasks() = %v, want %v", gotV, wantV)
+				t.Errorf("StringsToTasks() = %v, want %v", gotV, wantV)
 			}
 		})
 	}
@@ -207,9 +207,9 @@ func Test_parseSingleTaskString(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := parseTaskString(tt.in)
+			got := toTask(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("parseTaskString() = %v, want %v", got, tt.want)
+				t.Errorf("toTask() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -224,9 +224,9 @@ func Test_parseGroupTaskTitle(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := parseGroupTaskTitle(tt.in)
+			got := toGroup(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("parseGroupTaskTitle() = %v, want %v", got, tt.want)
+				t.Errorf("toGroup() = %v, want %v", got, tt.want)
 			}
 		})
 	}

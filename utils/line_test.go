@@ -14,9 +14,9 @@ func TestNewLineFormatter(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := New(tt.line)
+			got := NewLine(tt.line)
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("New() = %v, want %v", got, tt.want)
+				t.Errorf("NewLine() = %v, want %v", got, tt.want)
 			}
 		})
 	}

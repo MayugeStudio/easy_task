@@ -1,11 +1,11 @@
-package logic
+package parse
 
 import (
 	"errors"
 	"fmt"
 	"strings"
 
-	"github.com/MayugeStudio/easy_task/logic/utils"
+	"github.com/MayugeStudio/easy_task/utils"
 )
 
 var (
@@ -16,7 +16,7 @@ var (
 	errInvalidIndent  = fmt.Errorf("%w: no valid indent", errSyntax)
 )
 
-func FormatTaskStrings(taskStrings []string) ([]string, []error) {
+func formatTaskStrings(taskStrings []string) ([]string, []error) {
 	result := make([]string, 0)
 	errs := make([]error, 0)
 	inGroup := false
@@ -71,7 +71,7 @@ func formatTaskString(s string) (string, error) {
 		return "", errNoDash
 	}
 
-	l := utils.New(s)
+	l := utils.NewLine(s)
 
 	l = l.TrimPrefix("-").TrimSpace()
 
@@ -100,7 +100,7 @@ func getStatusString(taskString string) (string, error) {
 		return "", errNoDash
 	}
 
-	l := utils.New(taskString)
+	l := utils.NewLine(taskString)
 
 	l = l.TrimPrefix("-").TrimSpace()
 
@@ -121,64 +121,4 @@ func getGroupTitle(s string) (string, error) {
 	}
 	s = strings.TrimPrefix(s, "-")
 	return strings.TrimSpace(s), nil
-}
-
-func isGroupTitle(s string) bool {
-	if !strings.HasPrefix(s, "-") {
-		return false
-	}
-	l := utils.New(s)
-	l = l.TrimPrefix("-").TrimSpace()
-	return !l.HasPrefix("[")
-}
-
-func isGroupTaskString(s string) bool {
-	if !strings.HasPrefix(s, " ") {
-		return false
-	}
-	l := utils.New(strings.TrimSpace(s))
-
-	if !l.HasPrefix("-") {
-		return false
-	}
-	l = l.TrimPrefix("-").TrimSpace()
-
-	if !l.HasPrefix("[") {
-		return false
-	}
-	l = l.TrimPrefix("[").TrimSpace()
-
-	if l.HasPrefix("X") || l.HasPrefix("x") {
-		l = l.TrimPrefix("X").TrimSpace()
-	}
-
-	if !l.HasPrefix("]") {
-		return false
-	}
-
-	return true
-}
-
-func isSingleTaskString(s string) bool {
-	if !strings.HasPrefix(s, "-") {
-		return false
-	}
-
-	l := utils.New(s)
-	l = l.TrimPrefix("-").TrimSpace()
-
-	if !l.HasPrefix("[") {
-		return false
-	}
-	l = l.TrimPrefix("[").TrimSpace()
-
-	if l.HasPrefix("X") || l.HasPrefix("x") {
-		l = l.TrimPrefix("X").TrimSpace()
-	}
-
-	if !l.HasPrefix("]") {
-		return false
-	}
-
-	return true
 }

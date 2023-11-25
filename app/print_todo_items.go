@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/MayugeStudio/easy_task/logic"
+	"github.com/MayugeStudio/easy_task/logic/parse"
 )
 
 func PrintTodoItem(w io.Writer, fileName string, reader logic.FileReader) error {
@@ -12,7 +13,7 @@ func PrintTodoItem(w io.Writer, fileName string, reader logic.FileReader) error 
 	if scanErr != nil {
 		return fmt.Errorf("scanning file: %w", scanErr)
 	}
-	todoItemContainer := logic.ParseStringsToTasks(lines)
+	todoItemContainer := parse.StringsToTasks(lines)
 	if err := logic.PrintTasks(w, todoItemContainer.GetTasks()); err != nil {
 		return fmt.Errorf("printing tasks: %w", err)
 	}
