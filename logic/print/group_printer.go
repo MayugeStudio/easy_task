@@ -20,7 +20,7 @@ func Groups(w io.Writer, groups []*domain.Group) error {
 
 func getGroupString(group *domain.Group) string {
 	var b strings.Builder
-	maxLength := getMaxTaskNameLength(group.Tasks)
+	maxLength := getMaxTaskTitleLength(group.Tasks)
 	titleString := fmt.Sprintf("%s\n", group.Title)
 	b.WriteString(titleString)
 

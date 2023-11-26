@@ -43,19 +43,19 @@ func TestTasks(t *testing.T) {
 
 func Test_getTaskString(t *testing.T) {
 	type input struct {
-		task      *domain.Task
-		maxLength int
+		task   *domain.Task
+		length int
 	}
 	tests := map[string]struct {
 		in   input
 		want string
 	}{
-		"Success_Done":   {in: input{task: &domain.Task{Title: "TaskTitle", IsDone: true}, maxLength: 10}, want: "[X] TaskTitle "},
-		"Success_Undone": {in: input{task: &domain.Task{Title: "TaskTitle", IsDone: false}, maxLength: 10}, want: "[ ] TaskTitle "},
+		"Success_Done":   {in: input{task: &domain.Task{Title: "TaskTitle", IsDone: true}, length: 10}, want: "[X] TaskTitle "},
+		"Success_Undone": {in: input{task: &domain.Task{Title: "TaskTitle", IsDone: false}, length: 10}, want: "[ ] TaskTitle "},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := getTaskString(tt.in.task, tt.in.maxLength)
+			got := getTaskString(tt.in.task, tt.in.length)
 			if got != tt.want {
 				t.Errorf("getTaskString() gotW = %v, want %v", got, tt.want)
 			}
@@ -63,7 +63,7 @@ func Test_getTaskString(t *testing.T) {
 	}
 }
 
-func Test_getMaxTaskNameLength(t *testing.T) {
+func Test_getMaxTaskTitleLength(t *testing.T) {
 	tests := map[string]struct {
 		in   []*domain.Task
 		want int
@@ -96,8 +96,8 @@ func Test_getMaxTaskNameLength(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			if got := getMaxTaskNameLength(tt.in); got != tt.want {
-				t.Errorf("getMaxTaskNameLength() = %v, want %v", got, tt.want)
+			if got := getMaxTaskTitleLength(tt.in); got != tt.want {
+				t.Errorf("getMaxTaskTitleLength() = %v, want %v", got, tt.want)
 			}
 		})
 	}

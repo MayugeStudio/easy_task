@@ -9,8 +9,6 @@ import (
 )
 
 const (
-	doneSymbol               = "X"
-	undoneSymbol             = " "
 	progressSymbol           = "#"
 	defaultProgressBarLength = 40.0
 )
