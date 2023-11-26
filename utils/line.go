@@ -13,12 +13,16 @@ func (l Line) HasPrefix(prefix string) bool {
 }
 
 func (l Line) TrimPrefix(prefix string) Line {
-	upperPrefix := strings.ToUpper(prefix)
-	lowerPrefix := strings.ToLower(prefix)
+	if len(prefix) == 1 {
+		upperPrefix := strings.ToUpper(prefix)
+		lowerPrefix := strings.ToLower(prefix)
 
-	result := Line(strings.TrimPrefix(l.toString(), upperPrefix))
-	result = Line(strings.TrimPrefix(result.toString(), lowerPrefix))
-	return result
+		result := Line(strings.TrimPrefix(l.toString(), upperPrefix))
+		result = Line(strings.TrimPrefix(result.toString(), lowerPrefix))
+		return result
+	} else {
+		return Line(strings.TrimPrefix(l.toString(), prefix))
+	}
 }
 
 func (l Line) TrimSpace() Line {
