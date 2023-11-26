@@ -1,28 +1,55 @@
 package domain
 
 type Group struct {
-	Title string
-	Tasks []*Task
+	title string
+	items []Item
 }
 
 func NewGroup(title string) *Group {
 	return &Group{
-		Title: title,
-		Tasks: make([]*Task, 0),
+		title: title,
+		items: make([]Item, 0),
 	}
 }
 
-func (g *Group) AddTask(t *Task) {
-	g.Tasks = append(g.Tasks, t)
+func (g *Group) AddItem(i Item) {
+	g.items = append(g.items, i)
+}
+
+func (g *Group) Title() string {
+	return g.title
+}
+
+func (g *Group) Label() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (g *Group) Priority() Priority {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (g *Group) Estimate() EstimateTime {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (g *Group) Progress() float64 {
-	if len(g.Tasks) == 0 {
+	if len(g.items) == 0 {
 		return 0
 	}
 	var sum float64
-	for _, task := range g.Tasks {
+	for _, task := range g.items {
 		sum += task.Progress()
 	}
-	return sum / float64(len(g.Tasks))
+	return sum / float64(len(g.items))
+}
+
+func (g *Group) IsParent() bool {
+	return true
+}
+
+func (g *Group) Children() []Item {
+	return g.items
 }

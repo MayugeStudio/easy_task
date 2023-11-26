@@ -15,13 +15,13 @@ func ToTodoList(taskStrings []string) *domain.TodoList {
 	for _, str := range taskStrings {
 		if share.IsSingleTaskString(str) {
 			task := toTask(str)
-			list.AddTask(task)
+			list.AddItem(task)
 			continue
 		}
 
 		if share.IsGroupTitle(str) {
 			group = toGroup(str)
-			list.AddGroup(group)
+			list.AddItem(group)
 			continue
 		}
 
@@ -29,7 +29,7 @@ func ToTodoList(taskStrings []string) *domain.TodoList {
 			str = strings.TrimSpace(str)
 			task := toTask(str)
 			if group != nil {
-				group.AddTask(task)
+				group.AddItem(task)
 			}
 			continue
 		}

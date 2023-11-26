@@ -10,7 +10,7 @@ func TestNewGroup(t *testing.T) {
 		in   string
 		want *Group
 	}{
-		"Success": {in: "GroupTitle", want: &Group{Title: "GroupTitle", Tasks: make([]*Task, 0)}},
+		"Success": {in: "GroupTitle", want: &Group{title: "GroupTitle", items: make([]Item, 0)}},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -22,19 +22,18 @@ func TestNewGroup(t *testing.T) {
 	}
 }
 
-func TestGroup_AddTask(t *testing.T) {
+func TestGroup_AddItem(t *testing.T) {
 	tests := map[string]struct {
-		title string
-		in    *Task
-		want  []*Task
+		in   Item
+		want []Item
 	}{
-		"Success": {title: "G", in: &Task{"T", false}, want: []*Task{{"T", false}}},
+		"Success": {in: &Task{"T", false}, want: []Item{&Task{"T", false}}},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			g := &Group{Title: tt.title, Tasks: make([]*Task, 0)}
-			g.AddTask(tt.in)
-			got := g.Tasks
+			g := &Group{title: "Group", items: make([]Item, 0)}
+			g.AddItem(tt.in)
+			got := g.items
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewGroup() = %v, want %v", got, tt.want)
 			}
@@ -56,7 +55,7 @@ func TestGroup_Progress(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			g := &Group{}
 			for _, isDone := range tt.isDone {
-				g.Tasks = append(g.Tasks, &Task{IsDone: isDone})
+				g.items = append(g.items, &Task{isDone: isDone})
 			}
 			got := g.Progress()
 			if got != tt.want {

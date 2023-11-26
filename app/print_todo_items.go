@@ -15,11 +15,8 @@ func PrintTodoItem(w io.Writer, fileName string, reader logic.FileReader) error 
 		return fmt.Errorf("scanning file: %w", scanErr)
 	}
 	todoList := parse.ToTodoList(lines)
-	if err := print.Tasks(w, todoList.GetTasks()); err != nil {
-		return fmt.Errorf("printing tasks: %w", err)
-	}
-	if err := print.Groups(w, todoList.GetGroups()); err != nil {
-		return fmt.Errorf("printing groups: %w", err)
+	if err := print.Items(w, todoList.GetItems()); err != nil {
+		return fmt.Errorf("printing items: %w", err)
 	}
 	if err := print.Progress(w, todoList); err != nil {
 		return fmt.Errorf("printing progress: %w", err)
