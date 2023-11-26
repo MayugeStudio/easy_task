@@ -27,17 +27,17 @@ func Tasks(w io.Writer, tasks []*domain.Task) error {
 
 func getTaskString(task *domain.Task, length int) string {
 	var doneStr string
-	if task.IsDone {
+	if task.Progress() == 1 { // TODO: Implement float64 constant in domain package?
 		doneStr = doneSymbol
 	} else {
 		doneStr = undoneSymbol
 	}
-	return fmt.Sprintf("[%s] %-*s", doneStr, length, task.Title)
+	return fmt.Sprintf("[%s] %-*s", doneStr, length, task.Title())
 }
 
 func getMaxTaskTitleLength(tasks []*domain.Task) int {
 	longestTitleTask := slices.MaxFunc(tasks, func(a, b *domain.Task) int {
-		return cmp.Compare(len(a.Title), len(b.Title))
+		return cmp.Compare(len(a.Title()), len(b.Title()))
 	})
-	return len(longestTitleTask.Title)
+	return len(longestTitleTask.Title())
 }

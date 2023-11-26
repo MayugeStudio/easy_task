@@ -56,7 +56,7 @@ func TestGroup_Progress(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			g := &Group{}
 			for _, isDone := range tt.isDone {
-				g.Tasks = append(g.Tasks, &Task{IsDone: isDone})
+				g.Tasks = append(g.Tasks, &Task{isDone: isDone})
 			}
 			got := g.Progress()
 			if got != tt.want {

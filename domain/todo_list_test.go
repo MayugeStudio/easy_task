@@ -99,8 +99,8 @@ func TestTodoList_GetTasks(t *testing.T) {
 			want:   []*Task{{"T1", false}},
 		},
 		"Success_ThreeTasks": {
-			fields: fields{tasks: []*Task{{Title: "T1", IsDone: false}, {Title: "T2", IsDone: false}, {Title: "T3", IsDone: true}}, groups: []*Group{}, doneTaskCount: 0},
-			want:   []*Task{{Title: "T1", IsDone: false}, {Title: "T2", IsDone: false}, {Title: "T3", IsDone: true}},
+			fields: fields{tasks: []*Task{{title: "T1", isDone: false}, {title: "T2", isDone: false}, {title: "T3", isDone: true}}, groups: []*Group{}, doneTaskCount: 0},
+			want:   []*Task{{title: "T1", isDone: false}, {title: "T2", isDone: false}, {title: "T3", isDone: true}},
 		},
 	}
 	for testName, tt := range tests {
@@ -232,13 +232,13 @@ func TestTodoList_Progress(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			c := &TodoList{}
 			for _, status := range tt.in.tasks {
-				task := &Task{IsDone: status}
+				task := &Task{isDone: status}
 				c.AddTask(task)
 			}
 			for _, areTasksDone := range tt.in.groupTasks {
 				group := &Group{}
 				for _, isDone := range areTasksDone {
-					group.AddTask(&Task{IsDone: isDone})
+					group.AddTask(&Task{isDone: isDone})
 				}
 				c.AddGroup(group)
 			}

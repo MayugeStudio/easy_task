@@ -14,7 +14,7 @@ func TestNewTask(t *testing.T) {
 		in   args
 		want *Task
 	}{
-		"Success": {in: args{title: "T", isDone: false}, want: &Task{Title: "T", IsDone: false}},
+		"Success": {in: args{title: "T", isDone: false}, want: &Task{title: "T", isDone: false}},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -36,7 +36,7 @@ func TestTask_Progress(t1 *testing.T) {
 	}
 	for testName, tt := range tests {
 		t1.Run(testName, func(t1 *testing.T) {
-			t := &Task{IsDone: tt.isDone}
+			t := &Task{isDone: tt.isDone}
 			if got := t.Progress(); got != tt.want {
 				t1.Errorf("Progress() = %v, want %v", got, tt.want)
 			}

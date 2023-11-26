@@ -2,18 +2,19 @@ package print
 
 import (
 	"bytes"
-	"github.com/MayugeStudio/easy_task/domain"
 	"testing"
+
+	"github.com/MayugeStudio/easy_task/domain"
 )
 
-func TestGroups(t *testing.T) {
+func TestGroups(t *testing.T) { // FIXME: This test function's concern is not about group's and task's title.
 	tests := map[string]struct {
 		in      []*domain.Group
 		wantW   string
 		wantErr bool
 	}{
 		"Success_1Group": {
-			in: []*domain.Group{{"G", []*domain.Task{{"T1", false}, {"T2", true}}}},
+			in: []*domain.Group{{"G", []*domain.Task{newTask("T1", false), newTask("T2", true)}}},
 			wantW: "" +
 				"G\n" +
 				"  [ ] T1\n" +
@@ -23,8 +24,8 @@ func TestGroups(t *testing.T) {
 		},
 		"Success_2Group": {
 			in: []*domain.Group{
-				{"G1", []*domain.Task{{"T1", false}, {"T2", true}}},
-				{"G2", []*domain.Task{{"T1", false}, {"T2", false}}},
+				{"G1", []*domain.Task{newTask("T1", false), newTask("T2", true)}},
+				{"G2", []*domain.Task{newTask("T1", false), newTask("T2", false)}},
 			},
 			wantW: "" +
 				"G1\n" +
@@ -53,13 +54,13 @@ func TestGroups(t *testing.T) {
 	}
 }
 
-func Test_getGroupString(t *testing.T) {
+func Test_getGroupString(t *testing.T) { // FIXME: This test code's concern is not about group progress.
 	tests := map[string]struct {
 		in   *domain.Group
 		want string
 	}{
 		"100%": {
-			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{{"Task1", true}, {"Task2", true}}},
+			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{newTask("Task1", true), newTask("Task2", true)}},
 			want: "" +
 				"GroupTitle\n" +
 				"  [X] Task1\n" +
@@ -67,7 +68,7 @@ func Test_getGroupString(t *testing.T) {
 				"  [####################]100.0%\n",
 		},
 		"50%": {
-			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{{"Task1", true}, {"Task2", false}}},
+			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{newTask("Task1", true), newTask("Task2", false)}},
 			want: "" +
 				"GroupTitle\n" +
 				"  [X] Task1\n" +
@@ -75,7 +76,7 @@ func Test_getGroupString(t *testing.T) {
 				"  [##########          ]50.0%\n",
 		},
 		"0%": {
-			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{{"Task1", false}, {"Task2", false}}},
+			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{newTask("Task1", false), newTask("Task2", false)}},
 			want: "" +
 				"GroupTitle\n" +
 				"  [ ] Task1\n" +

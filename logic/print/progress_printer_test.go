@@ -2,6 +2,7 @@ package print
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 
 	"github.com/MayugeStudio/easy_task/domain"
@@ -9,27 +10,27 @@ import (
 
 func TestProgress(t *testing.T) {
 	tests := map[string]struct {
-		in      []*domain.Task
+		in      []bool
 		wantW   string
 		wantErr bool
 	}{
 		"100%": {
-			in:      []*domain.Task{{"T1", true}},
+			in:      []bool{true},
 			wantW:   "[########################################]100.0%",
 			wantErr: false,
 		},
 		"50%": {
-			in:      []*domain.Task{{"T1", true}, {"T2", false}},
+			in:      []bool{true, false},
 			wantW:   "[####################                    ]50.0%",
 			wantErr: false,
 		},
 		"0%": {
-			in:      []*domain.Task{{"T1", false}},
+			in:      []bool{false},
 			wantW:   "[                                        ]0.0%",
 			wantErr: false,
 		},
 		"NonTask": {
-			in:      []*domain.Task{},
+			in:      []bool{},
 			wantW:   "[                                        ]0.0%",
 			wantErr: false,
 		},
@@ -38,8 +39,8 @@ func TestProgress(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			w := &bytes.Buffer{}
 			c := domain.NewTodoList()
-			for _, task := range tt.in {
-				c.AddTask(task)
+			for i, b := range tt.in {
+				c.AddTask(newTask(fmt.Sprintf("T%d", i), b))
 			}
 			err := Progress(w, c)
 			if (err != nil) != tt.wantErr {

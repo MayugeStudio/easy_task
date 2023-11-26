@@ -18,7 +18,7 @@ func NewTodoList() *TodoList {
 
 func (c *TodoList) AddTask(t *Task) {
 	c.tasks = append(c.tasks, t)
-	if t.IsDone {
+	if t.isDone {
 		c.doneTaskCount++
 	}
 	c.items = append(c.items, t)

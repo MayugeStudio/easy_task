@@ -2,8 +2,9 @@ package print
 
 import (
 	"bytes"
-	"github.com/MayugeStudio/easy_task/domain"
 	"testing"
+
+	"github.com/MayugeStudio/easy_task/domain"
 )
 
 func TestTasks(t *testing.T) {
@@ -13,12 +14,12 @@ func TestTasks(t *testing.T) {
 		wantErr bool
 	}{
 		"Success_1Task": {
-			in:      []*domain.Task{{"T1", false}},
+			in:      []*domain.Task{newTask("T1", false)},
 			wantW:   "[ ] T1\n",
 			wantErr: false,
 		},
 		"Success_2Tasks": {
-			in: []*domain.Task{{"T1", false}, {"T2", true}},
+			in: []*domain.Task{newTask("T1", false), newTask("T2", true)},
 			wantW: "" +
 				"[ ] T1\n" +
 				"[X] T2\n",
@@ -50,8 +51,8 @@ func Test_getTaskString(t *testing.T) {
 		in   input
 		want string
 	}{
-		"Success_Done":   {in: input{task: &domain.Task{Title: "TaskTitle", IsDone: true}, length: 10}, want: "[X] TaskTitle "},
-		"Success_Undone": {in: input{task: &domain.Task{Title: "TaskTitle", IsDone: false}, length: 10}, want: "[ ] TaskTitle "},
+		"Success_Done":   {in: input{task: newTask("TaskTitle", true), length: 10}, want: "[X] TaskTitle "},
+		"Success_Undone": {in: input{task: newTask("TaskTitle", false), length: 10}, want: "[ ] TaskTitle "},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -70,26 +71,26 @@ func Test_getMaxTaskTitleLength(t *testing.T) {
 	}{
 		"Success_Length5": {
 			in: []*domain.Task{
-				{"12", false},
-				{"123", false},
-				{"12345", false},
+				newTask("12", false),
+				newTask("123", false),
+				newTask("12345", false),
 			},
 			want: 5,
 		},
 		"Success_Length10": {
 			in: []*domain.Task{
-				{"1234567890", false},
-				{"1234567", false},
-				{"123", false},
+				newTask("1234567890", false),
+				newTask("1234567", false),
+				newTask("123", false),
 			},
 			want: 10,
 		},
 		"Success_Length20": {
 			in: []*domain.Task{
-				{"12345678901234567890", false},
-				{"123456789012", false},
-				{"123", false},
-				{"1234567", false},
+				newTask("12345678901234567890", false),
+				newTask("123456789012", false),
+				newTask("123", false),
+				newTask("1234567", false),
 			},
 			want: 20,
 		},
