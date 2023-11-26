@@ -9,3 +9,7 @@ type Item interface {
 }
 type EstimateTime int
 type Priority int
+
+type ProgressItem interface {
+	Progress() float64
+}
