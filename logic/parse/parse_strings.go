@@ -10,7 +10,7 @@ import (
 
 func ToTodoList(taskStrings []string) *domain.TodoList {
 	todoItemContainer := domain.NewTodoList()
-	taskStrings, _ = format.TaskStrings(taskStrings)
+	taskStrings, _ = format.ToValidStrings(taskStrings)
 	var group *domain.Group
 	for _, str := range taskStrings {
 		if share.IsSingleTaskString(str) {
