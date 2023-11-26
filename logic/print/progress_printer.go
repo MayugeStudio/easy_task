@@ -15,7 +15,7 @@ const (
 	defaultProgressBarLength = 40.0
 )
 
-func PrintProgress(w io.Writer, todoList *domain.TodoList) error {
+func Progress(w io.Writer, todoList *domain.TodoList) error {
 	progress := todoList.Progress()
 	progressString := getProgressString(progress, defaultProgressBarLength)
 	if _, err := fmt.Fprint(w, progressString); err != nil {

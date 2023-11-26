@@ -7,7 +7,7 @@ import (
 	"github.com/MayugeStudio/easy_task/domain"
 )
 
-func TestPrintProgress(t *testing.T) {
+func TestProgress(t *testing.T) {
 	tests := map[string]struct {
 		in      []*domain.Task
 		wantW   string
@@ -41,13 +41,13 @@ func TestPrintProgress(t *testing.T) {
 			for _, task := range tt.in {
 				c.AddTask(task)
 			}
-			err := PrintProgress(w, c)
+			err := Progress(w, c)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PrintProgress() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Progress() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if gotW := w.String(); gotW != tt.wantW {
-				t.Errorf("PrintProgress() gotW = %v, want %v", gotW, tt.wantW)
+				t.Errorf("Progress() gotW = %v, want %v", gotW, tt.wantW)
 			}
 		})
 	}

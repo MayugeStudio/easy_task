@@ -7,7 +7,7 @@ import (
 	"github.com/MayugeStudio/easy_task/domain"
 )
 
-func PrintTasks(w io.Writer, tasks []*domain.Task) error {
+func Tasks(w io.Writer, tasks []*domain.Task) error {
 	maxLength := getMaxTaskNameLength(tasks)
 	for _, task := range tasks {
 		taskString := getTaskString(task, maxLength)

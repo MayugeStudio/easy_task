@@ -8,7 +8,7 @@ import (
 	"github.com/MayugeStudio/easy_task/domain"
 )
 
-func PrintGroups(w io.Writer, groups []*domain.Group) error {
+func Groups(w io.Writer, groups []*domain.Group) error {
 	for _, group := range groups {
 		groupString := getGroupString(group)
 		if _, err := fmt.Fprint(w, groupString); err != nil {

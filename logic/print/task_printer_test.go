@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestPrintTasks(t *testing.T) {
+func TestTasks(t *testing.T) {
 	tests := map[string]struct {
 		in      []*domain.Task
 		wantW   string
@@ -28,14 +28,14 @@ func TestPrintTasks(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			w := &bytes.Buffer{}
-			err := PrintTasks(w, tt.in)
+			err := Tasks(w, tt.in)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PrintTasks() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Tasks() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			gotW := w.String()
 			if gotW != tt.wantW {
-				t.Errorf("PrintTasks() gotW = %v, want %v", gotW, tt.wantW)
+				t.Errorf("Tasks() gotW = %v, want %v", gotW, tt.wantW)
 			}
 		})
 	}

@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestPrintGroups(t *testing.T) {
+func TestGroups(t *testing.T) {
 	tests := map[string]struct {
 		in      []*domain.Group
 		wantW   string
@@ -41,13 +41,13 @@ func TestPrintGroups(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			w := &bytes.Buffer{}
-			err := PrintGroups(w, tt.in)
+			err := Groups(w, tt.in)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PrintGroups() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Groups() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if gotW := w.String(); gotW != tt.wantW {
-				t.Errorf("PrintGroups() gotW = %v, want %v", gotW, tt.wantW)
+				t.Errorf("Groups() gotW = %v, want %v", gotW, tt.wantW)
 			}
 		})
 	}
