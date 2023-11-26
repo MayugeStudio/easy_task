@@ -1,8 +1,10 @@
 package print
 
 import (
+	"cmp"
 	"fmt"
 	"io"
+	"slices"
 
 	"github.com/MayugeStudio/easy_task/domain"
 )
@@ -29,11 +31,8 @@ func getTaskString(task *domain.Task, maxLength int) string {
 }
 
 func getMaxTaskNameLength(tasks []*domain.Task) int {
-	maxLength := 0
-	for _, task := range tasks {
-		if len(task.Title) > maxLength {
-			maxLength = len(task.Title)
-		}
-	}
-	return maxLength
+	longestTitleTask := slices.MaxFunc(tasks, func(a, b *domain.Task) int {
+		return cmp.Compare(len(a.Title), len(b.Title))
+	})
+	return len(longestTitleTask.Title)
 }
