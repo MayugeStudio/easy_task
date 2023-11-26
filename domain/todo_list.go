@@ -3,7 +3,7 @@ package domain
 type TodoList struct {
 	tasks         []*Task
 	groups        []*Group
-	items         []ProgressItem
+	items         []Item
 	doneTaskCount int
 }
 
@@ -11,7 +11,7 @@ func NewTodoList() *TodoList {
 	return &TodoList{
 		tasks:         make([]*Task, 0),
 		groups:        make([]*Group, 0),
-		items:         make([]ProgressItem, 0),
+		items:         make([]Item, 0),
 		doneTaskCount: 0,
 	}
 }

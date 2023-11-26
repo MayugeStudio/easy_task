@@ -10,7 +10,7 @@ func TestNewTodoList(t *testing.T) {
 		want *TodoList
 	}{
 		"Success": {
-			want: &TodoList{tasks: make([]*Task, 0), groups: make([]*Group, 0), items: make([]ProgressItem, 0), doneTaskCount: 0},
+			want: &TodoList{tasks: make([]*Task, 0), groups: make([]*Group, 0), items: make([]Item, 0), doneTaskCount: 0},
 		},
 	}
 	for testName, tt := range tests {
@@ -27,7 +27,7 @@ func TestTodoList_AddTask(t *testing.T) {
 	type fields struct {
 		tasks         []*Task
 		groups        []*Group
-		items         []ProgressItem
+		items         []Item
 		doneTaskCount int
 	}
 	tests := map[string]struct {
@@ -36,7 +36,7 @@ func TestTodoList_AddTask(t *testing.T) {
 		want   []*Task
 	}{
 		"Success": {
-			fields: fields{make([]*Task, 0), make([]*Group, 0), make([]ProgressItem, 0), 0},
+			fields: fields{make([]*Task, 0), make([]*Group, 0), make([]Item, 0), 0},
 			in:     &Task{"T", false}, want: []*Task{{"T", false}},
 		},
 	}
