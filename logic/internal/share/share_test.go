@@ -64,3 +64,20 @@ func Test_isSingleTaskString(t *testing.T) {
 		})
 	}
 }
+
+func TestIsItemModificationString(t *testing.T) {
+	tests := map[string]struct {
+		in   string
+		want bool
+	}{
+		"ModificationString":         {in: "<- [Tag]: Feature", want: true},
+		"Invalid_ModificationString": {in: "[Tag]: Feature", want: false},
+	}
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			if got := IsItemModificationString(tt.in); got != tt.want {
+				t.Errorf("IsItemModificationString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

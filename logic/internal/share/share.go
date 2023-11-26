@@ -65,3 +65,17 @@ func IsSingleTaskString(s string) bool {
 
 	return true
 }
+
+func IsItemModificationString(s string) bool {
+	l := utils.NewLine(s)
+	l = l.TrimSpace()
+	if !l.HasPrefix("<-") {
+		return false
+	}
+	l = l.TrimPrefix("<-").TrimSpace()
+	if !l.HasPrefix("[") {
+		return false
+	}
+	l = l.TrimPrefix("[").TrimSpace() // TODO: Implement 'Are' and 'Is' methods to Line struct
+	return true
+}
