@@ -2,22 +2,18 @@ package domain
 
 type Group struct {
 	title string
-	tasks []*Task
+	items []Item
 }
 
 func NewGroup(title string) *Group {
 	return &Group{
 		title: title,
-		tasks: make([]*Task, 0),
+		items: make([]Item, 0),
 	}
 }
 
-func (g *Group) AddTask(t *Task) {
-	g.tasks = append(g.tasks, t)
-}
-
-func (g *Group) Tasks() []*Task {
-	return g.tasks
+func (g *Group) AddItem(i Item) {
+	g.items = append(g.items, i)
 }
 
 func (g *Group) Title() string {
@@ -40,12 +36,20 @@ func (g *Group) Estimate() EstimateTime {
 }
 
 func (g *Group) Progress() float64 {
-	if len(g.tasks) == 0 {
+	if len(g.items) == 0 {
 		return 0
 	}
 	var sum float64
-	for _, task := range g.tasks {
+	for _, task := range g.items {
 		sum += task.Progress()
 	}
-	return sum / float64(len(g.tasks))
+	return sum / float64(len(g.items))
+}
+
+func (g *Group) IsParent() bool {
+	return true
+}
+
+func (g *Group) Children() []Item {
+	return g.items
 }

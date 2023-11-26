@@ -1,40 +1,19 @@
 package domain
 
 type TodoList struct {
-	tasks         []*Task
-	groups        []*Group
-	items         []Item
-	doneTaskCount int
+	items []Item
 }
 
 func NewTodoList() *TodoList {
-	return &TodoList{
-		tasks:         make([]*Task, 0),
-		groups:        make([]*Group, 0),
-		items:         make([]Item, 0),
-		doneTaskCount: 0,
-	}
+	return &TodoList{items: make([]Item, 0)}
 }
 
-func (c *TodoList) AddTask(t *Task) {
-	c.tasks = append(c.tasks, t)
-	if t.isDone {
-		c.doneTaskCount++
-	}
-	c.items = append(c.items, t)
+func (c *TodoList) AddItem(i Item) {
+	c.items = append(c.items, i)
 }
 
-func (c *TodoList) AddGroup(g *Group) {
-	c.groups = append(c.groups, g)
-	c.items = append(c.items, g)
-}
-
-func (c *TodoList) GetTasks() []*Task {
-	return c.tasks
-}
-
-func (c *TodoList) GetGroups() []*Group {
-	return c.groups
+func (c *TodoList) GetItems() []Item {
+	return c.items
 }
 
 func (c *TodoList) Progress() float64 {

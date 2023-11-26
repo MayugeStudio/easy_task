@@ -40,7 +40,7 @@ func TestProgress(t *testing.T) {
 			w := &bytes.Buffer{}
 			c := domain.NewTodoList()
 			for i, b := range tt.in {
-				c.AddTask(newTask(fmt.Sprintf("T%d", i), b))
+				c.AddItem(newTask(fmt.Sprintf("T%d", i), b))
 			}
 			err := Progress(w, c)
 			if (err != nil) != tt.wantErr {

@@ -95,11 +95,13 @@ func TestPrintTodoItem(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			w := &bytes.Buffer{}
 			got := PrintTodoItem(w, "", MockReader{lines: tt.in})
-			if gotW := w.String(); gotW != tt.wantW {
-				t.Errorf("PrintTodoItem() gotW = %v, want %v", gotW, tt.wantW)
-			}
 			if (got != nil) != tt.wantErr {
 				t.Errorf("PrintTodoItem() got = %v, want %v", got, tt.wantErr)
+				return
+			}
+
+			if gotW := w.String(); gotW != tt.wantW {
+				t.Errorf("PrintTodoItem() gotW = %v, want %v", gotW, tt.wantW)
 			}
 		})
 	}

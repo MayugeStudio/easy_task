@@ -37,3 +37,11 @@ func (t *Task) Progress() float64 {
 	}
 	return 0
 }
+
+func (t *Task) IsParent() bool {
+	return false
+}
+
+func (t *Task) Children() []Item {
+	return nil
+}
