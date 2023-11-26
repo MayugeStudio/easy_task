@@ -13,31 +13,17 @@ func TestItems(t *testing.T) {
 		wantW   string
 		wantErr bool
 	}{
-		"Success_1Task": {
-			in:      []domain.Item{newTask("T1", false)},
-			wantW:   "[ ] T1\n",
-			wantErr: false,
-		},
-		"Success_2Tasks": {
+		"Success_Tasks": {
 			in: []domain.Item{newTask("T1", false), newTask("T2", true)},
 			wantW: "" +
 				"[ ] T1\n" +
 				"[X] T2\n",
 			wantErr: false,
 		},
-		"Success_1Group": {
-			in: []domain.Item{newGroup("G", []*domain.Task{newTask("T1", false), newTask("T2", true)})},
-			wantW: "" +
-				"G\n" +
-				"  [ ] T1\n" +
-				"  [X] T2\n" +
-				"  [##########          ]50.0%\n",
-			wantErr: false,
-		},
-		"Success_2Group": {
+		"Success_Groups": {
 			in: []domain.Item{
-				newGroup("G1", []*domain.Task{newTask("T1", false), newTask("T2", true)}),
-				newGroup("G2", []*domain.Task{newTask("T1", false), newTask("T2", false)}),
+				newGroup("G1", []domain.Item{newTask("T1", false), newTask("T2", true)}),
+				newGroup("G2", []domain.Item{newTask("T1", false), newTask("T2", false)}),
 			},
 			wantW: "" +
 				"G1\n" +
@@ -74,8 +60,22 @@ func Test_getItemString(t *testing.T) {
 		in   input
 		want string
 	}{
-		"Success_Done":   {in: input{item: newTask("TaskTitle", true)}, want: "[X] TaskTitle\n"},
-		"Success_Undone": {in: input{item: newTask("TaskTitle", false)}, want: "[ ] TaskTitle\n"},
+		"Task_Done": {
+			in:   input{item: newTask("TaskTitle", true)},
+			want: "[X] TaskTitle\n",
+		},
+		"Task_Undone": {
+			in:   input{item: newTask("TaskTitle", false)},
+			want: "[ ] TaskTitle\n",
+		},
+		"Group": {
+			in: input{item: newGroup("GroupTitle", []domain.Item{newTask("TaskTitle1", true), newTask("TaskTitle2", false)})},
+			want: "" +
+				"GroupTitle\n" +
+				"  [X] TaskTitle1\n" +
+				"  [ ] TaskTitle2\n" +
+				"  [##########          ]50.0%\n",
+		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
