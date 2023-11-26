@@ -1,10 +1,11 @@
-package parse
+package format
 
 import (
 	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/MayugeStudio/easy_task/logic/internal/share"
 	"github.com/MayugeStudio/easy_task/utils"
 )
 
@@ -16,20 +17,20 @@ var (
 	errInvalidIndent  = fmt.Errorf("%w: no valid indent", errSyntax)
 )
 
-func formatTaskStrings(taskStrings []string) ([]string, []error) {
+func ToValidStrings(taskStrings []string) ([]string, []error) {
 	result := make([]string, 0)
 	errs := make([]error, 0)
 	inGroup := false
 	for _, str := range taskStrings {
 		var formattedString string
 		var err error
-		if isGroupTitle(str) {
-			formattedString, err = formatGroupTitleString(str)
+		if share.IsGroupTitle(str) {
+			formattedString, err = toFormattedGroupTitle(str)
 			inGroup = true
-		} else if inGroup && isGroupTaskString(str) {
-			formattedString, err = formatGroupTaskString(str)
-		} else if isSingleTaskString(str) {
-			formattedString, err = formatTaskString(str)
+		} else if inGroup && share.IsGroupTaskString(str) {
+			formattedString, err = toFormattedGroupTaskString(str)
+		} else if share.IsSingleTaskString(str) {
+			formattedString, err = toFormattedTaskString(str)
 			inGroup = false
 		} else {
 			if !strings.HasPrefix(str, "  ") {
@@ -46,27 +47,27 @@ func formatTaskStrings(taskStrings []string) ([]string, []error) {
 	return result, errs
 }
 
-func formatGroupTitleString(s string) (string, error) {
-	title, err := getGroupTitle(s)
+func toFormattedGroupTitle(s string) (string, error) {
+	title, err := extractGroupTitle(s)
 	if err != nil {
 		return "", err
 	}
 	return fmt.Sprintf("- %s", title), nil
 }
 
-func formatGroupTaskString(s string) (string, error) {
+func toFormattedGroupTaskString(s string) (string, error) {
 	if !strings.HasPrefix(s, " ") {
 		return "", errInvalidIndent
 	}
 	noSpaceStr := strings.TrimSpace(s)
-	formattedString, err := formatTaskString(noSpaceStr)
+	formattedString, err := toFormattedTaskString(noSpaceStr)
 	if err != nil {
 		return "", err
 	}
 	return fmt.Sprintf("  %s", formattedString), nil
 }
 
-func formatTaskString(s string) (string, error) {
+func toFormattedTaskString(s string) (string, error) {
 	if !strings.HasPrefix(s, "-") {
 		return "", errNoDash
 	}
@@ -80,7 +81,7 @@ func formatTaskString(s string) (string, error) {
 	}
 	l = l.TrimPrefix("[").TrimSpace()
 
-	statusStr, err := getStatusString(s)
+	statusStr, err := toFormattedTaskStatus(s)
 	if err != nil {
 		return "", err
 	}
@@ -95,12 +96,12 @@ func formatTaskString(s string) (string, error) {
 	return fmt.Sprintf("- [%s] %s", statusStr, l), nil
 }
 
-func getStatusString(taskString string) (string, error) {
-	if !strings.HasPrefix(taskString, "-") {
+func toFormattedTaskStatus(s string) (string, error) {
+	if !strings.HasPrefix(s, "-") {
 		return "", errNoDash
 	}
 
-	l := utils.NewLine(taskString)
+	l := utils.NewLine(s)
 
 	l = l.TrimPrefix("-").TrimSpace()
 
@@ -115,7 +116,7 @@ func getStatusString(taskString string) (string, error) {
 	return " ", nil
 }
 
-func getGroupTitle(s string) (string, error) {
+func extractGroupTitle(s string) (string, error) {
 	if !strings.HasPrefix(s, "-") {
 		return "", fmt.Errorf("%w: invalid group title %q", errSyntax, s)
 	}

@@ -1,4 +1,4 @@
-package parse
+package share
 
 import "testing"
 
@@ -14,7 +14,7 @@ func Test_isGroupTitle(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := isGroupTitle(tt.in)
+			got := IsGroupTitle(tt.in)
 			if got != tt.want {
 				t.Errorf("IsGroupTitle() = %v, want %v", got, tt.want)
 			}
@@ -35,7 +35,7 @@ func Test_isGroupTaskString(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := isGroupTaskString(tt.in)
+			got := IsGroupTaskString(tt.in)
 			if got != tt.want {
 				t.Errorf("IsGroupTaskString() = %v, want %v", got, tt.want)
 			}
@@ -57,7 +57,7 @@ func Test_isSingleTaskString(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := isSingleTaskString(tt.in)
+			got := IsSingleTaskString(tt.in)
 			if got != tt.want {
 				t.Errorf("IsSingleTaskString() = %v, want %v", got, tt.want)
 			}

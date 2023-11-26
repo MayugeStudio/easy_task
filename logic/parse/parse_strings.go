@@ -4,26 +4,28 @@ import (
 	"strings"
 
 	"github.com/MayugeStudio/easy_task/domain"
+	"github.com/MayugeStudio/easy_task/logic/format"
+	"github.com/MayugeStudio/easy_task/logic/internal/share"
 )
 
-func StringsToTasks(taskStrings []string) *domain.TodoList {
-	todoItemContainer := domain.NewTodoList()
-	taskStrings, _ = formatTaskStrings(taskStrings)
+func ToTodoList(taskStrings []string) *domain.TodoList {
+	list := domain.NewTodoList()
+	taskStrings, _ = format.ToValidStrings(taskStrings)
 	var group *domain.Group
 	for _, str := range taskStrings {
-		if isSingleTaskString(str) {
+		if share.IsSingleTaskString(str) {
 			task := toTask(str)
-			todoItemContainer.AddTask(task)
+			list.AddTask(task)
 			continue
 		}
 
-		if isGroupTitle(str) {
+		if share.IsGroupTitle(str) {
 			group = toGroup(str)
-			todoItemContainer.AddGroup(group)
+			list.AddGroup(group)
 			continue
 		}
 
-		if isGroupTaskString(str) {
+		if share.IsGroupTaskString(str) {
 			str = strings.TrimSpace(str)
 			task := toTask(str)
 			if group != nil {
@@ -32,7 +34,7 @@ func StringsToTasks(taskStrings []string) *domain.TodoList {
 			continue
 		}
 	}
-	return todoItemContainer
+	return list
 }
 
 func toTask(str string) *domain.Task {

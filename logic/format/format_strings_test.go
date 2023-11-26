@@ -1,4 +1,4 @@
-package parse
+package format
 
 import (
 	"fmt"
@@ -15,12 +15,12 @@ func joinWithComma(elems []string) string {
 	return "[" + strings.Join(newElems, ", ") + "]"
 }
 
-func TestFormatTaskStrings_OnlySingleTasks(t *testing.T) {
+func TestToValidStrings_OnlySingleTasks(t *testing.T) {
 	tests := map[string]struct {
 		in   []string
 		want []string
 	}{
-		"TaskStrings": {
+		"ToValidStrings": {
 			in: []string{
 				"-[]Bake the bread.",
 				"- [] Fry eggs.",
@@ -54,7 +54,7 @@ func TestFormatTaskStrings_OnlySingleTasks(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, _ := formatTaskStrings(tt.in)
+			got, _ := ToValidStrings(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
 			}
@@ -62,7 +62,7 @@ func TestFormatTaskStrings_OnlySingleTasks(t *testing.T) {
 	}
 }
 
-func TestFormatTaskStrings_OnlyGroupTasks(t *testing.T) {
+func TestToValidStrings_OnlyGroupTasks(t *testing.T) {
 	tests := map[string]struct {
 		in   []string
 		want []string
@@ -139,7 +139,7 @@ func TestFormatTaskStrings_OnlyGroupTasks(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, _ := formatTaskStrings(tt.in)
+			got, _ := ToValidStrings(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
 			}
@@ -147,7 +147,7 @@ func TestFormatTaskStrings_OnlyGroupTasks(t *testing.T) {
 	}
 }
 
-func TestFormatTaskStrings_MultiGroup(t *testing.T) {
+func TestToValidStrings_MultiGroup(t *testing.T) {
 	tests := map[string]struct {
 		in   []string
 		want []string
@@ -193,7 +193,7 @@ func TestFormatTaskStrings_MultiGroup(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, _ := formatTaskStrings(tt.in)
+			got, _ := ToValidStrings(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
 			}
@@ -201,7 +201,7 @@ func TestFormatTaskStrings_MultiGroup(t *testing.T) {
 	}
 }
 
-func Test_formatTaskString(t *testing.T) {
+func Test_toFormattedTaskString(t *testing.T) {
 	tests := map[string]struct {
 		in      string
 		want    string
@@ -223,7 +223,7 @@ func Test_formatTaskString(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, err := formatTaskString(tt.in)
+			got, err := toFormattedTaskString(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FormatTaskString() error = %v, wantErr = %v", err, tt.wantErr)
 				return
@@ -235,7 +235,7 @@ func Test_formatTaskString(t *testing.T) {
 	}
 }
 
-func Test_formatGroupTaskString(t *testing.T) {
+func Test_toFormattedGroupTaskString(t *testing.T) {
 	tests := map[string]struct {
 		in      string
 		want    string
@@ -249,7 +249,7 @@ func Test_formatGroupTaskString(t *testing.T) {
 
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, err := formatGroupTaskString(tt.in)
+			got, err := toFormattedGroupTaskString(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FormatGroupTaskString() error = %v, wantErr = %v", err, tt.wantErr)
 				return
@@ -261,7 +261,7 @@ func Test_formatGroupTaskString(t *testing.T) {
 	}
 }
 
-func Test_formatGroupTitleString(t *testing.T) {
+func Test_toFormattedGroupTitle(t *testing.T) {
 	tests := map[string]struct {
 		in      string
 		want    string
@@ -273,7 +273,7 @@ func Test_formatGroupTitleString(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, err := formatGroupTitleString(tt.in)
+			got, err := toFormattedGroupTitle(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FormatGroupTitleString() error = %v, wantErr = %v", err, tt.wantErr)
 				return
@@ -285,7 +285,7 @@ func Test_formatGroupTitleString(t *testing.T) {
 	}
 }
 
-func Test_getStatusString(t *testing.T) {
+func Test_toFormattedTaskStatus(t *testing.T) {
 	tests := map[string]struct {
 		in      string
 		want    string
@@ -300,7 +300,7 @@ func Test_getStatusString(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, err := getStatusString(tt.in)
+			got, err := toFormattedTaskStatus(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetStatusString() error = %v, wantErr = %v", err, tt.wantErr)
 				return
@@ -312,7 +312,7 @@ func Test_getStatusString(t *testing.T) {
 	}
 }
 
-func Test_getGroupTitle(t *testing.T) {
+func Test_extractGroupTitle(t *testing.T) {
 	tests := map[string]struct {
 		in      string
 		want    string
@@ -324,7 +324,7 @@ func Test_getGroupTitle(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, err := getGroupTitle(tt.in)
+			got, err := extractGroupTitle(tt.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetGroupTitle() error = %v, wantErr %v", err, tt.wantErr)
 				return

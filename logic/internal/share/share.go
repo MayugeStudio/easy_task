@@ -1,4 +1,4 @@
-package parse
+package share
 
 import (
 	"strings"
@@ -6,7 +6,7 @@ import (
 	"github.com/MayugeStudio/easy_task/utils"
 )
 
-func isGroupTitle(s string) bool {
+func IsGroupTitle(s string) bool {
 	if !strings.HasPrefix(s, "-") {
 		return false
 	}
@@ -15,7 +15,7 @@ func isGroupTitle(s string) bool {
 	return !l.HasPrefix("[")
 }
 
-func isGroupTaskString(s string) bool {
+func IsGroupTaskString(s string) bool {
 	if !strings.HasPrefix(s, " ") {
 		return false
 	}
@@ -42,7 +42,7 @@ func isGroupTaskString(s string) bool {
 	return true
 }
 
-func isSingleTaskString(s string) bool {
+func IsSingleTaskString(s string) bool {
 	if !strings.HasPrefix(s, "-") {
 		return false
 	}

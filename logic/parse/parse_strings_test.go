@@ -58,11 +58,11 @@ func TestStringsToTasks_OnlyTask(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := StringsToTasks(tt.in)
+			got := ToTodoList(tt.in)
 			if !reflect.DeepEqual(got.GetTasks(), tt.want) {
 				gotV := ConvertTaskPtrSliceToTaskValueSlice(got.GetTasks())
 				wantV := ConvertTaskPtrSliceToTaskValueSlice(tt.want)
-				t.Errorf("StringsToTasks() = %v, want %v", gotV, wantV)
+				t.Errorf("ToTodoList() = %v, want %v", gotV, wantV)
 			}
 		})
 	}
@@ -118,11 +118,11 @@ func TestStringsToTasks_OnlyGroupTask(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := StringsToTasks(tt.in)
+			got := ToTodoList(tt.in)
 			if !reflect.DeepEqual(got.GetGroups(), tt.want) {
 				gotV := ConvertGroupPtrSliceToGroupValueSlice(got.GetGroups())
 				wantV := ConvertGroupPtrSliceToGroupValueSlice(tt.want)
-				t.Errorf("StringsToTasks() = %v, want %v", gotV, wantV)
+				t.Errorf("ToTodoList() = %v, want %v", gotV, wantV)
 			}
 		})
 	}
@@ -182,11 +182,11 @@ func TestStringsToTasks_MultiGroupTask(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := StringsToTasks(tt.in)
+			got := ToTodoList(tt.in)
 			if !reflect.DeepEqual(got.GetGroups(), tt.want) {
 				gotV := ConvertGroupPtrSliceToGroupValueSlice(got.GetGroups())
 				wantV := ConvertGroupPtrSliceToGroupValueSlice(tt.want)
-				t.Errorf("StringsToTasks() = %v, want %v", gotV, wantV)
+				t.Errorf("ToTodoList() = %v, want %v", gotV, wantV)
 			}
 		})
 	}
