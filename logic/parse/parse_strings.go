@@ -9,19 +9,19 @@ import (
 )
 
 func ToTodoList(taskStrings []string) *domain.TodoList {
-	todoItemContainer := domain.NewTodoList()
+	list := domain.NewTodoList()
 	taskStrings, _ = format.ToValidStrings(taskStrings)
 	var group *domain.Group
 	for _, str := range taskStrings {
 		if share.IsSingleTaskString(str) {
 			task := toTask(str)
-			todoItemContainer.AddTask(task)
+			list.AddTask(task)
 			continue
 		}
 
 		if share.IsGroupTitle(str) {
 			group = toGroup(str)
-			todoItemContainer.AddGroup(group)
+			list.AddGroup(group)
 			continue
 		}
 
@@ -34,7 +34,7 @@ func ToTodoList(taskStrings []string) *domain.TodoList {
 			continue
 		}
 	}
-	return todoItemContainer
+	return list
 }
 
 func toTask(str string) *domain.Task {
