@@ -14,7 +14,7 @@ func TestGroups(t *testing.T) { // FIXME: This test function's concern is not ab
 		wantErr bool
 	}{
 		"Success_1Group": {
-			in: []*domain.Group{{"G", []*domain.Task{newTask("T1", false), newTask("T2", true)}}},
+			in: []*domain.Group{newGroup("G", []*domain.Task{newTask("T1", false), newTask("T2", true)})},
 			wantW: "" +
 				"G\n" +
 				"  [ ] T1\n" +
@@ -24,8 +24,8 @@ func TestGroups(t *testing.T) { // FIXME: This test function's concern is not ab
 		},
 		"Success_2Group": {
 			in: []*domain.Group{
-				{"G1", []*domain.Task{newTask("T1", false), newTask("T2", true)}},
-				{"G2", []*domain.Task{newTask("T1", false), newTask("T2", false)}},
+				newGroup("G1", []*domain.Task{newTask("T1", false), newTask("T2", true)}),
+				newGroup("G2", []*domain.Task{newTask("T1", false), newTask("T2", false)}),
 			},
 			wantW: "" +
 				"G1\n" +
@@ -60,7 +60,7 @@ func Test_getGroupString(t *testing.T) { // FIXME: This test code's concern is n
 		want string
 	}{
 		"100%": {
-			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{newTask("Task1", true), newTask("Task2", true)}},
+			in: newGroup("GroupTitle", []*domain.Task{newTask("Task1", true), newTask("Task2", true)}),
 			want: "" +
 				"GroupTitle\n" +
 				"  [X] Task1\n" +
@@ -68,7 +68,7 @@ func Test_getGroupString(t *testing.T) { // FIXME: This test code's concern is n
 				"  [####################]100.0%\n",
 		},
 		"50%": {
-			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{newTask("Task1", true), newTask("Task2", false)}},
+			in: newGroup("GroupTitle", []*domain.Task{newTask("Task1", true), newTask("Task2", false)}),
 			want: "" +
 				"GroupTitle\n" +
 				"  [X] Task1\n" +
@@ -76,7 +76,7 @@ func Test_getGroupString(t *testing.T) { // FIXME: This test code's concern is n
 				"  [##########          ]50.0%\n",
 		},
 		"0%": {
-			in: &domain.Group{Title: "GroupTitle", Tasks: []*domain.Task{newTask("Task1", false), newTask("Task2", false)}},
+			in: newGroup("GroupTitle", []*domain.Task{newTask("Task1", false), newTask("Task2", false)}),
 			want: "" +
 				"GroupTitle\n" +
 				"  [ ] Task1\n" +

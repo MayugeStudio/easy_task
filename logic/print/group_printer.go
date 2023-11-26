@@ -20,11 +20,11 @@ func Groups(w io.Writer, groups []*domain.Group) error {
 
 func getGroupString(group *domain.Group) string {
 	var b strings.Builder
-	titleString := fmt.Sprintf("%s\n", group.Title)
+	titleString := fmt.Sprintf("%s\n", group.Title())
 	b.WriteString(titleString)
 
-	length := getMaxTaskTitleLength(group.Tasks)
-	for _, task := range group.Tasks {
+	length := getMaxTaskTitleLength(group.Tasks())
+	for _, task := range group.Tasks() {
 		taskString := fmt.Sprintf("  %s\n", getTaskString(task, length))
 		b.WriteString(taskString)
 	}

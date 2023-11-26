@@ -10,7 +10,7 @@ func TestNewGroup(t *testing.T) {
 		in   string
 		want *Group
 	}{
-		"Success": {in: "GroupTitle", want: &Group{Title: "GroupTitle", Tasks: make([]*Task, 0)}},
+		"Success": {in: "GroupTitle", want: &Group{title: "GroupTitle", tasks: make([]*Task, 0)}},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -32,9 +32,9 @@ func TestGroup_AddTask(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			g := &Group{Title: tt.title, Tasks: make([]*Task, 0)}
+			g := &Group{title: tt.title, tasks: make([]*Task, 0)}
 			g.AddTask(tt.in)
-			got := g.Tasks
+			got := g.tasks
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewGroup() = %v, want %v", got, tt.want)
 			}
@@ -56,7 +56,7 @@ func TestGroup_Progress(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			g := &Group{}
 			for _, isDone := range tt.isDone {
-				g.Tasks = append(g.Tasks, &Task{isDone: isDone})
+				g.tasks = append(g.tasks, &Task{isDone: isDone})
 			}
 			got := g.Progress()
 			if got != tt.want {
