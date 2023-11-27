@@ -1,8 +1,6 @@
 package parse
 
 import (
-	"strings"
-
 	"github.com/MayugeStudio/easy_task/domain"
 	"github.com/MayugeStudio/easy_task/logic/internal/share"
 )
@@ -34,7 +32,6 @@ func ToItems(taskStrings []string) domain.Items {
 		}
 
 		if share.IsGroupTaskString(str) {
-			str = strings.TrimSpace(str)
 			task := toTask(str)
 			if group != nil {
 				group.AddItem(task)

@@ -9,6 +9,7 @@ func toTask(str string) *domain.Task {
 	title := ""
 	isDone := false
 	l := utils.NewLine(str).
+		TrimSpace().
 		TrimPrefix("-").
 		TrimSpace().
 		Replace("[", "", 1).

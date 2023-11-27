@@ -21,6 +21,14 @@ func Test_toTask(t *testing.T) {
 			in:   "- [ ] TaskName",
 			want: newTask("TaskName", false),
 		},
+		"2Indent": {
+			in:   "  - [ ] TaskName",
+			want: newTask("TaskName", false),
+		},
+		"4Indent": {
+			in:   "    - [ ] TaskName",
+			want: newTask("TaskName", false),
+		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
