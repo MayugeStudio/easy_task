@@ -10,9 +10,13 @@ func ToItems(taskStrings []string) domain.Items {
 	var group *domain.Group
 	currentIndentLevel := 0
 	for _, str := range taskStrings {
-		if share.IsSingleTaskString(str) {
-			currentIndentLevel = 0
+		if share.IsTaskString(str) {
+			currentIndentLevel = share.GetIndentLevel(str)
 			task := toTask(str)
+			if group != nil {
+				group.AddItem(task)
+				continue
+			}
 			items = append(items, task)
 			continue
 		}
@@ -28,14 +32,6 @@ func ToItems(taskStrings []string) domain.Items {
 			}
 			group = toGroup(str)
 			items = append(items, group)
-			continue
-		}
-
-		if share.IsGroupTaskString(str) {
-			task := toTask(str)
-			if group != nil {
-				group.AddItem(task)
-			}
 			continue
 		}
 	}

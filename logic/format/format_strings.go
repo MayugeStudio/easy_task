@@ -34,13 +34,13 @@ func ToValidStrings(taskStrings []string) ([]string, []error) {
 			inGroup = true
 			goto success
 		}
-		if inGroup && share.IsGroupTaskString(str) {
-			formattedString, err = toFormattedGroupTaskString(str)
-			goto success
-		}
-		if share.IsSingleTaskString(str) {
-			formattedString, err = toFormattedTaskString(str)
-			inGroup = false
+		if share.IsTaskString(str) {
+			if inGroup {
+				formattedString, err = toFormattedGroupTaskString(str)
+			} else {
+				formattedString, err = toFormattedTaskString(str)
+				inGroup = false
+			}
 			goto success
 		}
 		if share.IsItemModificationString(str) {
