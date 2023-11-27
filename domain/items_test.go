@@ -7,11 +7,9 @@ import (
 
 func TestNewItems(t *testing.T) {
 	tests := map[string]struct {
-		want *Items
+		want Items
 	}{
-		"Success": {
-			want: &Items{items: make([]Item, 0)},
-		},
+		"Success": {want: Items{}},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -23,71 +21,10 @@ func TestNewItems(t *testing.T) {
 	}
 }
 
-func TestItems_AddItem(t *testing.T) {
-	tests := map[string]struct {
-		in   Item
-		want []Item
-	}{
-		"Success_Task": {
-			in:   &Task{"T", false},
-			want: []Item{&Task{"T", false}},
-		},
-		"Success_Group": {
-			in:   &Group{"G", make([]Item, 0)},
-			want: []Item{&Group{"G", make([]Item, 0)}},
-		},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			list := Items{make([]Item, 0)}
-			list.AddItem(tt.in)
-			got := list.items
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("AddItem() items = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestItems_GetItems(t *testing.T) {
-	tests := map[string]struct {
-		fields []Item
-		want   []Item
-	}{
-		"ZeroItem": {
-			fields: []Item{},
-			want:   []Item{},
-		},
-		"TasksAndGroups": {
-			fields: []Item{
-				&Task{"Task1", false},
-				&Task{"Task2", false},
-				&Group{"Group1", []Item{&Task{"Task3", false}}},
-				&Group{"Group2", []Item{&Task{"Task4", false}}},
-			},
-			want: []Item{
-				&Task{"Task1", false},
-				&Task{"Task2", false},
-				&Group{"Group1", []Item{&Task{"Task3", false}}},
-				&Group{"Group2", []Item{&Task{"Task4", false}}},
-			},
-		},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			list := Items{items: tt.fields}
-			got := list.GetItems()
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetItems() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestItems_Progress(t *testing.T) {
 	type input struct {
-		tasks      []bool
-		groupTasks [][]bool
+		taskStatus       []bool
+		groupTasksStatus [][]bool
 	}
 	tests := map[string]struct {
 		in   input
@@ -95,49 +32,49 @@ func TestItems_Progress(t *testing.T) {
 	}{
 		"100%_Mix": {
 			in: input{
-				tasks:      []bool{true, true},
-				groupTasks: [][]bool{{true, true}, {true, true}},
+				taskStatus:       []bool{true, true},
+				groupTasksStatus: [][]bool{{true, true}, {true, true}},
 			},
 			want: 1,
 		},
 		"50%_Mix_010101": {
 			in: input{
-				tasks:      []bool{false, true},
-				groupTasks: [][]bool{{false, true}, {false, true}},
+				taskStatus:       []bool{false, true},
+				groupTasksStatus: [][]bool{{false, true}, {false, true}},
 			},
 			want: 0.5,
 		},
 		"0%_Mix": {
 			in: input{
-				tasks:      []bool{false},
-				groupTasks: [][]bool{{false, false}, {false, false}},
+				taskStatus:       []bool{false},
+				groupTasksStatus: [][]bool{{false, false}, {false, false}},
 			},
 			want: 0,
 		},
 		"0%_NoItem": {
 			in: input{
-				tasks:      nil,
-				groupTasks: nil,
+				taskStatus:       nil,
+				groupTasksStatus: nil,
 			},
 			want: 0,
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			c := &Items{}
-			for _, status := range tt.in.tasks {
+			items := Items{}
+			for _, status := range tt.in.taskStatus {
 				task := &Task{isDone: status}
-				c.AddItem(task)
+				items = append(items, task)
 			}
-			for _, areTasksDone := range tt.in.groupTasks {
+			for _, tasksStatus := range tt.in.groupTasksStatus {
 				group := &Group{}
-				for _, isDone := range areTasksDone {
+				for _, isDone := range tasksStatus {
 					group.AddItem(&Task{isDone: isDone})
 				}
-				c.AddItem(group)
+				items = append(items, group)
 			}
 
-			got := c.Progress()
+			got := items.Progress()
 
 			if got != tt.want {
 				t.Errorf("Progress() = %v, want %v", got, tt.want)

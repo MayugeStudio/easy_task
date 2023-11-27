@@ -40,7 +40,7 @@ func TestProgress(t *testing.T) { // FIX-TEST: Add group pattern.
 			w := &bytes.Buffer{}
 			items := domain.NewItems()
 			for i, b := range tt.in { // FIX-TEST: This code is redundant. Duplicate task title is ok.
-				items.AddItem(newTask(fmt.Sprintf("T%d", i), b))
+				items = append(items, newTask(fmt.Sprintf("T%d", i), b))
 			}
 			err := Progress(w, items)
 			if (err != nil) != tt.wantErr {

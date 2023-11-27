@@ -13,7 +13,7 @@ const (
 	undoneSymbol = " "
 )
 
-func Items(w io.Writer, items []domain.Item) error { // TODO: Change argument type []domain.Item to domain.Items.
+func Items(w io.Writer, items domain.Items) error {
 	for _, item := range items {
 		str := getItemString(item, 0)
 		if _, err := fmt.Fprint(w, str); err != nil {

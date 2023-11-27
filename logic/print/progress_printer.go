@@ -13,7 +13,7 @@ const (
 	defaultProgressBarLength = 40.0
 )
 
-func Progress(w io.Writer, items *domain.Items) error {
+func Progress(w io.Writer, items domain.Items) error {
 	progress := items.Progress()
 	progressString := getProgressString(progress, defaultProgressBarLength)
 	if _, err := fmt.Fprint(w, progressString); err != nil {

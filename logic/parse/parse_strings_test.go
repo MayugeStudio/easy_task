@@ -31,24 +31,24 @@ func debug(items []domain.Item, indent int) {
 func TestToItems_OnlyTask(t *testing.T) { // TODO: Refactor test cases.
 	tests := map[string]struct {
 		in   []string
-		want []domain.Item
+		want domain.Items
 	}{
 		"DoneTasks_Lowercase": {
 			in:   []string{"- [x] Task1", "- [x] Task2"},
-			want: []domain.Item{newTask("Task1", true), newTask("Task2", true)},
+			want: domain.Items{newTask("Task1", true), newTask("Task2", true)},
 		},
 		"1Done1Undone": {
 			in:   []string{"- [ ] Task1", "- [X] Task2"},
-			want: []domain.Item{newTask("Task1", false), newTask("Task2", true)},
+			want: domain.Items{newTask("Task1", false), newTask("Task2", true)},
 		},
 		"ContainInvalidTaskString": {
 			in:   []string{"- [ ] Task1", "InvalidTaskString", "- [X] Task2"},
-			want: []domain.Item{newTask("Task1", false), newTask("Task2", true)},
+			want: domain.Items{newTask("Task1", false), newTask("Task2", true)},
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := ToItems(tt.in).GetItems()
+			got := ToItems(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ToItems() = %v, want %v", got, tt.want)
 			}
@@ -59,7 +59,7 @@ func TestToItems_OnlyTask(t *testing.T) { // TODO: Refactor test cases.
 func TestToItems_OnlySingleGroup(t *testing.T) { // FIXME: Rename function name 'OnlyGroupTask' to 'OnlySingleGroup'.
 	tests := map[string]struct {
 		in   []string
-		want []domain.Item
+		want domain.Items
 	}{
 		"1GroupIn1DoneAnd1Undone": {
 			in: []string{
@@ -105,7 +105,7 @@ func TestToItems_OnlySingleGroup(t *testing.T) { // FIXME: Rename function name 
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := ToItems(tt.in).GetItems()
+			got := ToItems(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ToItems() = %v, want %v", got, tt.want)
 			}
@@ -116,7 +116,7 @@ func TestToItems_OnlySingleGroup(t *testing.T) { // FIXME: Rename function name 
 func TestToTodoList_MultiGroup(t *testing.T) { // FIXME: Rename test function name.
 	tests := map[string]struct {
 		in   []string
-		want []domain.Item
+		want domain.Items
 	}{
 		"Groups": {
 			in: []string{
@@ -184,7 +184,7 @@ func TestToTodoList_MultiGroup(t *testing.T) { // FIXME: Rename test function na
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := ToItems(tt.in).GetItems()
+			got := ToItems(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				debug(got, 0)
 				debug(tt.want, 0)
