@@ -172,6 +172,24 @@ func TestToValidStrings_MultiGroup(t *testing.T) {
 				"  - [ ] Memorize english words.",
 			},
 		},
+		"NestedGroup": {
+			in: []string{
+				"- Group1",
+				"  - [X] Task1",
+				"  - [ ] Task2",
+				"  - Group2",
+				"    - [ ] Task3",
+				"    - [ ] Task4",
+			},
+			want: []string{
+				"- Group1",
+				"  - [X] Task1",
+				"  - [ ] Task2",
+				"  - Group2",
+				"    - [ ] Task3",
+				"    - [ ] Task4",
+			},
+		},
 		"ContainInValidGroupTaskString": {
 			[]string{
 				"- Eat breakfast.",
@@ -195,7 +213,7 @@ func TestToValidStrings_MultiGroup(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			got, _ := ToValidStrings(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
+				t.Errorf("FormatTaskStrings() = \n%s \nwant \n%s", strings.Join(got, "\n"), strings.Join(tt.want, "\n"))
 			}
 		})
 	}

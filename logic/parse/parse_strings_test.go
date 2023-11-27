@@ -1,17 +1,19 @@
 package parse
 
 import (
+	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/MayugeStudio/easy_task/domain"
 )
 
 var newTask = domain.NewTask
-var newGroup = func(title string, tasks []*domain.Task) *domain.Group {
+var newGroup = func(title string, items []domain.Item) *domain.Group {
 	g := domain.NewGroup(title)
-	for _, task := range tasks {
-		g.AddItem(task)
+	for _, item := range items {
+		g.AddItem(item)
 	}
 	return g
 }
@@ -61,42 +63,42 @@ func TestStringsToTasks_OnlyGroupTask(t *testing.T) { // FIXME: Rename function 
 			in: []string{"- TaskGroup", "  - [X]Task1", "  - [X]Task2"},
 			want: []domain.Item{newGroup(
 				"TaskGroup",
-				[]*domain.Task{newTask("Task1", true), newTask("Task2", true)}),
+				[]domain.Item{newTask("Task1", true), newTask("Task2", true)}),
 			},
 		},
 		"DoneTasks_Lowercase": {
 			in: []string{"- TaskGroup", "  - [x]Task1", "  - [x]Task2"},
 			want: []domain.Item{newGroup(
 				"TaskGroup",
-				[]*domain.Task{newTask("Task1", true), newTask("Task2", true)}),
+				[]domain.Item{newTask("Task1", true), newTask("Task2", true)}),
 			},
 		},
 		"UndoneTasks": {
 			in: []string{"- TaskGroup", "  - [ ]Task1", "  - [ ]Task2"},
 			want: []domain.Item{newGroup(
 				"TaskGroup",
-				[]*domain.Task{newTask("Task1", false), newTask("Task2", false)}),
+				[]domain.Item{newTask("Task1", false), newTask("Task2", false)}),
 			},
 		},
 		"MixPattern": {
 			in: []string{"- TaskGroup", "  - [ ]Task1", "  - [X]Task2"},
 			want: []domain.Item{newGroup(
 				"TaskGroup",
-				[]*domain.Task{newTask("Task1", false), newTask("Task2", true)}),
+				[]domain.Item{newTask("Task1", false), newTask("Task2", true)}),
 			},
 		},
 		"ContainInvalidTaskString": {
 			in: []string{"- TaskGroup", "  - [ ]Task1", "  InvalidTaskString", "  - [X]Task2"},
 			want: []domain.Item{newGroup(
 				"TaskGroup",
-				[]*domain.Task{newTask("Task1", false), newTask("Task2", true)}),
+				[]domain.Item{newTask("Task1", false), newTask("Task2", true)}),
 			},
 		},
 		"ContainInvalidTaskString_BadIndent": {
 			in: []string{"- TaskGroup", "  - [ ]Task1", "InvalidTaskString", "  - [X]Task2"},
 			want: []domain.Item{newGroup(
 				"TaskGroup",
-				[]*domain.Task{newTask("Task1", false)}),
+				[]domain.Item{newTask("Task1", false)}),
 			},
 		},
 	}
@@ -115,7 +117,7 @@ func TestStringsToTasks_MultiGroupTask(t *testing.T) { // FIXME: Rename test fun
 		in   []string
 		want []domain.Item
 	}{
-		"MixPattern": {
+		"Groups": {
 			in: []string{
 				"- TaskGroup1",
 				"  - [ ]Task1",
@@ -125,8 +127,28 @@ func TestStringsToTasks_MultiGroupTask(t *testing.T) { // FIXME: Rename test fun
 				"  - [X]Task2",
 			},
 			want: []domain.Item{
-				newGroup("TaskGroup1", []*domain.Task{newTask("Task1", false), newTask("Task2", true)}),
-				newGroup("TaskGroup2", []*domain.Task{newTask("Task1", false), newTask("Task2", true)}),
+				newGroup("TaskGroup1", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
+				newGroup("TaskGroup2", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
+			},
+		},
+		"NestedGroup": {
+			in: []string{
+				"- G1",
+				"  - G2",
+				"    - [X] Task1",
+				"    - [ ] Task2",
+			},
+			want: []domain.Item{
+				newGroup(
+					"G1",
+					[]domain.Item{
+						newGroup(
+							"G2",
+							[]domain.Item{
+								newTask("Task1", true),
+								newTask("Task2", false),
+							}),
+					}),
 			},
 		},
 		"ContainInvalidTaskString": {
@@ -141,8 +163,8 @@ func TestStringsToTasks_MultiGroupTask(t *testing.T) { // FIXME: Rename test fun
 				"  - [X]Task2",
 			},
 			[]domain.Item{
-				newGroup("TaskGroup1", []*domain.Task{newTask("Task1", false), newTask("Task2", true)}),
-				newGroup("TaskGroup2", []*domain.Task{newTask("Task1", false), newTask("Task2", true)}),
+				newGroup("TaskGroup1", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
+				newGroup("TaskGroup2", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
 			},
 		},
 		"ContainInvalidTaskString_BadIndent": {
@@ -157,8 +179,8 @@ func TestStringsToTasks_MultiGroupTask(t *testing.T) { // FIXME: Rename test fun
 				"  - [X]Task2",
 			},
 			[]domain.Item{
-				newGroup("TaskGroup1", []*domain.Task{newTask("Task1", false)}),
-				newGroup("TaskGroup2", []*domain.Task{newTask("Task1", false)}),
+				newGroup("TaskGroup1", []domain.Item{newTask("Task1", false)}),
+				newGroup("TaskGroup2", []domain.Item{newTask("Task1", false)}),
 			},
 		},
 	}
@@ -166,9 +188,20 @@ func TestStringsToTasks_MultiGroupTask(t *testing.T) { // FIXME: Rename test fun
 		t.Run(testName, func(t *testing.T) {
 			got := ToTodoList(tt.in).GetItems()
 			if !reflect.DeepEqual(got, tt.want) {
+				debug(got, 0)
+				debug(tt.want, 0)
 				t.Errorf("ToTodoList() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func debug(items []domain.Item, indent int) {
+	for _, item := range items {
+		fmt.Println(strings.Repeat(" ", indent), item.Title())
+		if item.IsParent() {
+			debug(item.Children(), indent+2)
+		}
 	}
 }
 
@@ -201,7 +234,7 @@ func Test_toGroup(t *testing.T) {
 		in   string
 		want *domain.Group
 	}{
-		"ValidGroupTitle": {in: "- GroupName", want: newGroup("GroupName", make([]*domain.Task, 0))},
+		"ValidGroupTitle": {in: "- GroupName", want: newGroup("GroupName", make([]domain.Item, 0))},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
