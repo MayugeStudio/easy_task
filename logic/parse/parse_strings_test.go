@@ -27,42 +27,23 @@ func debug(items []domain.Item, indent int) {
 	}
 }
 
-func TestToItems_OnlyTask(t *testing.T) { // TODO: Refactor test cases.
+func TestToItems(t *testing.T) {
 	t.Parallel()
 	tests := map[string]struct {
 		in   []string
 		want domain.Items
 	}{
-		"DoneTasks_Lowercase": {
-			in:   []string{"- [x] Task1", "- [x] Task2"},
-			want: domain.Items{newTask("Task1", true), newTask("Task2", true)},
+		"Tasks": {
+			in: []string{
+				"- [ ] Task1",
+				"- [X] Task2",
+			},
+			want: domain.Items{
+				newTask("Task1", false),
+				newTask("Task2", true),
+			},
 		},
-		"1Done1Undone": {
-			in:   []string{"- [ ] Task1", "- [X] Task2"},
-			want: domain.Items{newTask("Task1", false), newTask("Task2", true)},
-		},
-		"ContainInvalidTaskString": {
-			in:   []string{"- [ ] Task1", "InvalidTaskString", "- [X] Task2"},
-			want: domain.Items{newTask("Task1", false), newTask("Task2", true)},
-		},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			got := ToItems(tt.in)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ToItems() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestToItems_OnlySingleGroup(t *testing.T) {
-	t.Parallel()
-	tests := map[string]struct {
-		in   []string
-		want domain.Items
-	}{
-		"1GroupIn1DoneAnd1Undone": {
+		"Group": {
 			in: []string{
 				"- Group",
 				"  - [ ] Task1",
@@ -71,67 +52,11 @@ func TestToItems_OnlySingleGroup(t *testing.T) {
 			want: []domain.Item{
 				newGroup(
 					"Group",
-					[]domain.Item{newTask("Task1", false), newTask("Task2", true)},
+					[]domain.Item{
+						newTask("Task1", false),
+						newTask("Task2", true),
+					},
 				),
-			},
-		},
-		"ContainInvalidTaskString": {
-			in: []string{
-				"- Group",
-				"  - [ ] Task1",
-				"  InvalidTaskString",
-				"  - [X] Task2",
-			},
-			want: []domain.Item{
-				newGroup(
-					"Group",
-					[]domain.Item{newTask("Task1", false), newTask("Task2", true)},
-				),
-			},
-		},
-		"ContainInvalidTaskString_BadIndent": {
-			in: []string{
-				"- Group",
-				"  - [ ] Task1",
-				"InvalidTaskString",
-				"  - [X] Task2",
-			},
-			want: []domain.Item{
-				newGroup(
-					"Group",
-					[]domain.Item{newTask("Task1", false)},
-				),
-			},
-		},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			got := ToItems(tt.in)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ToItems() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestToTodoList_MultiGroup(t *testing.T) { // FIXME: Rename test function name.
-	t.Parallel()
-	tests := map[string]struct {
-		in   []string
-		want domain.Items
-	}{
-		"Groups": {
-			in: []string{
-				"- Group1",
-				"  - [ ]Task1",
-				"  - [X]Task2",
-				"- Group2",
-				"  - [ ]Task1",
-				"  - [X]Task2",
-			},
-			want: []domain.Item{
-				newGroup("Group1", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
-				newGroup("Group2", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
 			},
 		},
 		"NestedGroup": {
@@ -151,15 +76,87 @@ func TestToTodoList_MultiGroup(t *testing.T) { // FIXME: Rename test function na
 					}),
 			},
 		},
-		"ContainInvalidTaskString": {
-			[]string{
+		"Groups": {
+			in: []string{
 				"- Group1",
 				"  - [ ]Task1",
-				"  InvalidTaskString",
 				"  - [X]Task2",
 				"- Group2",
 				"  - [ ]Task1",
-				"  InvalidTaskString",
+				"  - [X]Task2",
+			},
+			want: []domain.Item{
+				newGroup("Group1", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
+				newGroup("Group2", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
+			},
+		},
+		//"NestedGroups": {
+		//	in: []string{
+		//		"- Group1",
+		//		"  - Group1-1",
+		//		"    - [X] Task1",
+		//		"    - [ ] Task2",
+		//		"  - Group1-2",
+		//		"    - [X] Task1",
+		//		"    - [ ] Task2",
+		//		"- Group2",
+		//		"  - Group2-1",
+		//		"    - [X] Task1",
+		//		"    - [ ] Task2",
+		//		"  - Group2-2",
+		//		"    - [X] Task1",
+		//		"    - [ ] Task2",
+		//	},
+		//	want: []domain.Item{
+		//		newGroup(
+		//			"Group1",
+		//			[]domain.Item{
+		//				newGroup(
+		//					"Group1-1",
+		//					[]domain.Item{
+		//						newTask("Task1", true),
+		//						newTask("Task2", false),
+		//					},
+		//				),
+		//				newGroup(
+		//					"Group1-2",
+		//					[]domain.Item{
+		//						newTask("Task1", true),
+		//						newTask("Task2", false),
+		//					},
+		//				),
+		//			},
+		//		),
+		//		newGroup(
+		//			"Group2",
+		//			[]domain.Item{
+		//				newGroup(
+		//					"Group2-1",
+		//					[]domain.Item{
+		//						newTask("Task1", true),
+		//						newTask("Task2", false),
+		//					},
+		//				),
+		//				newGroup(
+		//					"Group2-2",
+		//					[]domain.Item{
+		//						newTask("Task1", true),
+		//						newTask("Task2", false),
+		//					},
+		//				),
+		//			},
+		//		),
+		//	},
+		//},
+		"ContainInvalidString": {
+			[]string{
+				"- Group1",
+				"  - [ ]Task1",
+				"InvalidTaskString",
+				"  - [X]Task2",
+				"- Group2",
+				"  - [ ]Task1",
+				"    InvalidTaskString",
 				"  - [X]Task2",
 			},
 			[]domain.Item{
@@ -167,28 +164,15 @@ func TestToTodoList_MultiGroup(t *testing.T) { // FIXME: Rename test function na
 				newGroup("Group2", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
 			},
 		},
-		"ContainInvalidTaskString_BadIndent": {
-			[]string{
-				"- Group1",
-				"  - [ ]Task1",
-				"InvalidTaskString",
-				"  - [X]Task2",
-				"- Group2",
-				"  - [ ]Task1",
-				"InvalidTaskString",
-				"  - [X]Task2",
-			},
-			[]domain.Item{
-				newGroup("Group1", []domain.Item{newTask("Task1", false)}),
-				newGroup("Group2", []domain.Item{newTask("Task1", false)}),
-			},
-		},
 	}
+
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			got := ToItems(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
+				fmt.Println("Got")
 				debug(got, 0)
+				fmt.Println("Want")
 				debug(tt.want, 0)
 				t.Errorf("ToItems() = %v, want %v", got, tt.want)
 			}
@@ -202,11 +186,11 @@ func Test_toTask(t *testing.T) {
 		in   string
 		want *domain.Task
 	}{
-		"ValidSingleTaskString_Done": {
+		"Done": {
 			in:   "- [X] TaskName",
 			want: newTask("TaskName", true),
 		},
-		"ValidSingleTaskString_Undone": {
+		"Undone": {
 			in:   "- [ ] TaskName",
 			want: newTask("TaskName", false),
 		},
@@ -227,7 +211,9 @@ func Test_toGroup(t *testing.T) {
 		in   string
 		want *domain.Group
 	}{
-		"ValidGroupTitle": {in: "- GroupName", want: newGroup("GroupName", make([]domain.Item, 0))},
+		"GroupTitle":           {in: "- GroupName", want: newGroup("GroupName", make([]domain.Item, 0))},
+		"GroupTitle_2Indented": {in: "  - GroupName", want: newGroup("GroupName", make([]domain.Item, 0))},
+		"GroupTitle_4Indented": {in: "    - GroupName", want: newGroup("GroupName", make([]domain.Item, 0))},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {

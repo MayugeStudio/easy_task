@@ -4,13 +4,11 @@ import (
 	"strings"
 
 	"github.com/MayugeStudio/easy_task/domain"
-	"github.com/MayugeStudio/easy_task/logic/format"
 	"github.com/MayugeStudio/easy_task/logic/internal/share"
 )
 
 func ToItems(taskStrings []string) domain.Items {
 	items := domain.NewItems()
-	taskStrings, _ = format.ToValidStrings(taskStrings)
 	var group *domain.Group
 	currentIndentLevel := 0
 	for _, str := range taskStrings {
