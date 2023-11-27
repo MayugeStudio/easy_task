@@ -1,179 +1,118 @@
 package format
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 	"testing"
 )
 
-func joinWithComma(elems []string) string {
-	newElems := make([]string, 0)
-	for _, elem := range elems {
-		newElems = append(newElems, fmt.Sprintf("%q", elem))
-	}
-	return "[" + strings.Join(newElems, ", ") + "]"
-}
-
-func TestToFormattedStrings_OnlySingleTasks(t *testing.T) {
+func TestToFormattedStrings(t *testing.T) {
 	t.Parallel()
 	tests := map[string]struct {
 		in   []string
 		want []string
 	}{
-		"ToFormattedStrings": {
+		"BadFormatTaskStrings": {
 			in: []string{
-				"-[]Bake the bread.",
-				"- [] Fry eggs.",
-				"- []Prepare coffee.",
+				"-[]Task1",
+				"- [] Task2",
+				"- []Task3",
 			},
 			want: []string{
-				"- [ ] Bake the bread.",
-				"- [ ] Fry eggs.",
-				"- [ ] Prepare coffee.",
+				"- [ ] Task1",
+				"- [ ] Task2",
+				"- [ ] Task3",
+			},
+		},
+		"BadFormatGroupStrings": {
+			in: []string{
+				"- Group",
+				"  -[X] Task1",
+				"  - [] Task2",
+				"  - [ ]Task3",
+			},
+			want: []string{
+				"- Group",
+				"  - [X] Task1",
+				"  - [ ] Task2",
+				"  - [ ] Task3",
+			},
+		},
+		"BadFormat2GroupStrings": {
+			in: []string{
+				"- Group1",
+				"  -[X] Task1",
+				"  -[]Task2",
+				"  -[ ]Task3",
+				"-Group2",
+				"  -[X]Task1",
+				"  - [] Task2",
+			},
+			want: []string{
+				"- Group1",
+				"  - [X] Task1",
+				"  - [ ] Task2",
+				"  - [ ] Task3",
+				"- Group2",
+				"  - [X] Task1",
+				"  - [ ] Task2",
 			},
 		},
 		"ContainsInvalidTaskString": {
 			in: []string{
-				"- [ ] Bake the bread.",
-				"Invalid TaskString.",
-				"- [ ] Prepare coffee.",
+				"- [ ] Task1",
+				"InvalidString",
+				"- [ ] Task2",
 			},
 			want: []string{
-				"- [ ] Bake the bread.",
-				"- [ ] Prepare coffee.",
+				"- [ ] Task1",
+				"- [ ] Task2",
 			},
 		},
-		"AllTaskStringsAreInvalid": {
+		"ContainsInvalidIndentGroupTaskString": {
 			in: []string{
-				"Bake the bread.",
-				"Fry eggs.",
-				"Prepare coffee.",
+				"- Group",
+				"  - [X] Task1",
+				"InvalidString.",
+				"  - [ ] Task2",
+			},
+			want: []string{
+				"- Group",
+				"  - [X] Task1",
+			},
+		},
+		"ContainsInvalidGroupTaskStringOtherThanInvalidIndent": {
+			in: []string{
+				"- Group",
+				"  - [X] Task1",
+				"  InvalidString",
+				"  - [ ] Task2",
+			},
+			want: []string{
+				"- Group",
+				"  - [X] Task1",
+				"  - [ ] Task2",
+			},
+		},
+		"AllGroupTaskStringsAreInvalid": {
+			in: []string{
+				"- Group",
+				"  Task1",
+				"  Task2",
+				"  Task3",
+			},
+			want: []string{
+				"- Group",
+			},
+		},
+		"InvalidGroupTitle": {
+			in: []string{
+				"Group",
+				"  - [X] Task1",
+				"  - [X] Task2",
+				"  - [ ] Task3",
 			},
 			want: []string{},
-		},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			got, _ := ToFormattedStrings(tt.in)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
-			}
-		})
-	}
-}
-
-func TestToFormattedStrings_OnlyGroupTasks(t *testing.T) {
-	t.Parallel()
-	tests := map[string]struct {
-		in   []string
-		want []string
-	}{
-		"ValidGroupTaskString": {
-			in: []string{
-				"- Eat breakfast.",
-				// Child task must have Two indentations in the prefix.
-				"  -[X]Bake the bread.",
-				"  - [] Fry eggs.",
-				"  - [ ]Prepare coffee.",
-			},
-			want: []string{
-				"- Eat breakfast.",
-				"  - [X] Bake the bread.",
-				"  - [ ] Fry eggs.",
-				"  - [ ] Prepare coffee.",
-			},
-		},
-		"ContainsInvalidIndentChildTaskString": {
-			in: []string{
-				"- Eat breakfast.",
-				"  - [X] Bake the bread.",
-				"Invalid TaskString.",
-				"  - [ ] Prepare coffee.",
-			},
-			want: []string{
-				"- Eat breakfast.",
-				"  - [X] Bake the bread.",
-			},
-		},
-		"ContainsInvalidChildTaskStringOtherThanInvalidIndent": {
-			in: []string{
-				"- Eat breakfast.",
-				"  - [X] Bake the bread.",
-				"  Invalid TaskString.",
-				"  - [ ] Prepare coffee.",
-			},
-			want: []string{
-				"- Eat breakfast.",
-				"  - [X] Bake the bread.",
-				"  - [ ] Prepare coffee.",
-			},
-		},
-		"AllTaskStringsAreInvalid": {
-			in: []string{
-				"- Eat breakfast.",
-				"  Bake the bread.",
-				"  Fry eggs.",
-				"  Prepare coffee.",
-			},
-			want: []string{
-				"- Eat breakfast.",
-			},
-		},
-		"InvalidGroupTitleWithUndoneTasks": {
-			in: []string{
-				"Eat breakfast.",
-				"  - [ ] Bake the bread.",
-				"  - [ ] Fry eggs.",
-				"  - [ ] Prepare coffee.",
-			},
-			want: []string{},
-		},
-		"InvalidGroupTitleWithDoneTasks": {
-			in: []string{
-				"Eat breakfast.",
-				"  - [X] Bake the bread.",
-				"  - [X] Fry eggs.",
-				"  - [X] Prepare coffee.",
-			},
-			want: []string{},
-		},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			got, _ := ToFormattedStrings(tt.in)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
-			}
-		})
-	}
-}
-
-func TestToFormattedStrings_MultiGroup(t *testing.T) {
-	t.Parallel()
-	tests := map[string]struct {
-		in   []string
-		want []string
-	}{
-		"ValidGroupTaskString": {
-			in: []string{
-				"- Eat breakfast.",
-				"  -[X] Bake the bread.",
-				"  -[]Fry eggs.",
-				"  -[ ]Prepare coffee.",
-				"-Study English.",
-				"  -[X]Watch english TV show.",
-				"  - []Memorize english words.",
-			},
-			want: []string{
-				"- Eat breakfast.",
-				"  - [X] Bake the bread.",
-				"  - [ ] Fry eggs.",
-				"  - [ ] Prepare coffee.",
-				"- Study English.",
-				"  - [X] Watch english TV show.",
-				"  - [ ] Memorize english words.",
-			},
 		},
 		"NestedGroup": {
 			in: []string{
@@ -191,24 +130,6 @@ func TestToFormattedStrings_MultiGroup(t *testing.T) {
 				"  - Group2",
 				"    - [ ] Task3",
 				"    - [ ] Task4",
-			},
-		},
-		"ContainInValidGroupTaskString": {
-			[]string{
-				"- Eat breakfast.",
-				"  -[X] Bake the bread.",
-				"  Fry eggs.",
-				"  -[ ]Prepare coffee.",
-				"-Study English.",
-				"  -[X]Watch english TV show.",
-				"Memorize english words.",
-			},
-			[]string{
-				"- Eat breakfast.",
-				"  - [X] Bake the bread.",
-				"  - [ ] Prepare coffee.",
-				"- Study English.",
-				"  - [X] Watch english TV show.",
 			},
 		},
 	}
