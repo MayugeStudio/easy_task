@@ -14,11 +14,11 @@ func PrintTodoItem(w io.Writer, fileName string, reader logic.FileReader) error 
 	if scanErr != nil {
 		return fmt.Errorf("scanning file: %w", scanErr)
 	}
-	todoList := parse.ToTodoList(lines)
-	if err := print.Items(w, todoList.GetItems()); err != nil {
+	items := parse.ToItems(lines)
+	if err := print.Items(w, items.GetItems()); err != nil {
 		return fmt.Errorf("printing items: %w", err)
 	}
-	if err := print.Progress(w, todoList); err != nil {
+	if err := print.Progress(w, items); err != nil {
 		return fmt.Errorf("printing progress: %w", err)
 	}
 	return nil

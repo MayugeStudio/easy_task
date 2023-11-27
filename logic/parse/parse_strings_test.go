@@ -18,24 +18,26 @@ var newGroup = func(title string, items []domain.Item) *domain.Group {
 	return g
 }
 
-func TestStringsToTasks_OnlyTask(t *testing.T) { // TODO: Refactor test cases.
+func debug(items []domain.Item, indent int) {
+	for _, item := range items {
+		fmt.Println(strings.Repeat(" ", indent), item.Title())
+		if item.IsParent() {
+			debug(item.Children(), indent+2)
+		}
+	}
+}
+
+// TODO: Make all test cases parallel
+func TestToItems_OnlyTask(t *testing.T) { // TODO: Refactor test cases.
 	tests := map[string]struct {
 		in   []string
 		want []domain.Item
 	}{
-		"DoneTasks": {
-			in:   []string{"- [X]Task1", "- [X]Task2"},
-			want: []domain.Item{newTask("Task1", true), newTask("Task2", true)},
-		},
 		"DoneTasks_Lowercase": {
 			in:   []string{"- [x] Task1", "- [x] Task2"},
 			want: []domain.Item{newTask("Task1", true), newTask("Task2", true)},
 		},
-		"UndoneTasks": {
-			in:   []string{"- [ ] Task1", "- [ ] Task2"},
-			want: []domain.Item{newTask("Task1", false), newTask("Task2", false)},
-		},
-		"MixPattern": {
+		"1Done1Undone": {
 			in:   []string{"- [ ] Task1", "- [X] Task2"},
 			want: []domain.Item{newTask("Task1", false), newTask("Task2", true)},
 		},
@@ -46,73 +48,72 @@ func TestStringsToTasks_OnlyTask(t *testing.T) { // TODO: Refactor test cases.
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := ToTodoList(tt.in).GetItems()
+			got := ToItems(tt.in).GetItems()
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ToTodoList() = %v, want %v", got, tt.want)
+				t.Errorf("ToItems() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestStringsToTasks_OnlyGroupTask(t *testing.T) { // FIXME: Rename function name 'OnlyGroupTask' to 'OnlySingleGroup'.
+func TestToItems_OnlySingleGroup(t *testing.T) { // FIXME: Rename function name 'OnlyGroupTask' to 'OnlySingleGroup'.
 	tests := map[string]struct {
 		in   []string
 		want []domain.Item
 	}{
-		"DoneTasks": {
-			in: []string{"- TaskGroup", "  - [X]Task1", "  - [X]Task2"},
-			want: []domain.Item{newGroup(
-				"TaskGroup",
-				[]domain.Item{newTask("Task1", true), newTask("Task2", true)}),
+		"1GroupIn1DoneAnd1Undone": {
+			in: []string{
+				"- Group",
+				"  - [ ] Task1",
+				"  - [X] Task2",
 			},
-		},
-		"DoneTasks_Lowercase": {
-			in: []string{"- TaskGroup", "  - [x]Task1", "  - [x]Task2"},
-			want: []domain.Item{newGroup(
-				"TaskGroup",
-				[]domain.Item{newTask("Task1", true), newTask("Task2", true)}),
-			},
-		},
-		"UndoneTasks": {
-			in: []string{"- TaskGroup", "  - [ ]Task1", "  - [ ]Task2"},
-			want: []domain.Item{newGroup(
-				"TaskGroup",
-				[]domain.Item{newTask("Task1", false), newTask("Task2", false)}),
-			},
-		},
-		"MixPattern": {
-			in: []string{"- TaskGroup", "  - [ ]Task1", "  - [X]Task2"},
-			want: []domain.Item{newGroup(
-				"TaskGroup",
-				[]domain.Item{newTask("Task1", false), newTask("Task2", true)}),
+			want: []domain.Item{
+				newGroup(
+					"Group",
+					[]domain.Item{newTask("Task1", false), newTask("Task2", true)},
+				),
 			},
 		},
 		"ContainInvalidTaskString": {
-			in: []string{"- TaskGroup", "  - [ ]Task1", "  InvalidTaskString", "  - [X]Task2"},
-			want: []domain.Item{newGroup(
-				"TaskGroup",
-				[]domain.Item{newTask("Task1", false), newTask("Task2", true)}),
+			in: []string{
+				"- Group",
+				"  - [ ] Task1",
+				"  InvalidTaskString",
+				"  - [X] Task2",
+			},
+			want: []domain.Item{
+				newGroup(
+					"Group",
+					[]domain.Item{newTask("Task1", false), newTask("Task2", true)},
+				),
 			},
 		},
 		"ContainInvalidTaskString_BadIndent": {
-			in: []string{"- TaskGroup", "  - [ ]Task1", "InvalidTaskString", "  - [X]Task2"},
-			want: []domain.Item{newGroup(
-				"TaskGroup",
-				[]domain.Item{newTask("Task1", false)}),
+			in: []string{
+				"- Group",
+				"  - [ ] Task1",
+				"InvalidTaskString",
+				"  - [X] Task2",
+			},
+			want: []domain.Item{
+				newGroup(
+					"Group",
+					[]domain.Item{newTask("Task1", false)},
+				),
 			},
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := ToTodoList(tt.in).GetItems()
+			got := ToItems(tt.in).GetItems()
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ToTodoList() = %v, want %v", got, tt.want)
+				t.Errorf("ToItems() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestStringsToTasks_MultiGroupTask(t *testing.T) { // FIXME: Rename test function name.
+func TestToTodoList_MultiGroup(t *testing.T) { // FIXME: Rename test function name.
 	tests := map[string]struct {
 		in   []string
 		want []domain.Item
@@ -144,10 +145,7 @@ func TestStringsToTasks_MultiGroupTask(t *testing.T) { // FIXME: Rename test fun
 					[]domain.Item{
 						newGroup(
 							"Group2",
-							[]domain.Item{
-								newTask("Task1", true),
-								newTask("Task2", false),
-							}),
+							[]domain.Item{newTask("Task1", true), newTask("Task2", false)}),
 					}),
 			},
 		},
@@ -186,22 +184,13 @@ func TestStringsToTasks_MultiGroupTask(t *testing.T) { // FIXME: Rename test fun
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := ToTodoList(tt.in).GetItems()
+			got := ToItems(tt.in).GetItems()
 			if !reflect.DeepEqual(got, tt.want) {
 				debug(got, 0)
 				debug(tt.want, 0)
-				t.Errorf("ToTodoList() = %v, want %v", got, tt.want)
+				t.Errorf("ToItems() = %v, want %v", got, tt.want)
 			}
 		})
-	}
-}
-
-func debug(items []domain.Item, indent int) {
-	for _, item := range items {
-		fmt.Println(strings.Repeat(" ", indent), item.Title())
-		if item.IsParent() {
-			debug(item.Children(), indent+2)
-		}
 	}
 }
 

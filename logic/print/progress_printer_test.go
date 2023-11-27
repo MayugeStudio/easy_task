@@ -8,7 +8,7 @@ import (
 	"github.com/MayugeStudio/easy_task/domain"
 )
 
-func TestProgress(t *testing.T) {
+func TestProgress(t *testing.T) { // FIX-TEST: Add group pattern.
 	tests := map[string]struct {
 		in      []bool
 		wantW   string
@@ -38,11 +38,11 @@ func TestProgress(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			w := &bytes.Buffer{}
-			c := domain.NewTodoList()
-			for i, b := range tt.in {
-				c.AddItem(newTask(fmt.Sprintf("T%d", i), b))
+			items := domain.NewItems()
+			for i, b := range tt.in { // FIX-TEST: This code is redundant. Duplicate task title is ok.
+				items.AddItem(newTask(fmt.Sprintf("T%d", i), b))
 			}
-			err := Progress(w, c)
+			err := Progress(w, items)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Progress() error = %v, wantErr %v", err, tt.wantErr)
 				return
