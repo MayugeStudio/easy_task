@@ -9,9 +9,7 @@ func TestNewItems(t *testing.T) {
 	tests := map[string]struct {
 		want Items
 	}{
-		"Success": {
-			want: Items{},
-		},
+		"Success": {want: Items{}},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -25,8 +23,8 @@ func TestNewItems(t *testing.T) {
 
 func TestItems_Progress(t *testing.T) {
 	type input struct {
-		tasks      []bool
-		groupTasks [][]bool
+		taskStatus       []bool
+		groupTasksStatus [][]bool
 	}
 	tests := map[string]struct {
 		in   input
@@ -34,29 +32,29 @@ func TestItems_Progress(t *testing.T) {
 	}{
 		"100%_Mix": {
 			in: input{
-				tasks:      []bool{true, true},
-				groupTasks: [][]bool{{true, true}, {true, true}},
+				taskStatus:       []bool{true, true},
+				groupTasksStatus: [][]bool{{true, true}, {true, true}},
 			},
 			want: 1,
 		},
 		"50%_Mix_010101": {
 			in: input{
-				tasks:      []bool{false, true},
-				groupTasks: [][]bool{{false, true}, {false, true}},
+				taskStatus:       []bool{false, true},
+				groupTasksStatus: [][]bool{{false, true}, {false, true}},
 			},
 			want: 0.5,
 		},
 		"0%_Mix": {
 			in: input{
-				tasks:      []bool{false},
-				groupTasks: [][]bool{{false, false}, {false, false}},
+				taskStatus:       []bool{false},
+				groupTasksStatus: [][]bool{{false, false}, {false, false}},
 			},
 			want: 0,
 		},
 		"0%_NoItem": {
 			in: input{
-				tasks:      nil,
-				groupTasks: nil,
+				taskStatus:       nil,
+				groupTasksStatus: nil,
 			},
 			want: 0,
 		},
@@ -64,13 +62,13 @@ func TestItems_Progress(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			items := Items{}
-			for _, status := range tt.in.tasks {
+			for _, status := range tt.in.taskStatus {
 				task := &Task{isDone: status}
 				items = append(items, task)
 			}
-			for _, areTasksDone := range tt.in.groupTasks {
+			for _, tasksStatus := range tt.in.groupTasksStatus {
 				group := &Group{}
-				for _, isDone := range areTasksDone {
+				for _, isDone := range tasksStatus {
 					group.AddItem(&Task{isDone: isDone})
 				}
 				items = append(items, group)
