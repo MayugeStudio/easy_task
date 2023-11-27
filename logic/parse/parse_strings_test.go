@@ -119,31 +119,31 @@ func TestStringsToTasks_MultiGroupTask(t *testing.T) { // FIXME: Rename test fun
 	}{
 		"Groups": {
 			in: []string{
-				"- TaskGroup1",
+				"- Group1",
 				"  - [ ]Task1",
 				"  - [X]Task2",
-				"- TaskGroup2",
+				"- Group2",
 				"  - [ ]Task1",
 				"  - [X]Task2",
 			},
 			want: []domain.Item{
-				newGroup("TaskGroup1", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
-				newGroup("TaskGroup2", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
+				newGroup("Group1", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
+				newGroup("Group2", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
 			},
 		},
 		"NestedGroup": {
 			in: []string{
-				"- G1",
-				"  - G2",
+				"- Group1",
+				"  - Group2",
 				"    - [X] Task1",
 				"    - [ ] Task2",
 			},
 			want: []domain.Item{
 				newGroup(
-					"G1",
+					"Group1",
 					[]domain.Item{
 						newGroup(
-							"G2",
+							"Group2",
 							[]domain.Item{
 								newTask("Task1", true),
 								newTask("Task2", false),
@@ -153,34 +153,34 @@ func TestStringsToTasks_MultiGroupTask(t *testing.T) { // FIXME: Rename test fun
 		},
 		"ContainInvalidTaskString": {
 			[]string{
-				"- TaskGroup1",
+				"- Group1",
 				"  - [ ]Task1",
 				"  InvalidTaskString",
 				"  - [X]Task2",
-				"- TaskGroup2",
+				"- Group2",
 				"  - [ ]Task1",
 				"  InvalidTaskString",
 				"  - [X]Task2",
 			},
 			[]domain.Item{
-				newGroup("TaskGroup1", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
-				newGroup("TaskGroup2", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
+				newGroup("Group1", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
+				newGroup("Group2", []domain.Item{newTask("Task1", false), newTask("Task2", true)}),
 			},
 		},
 		"ContainInvalidTaskString_BadIndent": {
 			[]string{
-				"- TaskGroup1",
+				"- Group1",
 				"  - [ ]Task1",
 				"InvalidTaskString",
 				"  - [X]Task2",
-				"- TaskGroup2",
+				"- Group2",
 				"  - [ ]Task1",
 				"InvalidTaskString",
 				"  - [X]Task2",
 			},
 			[]domain.Item{
-				newGroup("TaskGroup1", []domain.Item{newTask("Task1", false)}),
-				newGroup("TaskGroup2", []domain.Item{newTask("Task1", false)}),
+				newGroup("Group1", []domain.Item{newTask("Task1", false)}),
+				newGroup("Group2", []domain.Item{newTask("Task1", false)}),
 			},
 		},
 	}
