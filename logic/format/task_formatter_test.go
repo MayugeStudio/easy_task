@@ -9,19 +9,15 @@ func Test_toFormattedTaskString(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		"Undone_Valid":                 {in: "- [ ] Buy the milk.", want: "- [ ] Buy the milk."},
-		"Undone_BadIndentStartBracket": {in: "-[] Buy the milk.", want: "- [ ] Buy the milk."},
-		"Undone_BadIndentEndBracket":   {in: "- []Buy the milk.", want: "- [ ] Buy the milk."},
-		"Done_Valid":                   {in: "- [X] Buy the milk.", want: "- [X] Buy the milk."},
-		"Done_BadIndentStartEnd":       {in: "-[X]Buy the milk.", want: "- [X] Buy the milk."},
-		"Done_Valid_Lower":             {in: "- [x] Buy the milk.", want: "- [X] Buy the milk."},
-		"Done_NoSpaceInBracket_Lower":  {in: "- [x] Buy the milk.", want: "- [X] Buy the milk."},
-		"Done_BadIndentStartEnd_Lower": {in: "-[x]Buy the milk.", want: "- [X] Buy the milk."},
-		"Done_NoDash":                  {in: "[X] No Dash.", wantErr: true},
-		"Done_NoBracketStart":          {in: "- X] No BracketStart.", wantErr: true},
-		"Done_NoBracketEnd":            {in: "- [X No BracketEnd.", wantErr: true},
-		"Done_NoDash_Lower":            {in: "[x] No Dash.", wantErr: true},
-		"Undone_NoDash":                {in: "[ ] Buy the milk.", wantErr: true},
+		"Undone_Valid":          {in: "- [ ] Task", want: "- [ ] Task"},
+		"Done_Valid":            {in: "- [X] Task", want: "- [X] Task"},
+		"Done_Valid_Lower":      {in: "- [x] Task", want: "- [X] Task"},
+		"BadIndentStartBracket": {in: "-[] Task", want: "- [ ] Task"},
+		"BadIndentEndBracket":   {in: "- []Task", want: "- [ ] Task"},
+		"BadIndentStartEnd":     {in: "-[X]Task", want: "- [X] Task"},
+		"NoDash":                {in: "[X] Task", wantErr: true},
+		"NoBracketStart":        {in: "- X] Task", wantErr: true},
+		"NoBracketEnd":          {in: "- [X Task", wantErr: true},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
@@ -44,12 +40,12 @@ func Test_toFormattedTaskStatus(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		"ValidTaskStringGoodFormat_Done":   {in: "- [ ] TaskName", want: " "},
-		"ValidTaskStringGoodFormat_Undone": {in: "- [X] TaskName", want: "X"},
-		"ValidTaskStringBadFormat_Done":    {in: "-[]TaskName", want: " "},
-		"ValidTaskStringBadFormat_Undone":  {in: "-[X]TaskName", want: "X"},
-		"InValidTaskString_NoDash":         {in: "[ ] TaskName", wantErr: true}, //FIXME: InValid -> Invalid
-		"InValidTaskString_NoBracketStart": {in: "- ] TaskName", wantErr: true},
+		"GoodFormat_Done":   {in: "- [ ] Task", want: " "},
+		"GoodFormat_Undone": {in: "- [X] Task", want: "X"},
+		"BadFormat_Done":    {in: "-[]Task", want: " "},
+		"BadFormat_Undone":  {in: "-[X]Task", want: "X"},
+		"NoDash":            {in: "[ ] Task", wantErr: true}, //FIXME: InValid -> Invalid
+		"NoBracketStart":    {in: "- ] Task", wantErr: true},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {

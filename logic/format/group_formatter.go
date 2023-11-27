@@ -26,7 +26,7 @@ func toFormattedGroupTaskString(s string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if indentLevel == 1 {
+	if indentLevel == 1 { // TODO: Change Indent rule. Use indentLevel % 2 == 1 -> indentLevel += 1
 		indentLevel = 2
 	}
 	return fmt.Sprintf("%s%s", strings.Repeat(" ", indentLevel), formattedString), nil

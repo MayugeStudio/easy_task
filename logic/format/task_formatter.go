@@ -4,10 +4,13 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/MayugeStudio/easy_task/logic/internal/share"
 	"github.com/MayugeStudio/easy_task/utils"
 )
 
 func toFormattedTaskString(s string) (string, error) {
+	indentLevel := share.GetIndentLevel(s)
+	indentStr := strings.Repeat(" ", indentLevel)
 	if !strings.HasPrefix(s, "-") {
 		return "", errNoDash
 	}
@@ -33,7 +36,7 @@ func toFormattedTaskString(s string) (string, error) {
 
 	l = l.TrimPrefix("]").TrimSpace()
 
-	return fmt.Sprintf("- [%s] %s", statusStr, l), nil
+	return fmt.Sprintf("%s- [%s] %s", indentStr, statusStr, l), nil
 }
 
 func toFormattedTaskStatus(s string) (string, error) {
