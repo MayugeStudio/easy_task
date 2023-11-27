@@ -6,6 +6,7 @@ import (
 )
 
 func TestNewLineFormatter(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		line string
 		want Line
@@ -23,6 +24,7 @@ func TestNewLineFormatter(t *testing.T) {
 }
 
 func TestLineFormatter_HasPrefix(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		line string
 		in   string
@@ -44,6 +46,7 @@ func TestLineFormatter_HasPrefix(t *testing.T) {
 }
 
 func TestLineFormatter_TrimPrefix(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		line string
 		in   string
@@ -64,6 +67,7 @@ func TestLineFormatter_TrimPrefix(t *testing.T) {
 }
 
 func TestLineFormatter_TrimSpace(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		line string
 		want Line

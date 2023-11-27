@@ -27,8 +27,8 @@ func debug(items []domain.Item, indent int) {
 	}
 }
 
-// TODO: Make all test cases parallel
 func TestToItems_OnlyTask(t *testing.T) { // TODO: Refactor test cases.
+	t.Parallel()
 	tests := map[string]struct {
 		in   []string
 		want domain.Items
@@ -56,7 +56,8 @@ func TestToItems_OnlyTask(t *testing.T) { // TODO: Refactor test cases.
 	}
 }
 
-func TestToItems_OnlySingleGroup(t *testing.T) { // FIXME: Rename function name 'OnlyGroupTask' to 'OnlySingleGroup'.
+func TestToItems_OnlySingleGroup(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   []string
 		want domain.Items
@@ -114,6 +115,7 @@ func TestToItems_OnlySingleGroup(t *testing.T) { // FIXME: Rename function name 
 }
 
 func TestToTodoList_MultiGroup(t *testing.T) { // FIXME: Rename test function name.
+	t.Parallel()
 	tests := map[string]struct {
 		in   []string
 		want domain.Items
@@ -195,6 +197,7 @@ func TestToTodoList_MultiGroup(t *testing.T) { // FIXME: Rename test function na
 }
 
 func Test_toTask(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   string
 		want *domain.Task
@@ -219,6 +222,7 @@ func Test_toTask(t *testing.T) {
 }
 
 func Test_toGroup(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   string
 		want *domain.Group

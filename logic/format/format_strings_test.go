@@ -16,6 +16,7 @@ func joinWithComma(elems []string) string {
 }
 
 func TestToValidStrings_OnlySingleTasks(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   []string
 		want []string
@@ -63,6 +64,7 @@ func TestToValidStrings_OnlySingleTasks(t *testing.T) {
 }
 
 func TestToValidStrings_OnlyGroupTasks(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   []string
 		want []string
@@ -148,6 +150,7 @@ func TestToValidStrings_OnlyGroupTasks(t *testing.T) {
 }
 
 func TestToValidStrings_MultiGroup(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   []string
 		want []string
@@ -220,6 +223,7 @@ func TestToValidStrings_MultiGroup(t *testing.T) {
 }
 
 func Test_toFormattedTaskString(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in      string
 		want    string
@@ -254,6 +258,7 @@ func Test_toFormattedTaskString(t *testing.T) {
 }
 
 func Test_toFormattedGroupTaskString(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in      string
 		want    string
@@ -280,6 +285,7 @@ func Test_toFormattedGroupTaskString(t *testing.T) {
 }
 
 func Test_toFormattedGroupTitle(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in      string
 		want    string
@@ -304,6 +310,7 @@ func Test_toFormattedGroupTitle(t *testing.T) {
 }
 
 func Test_toFormattedTaskStatus(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in      string
 		want    string
@@ -331,6 +338,7 @@ func Test_toFormattedTaskStatus(t *testing.T) {
 }
 
 func Test_toFormattedModificationString(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in      string
 		want    string
@@ -361,6 +369,7 @@ func Test_toFormattedModificationString(t *testing.T) {
 }
 
 func Test_extractGroupTitle(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in      string
 		want    string

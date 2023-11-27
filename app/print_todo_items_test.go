@@ -21,6 +21,7 @@ func (w ErrorWriter) Write(_ []byte) (n int, err error) {
 }
 
 func TestPrintTodoItem(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in      []string
 		wantW   string
@@ -105,6 +106,7 @@ func TestPrintTodoItem(t *testing.T) {
 }
 
 func TestPrintTodoItem_Error(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in      []string
 		wantErr bool

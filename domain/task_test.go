@@ -6,6 +6,7 @@ import (
 )
 
 func TestNewTask(t *testing.T) {
+	t.Parallel()
 	type args struct {
 		title  string
 		isDone bool
@@ -26,7 +27,8 @@ func TestNewTask(t *testing.T) {
 	}
 }
 
-func TestTask_Progress(t1 *testing.T) {
+func TestTask_Progress(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		isDone bool
 		want   float64
@@ -35,10 +37,10 @@ func TestTask_Progress(t1 *testing.T) {
 		"0%":   {isDone: false, want: 0},
 	}
 	for testName, tt := range tests {
-		t1.Run(testName, func(t1 *testing.T) {
-			t := &Task{isDone: tt.isDone}
-			if got := t.Progress(); got != tt.want {
-				t1.Errorf("Progress() = %v, want %v", got, tt.want)
+		t.Run(testName, func(t *testing.T) {
+			task := &Task{isDone: tt.isDone}
+			if got := task.Progress(); got != tt.want {
+				t.Errorf("Progress() = %v, want %v", got, tt.want)
 			}
 		})
 	}

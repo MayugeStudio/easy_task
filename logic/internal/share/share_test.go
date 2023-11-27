@@ -3,6 +3,7 @@ package share
 import "testing"
 
 func Test_isGroupTitle(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   string
 		want bool
@@ -24,6 +25,7 @@ func Test_isGroupTitle(t *testing.T) {
 }
 
 func Test_isGroupTaskString(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   string
 		want bool
@@ -45,6 +47,7 @@ func Test_isGroupTaskString(t *testing.T) {
 }
 
 func Test_isSingleTaskString(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   string
 		want bool
@@ -67,6 +70,7 @@ func Test_isSingleTaskString(t *testing.T) {
 }
 
 func TestIsItemModificationString(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   string
 		want bool
@@ -84,6 +88,7 @@ func TestIsItemModificationString(t *testing.T) {
 }
 
 func TestGetIndentLevel(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   string
 		want int

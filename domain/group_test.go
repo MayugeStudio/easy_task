@@ -6,6 +6,7 @@ import (
 )
 
 func TestNewGroup(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   string
 		want *Group
@@ -23,6 +24,7 @@ func TestNewGroup(t *testing.T) {
 }
 
 func TestGroup_AddItem(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   Item
 		want []Item
@@ -42,6 +44,7 @@ func TestGroup_AddItem(t *testing.T) {
 }
 
 func TestGroup_Progress(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		isDone []bool
 		want   float64
