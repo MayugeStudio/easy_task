@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/MayugeStudio/easy_task/logic/internal/share"
+	"github.com/MayugeStudio/easy_task/utils"
 )
 
 func toFormattedGroupTitle(s string) (string, error) {
@@ -18,21 +19,21 @@ func toFormattedGroupTitle(s string) (string, error) {
 }
 
 func toFormattedGroupTaskString(s string) (string, error) {
-	if !strings.HasPrefix(s, " ") {
+	l := utils.NewLine(s)
+	if !l.HasPrefix(" ") {
 		return "", errInvalidIndent
 	}
-	noSpaceStr := strings.TrimSpace(s)
-	formattedString, err := toFormattedTaskString(noSpaceStr)
-	if err != nil {
-		return "", err
-	}
-
-	indentLevel := share.GetIndentLevel(s)
-	if indentLevel == 1 { // TODO: Change Indent rule. Use indentLevel % 2 == 1 -> indentLevel += 1
+	indentLevel := share.GetIndentLevel(l.String())
+	// TODO: Change Indent rule. Use indentLevel % 2 == 1 -> indentLevel += 1
+	if indentLevel == 1 {
 		indentLevel = 2
 	}
 	indentStr := strings.Repeat(" ", indentLevel)
-	return fmt.Sprintf("%s%s", indentStr, formattedString), nil
+	fStr, err := toFormattedTaskString(l.TrimSpace().String())
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%s%s", indentStr, fStr), nil
 }
 
 func extractGroupTitle(s string) (string, error) {

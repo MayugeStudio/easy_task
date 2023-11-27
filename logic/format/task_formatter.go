@@ -2,21 +2,15 @@ package format
 
 import (
 	"fmt"
-	"strings"
 
-	"github.com/MayugeStudio/easy_task/logic/internal/share"
 	"github.com/MayugeStudio/easy_task/utils"
 )
 
 func toFormattedTaskString(s string) (string, error) {
-	indentLevel := share.GetIndentLevel(s)
-	indentStr := strings.Repeat(" ", indentLevel)
-	if !strings.HasPrefix(s, "-") {
+	l := utils.NewLine(s)
+	if !l.HasPrefix("-") {
 		return "", errNoDash
 	}
-
-	l := utils.NewLine(s)
-
 	l = l.TrimPrefix("-").TrimSpace()
 
 	if !l.HasPrefix("[") {
@@ -35,16 +29,14 @@ func toFormattedTaskString(s string) (string, error) {
 	}
 
 	l = l.TrimPrefix("]").TrimSpace()
-
-	return fmt.Sprintf("%s- [%s] %s", indentStr, statusStr, l), nil
+	return fmt.Sprintf("- [%s] %s", statusStr, l), nil
 }
 
 func toFormattedTaskStatus(s string) (string, error) {
-	if !strings.HasPrefix(s, "-") {
+	l := utils.NewLine(s).TrimSpace()
+	if !l.HasPrefix("-") {
 		return "", errNoDash
 	}
-
-	l := utils.NewLine(s)
 
 	l = l.TrimPrefix("-").TrimSpace()
 
