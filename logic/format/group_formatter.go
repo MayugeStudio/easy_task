@@ -9,27 +9,30 @@ import (
 
 func toFormattedGroupTitle(s string) (string, error) {
 	indentLevel := share.GetIndentLevel(s)
+	indentStr := strings.Repeat(" ", indentLevel)
 	title, err := extractGroupTitle(s)
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("%s- %s", strings.Repeat(" ", indentLevel), title), nil
+	return fmt.Sprintf("%s- %s", indentStr, title), nil
 }
 
 func toFormattedGroupTaskString(s string) (string, error) {
 	if !strings.HasPrefix(s, " ") {
 		return "", errInvalidIndent
 	}
-	indentLevel := share.GetIndentLevel(s)
 	noSpaceStr := strings.TrimSpace(s)
 	formattedString, err := toFormattedTaskString(noSpaceStr)
 	if err != nil {
 		return "", err
 	}
+
+	indentLevel := share.GetIndentLevel(s)
 	if indentLevel == 1 { // TODO: Change Indent rule. Use indentLevel % 2 == 1 -> indentLevel += 1
 		indentLevel = 2
 	}
-	return fmt.Sprintf("%s%s", strings.Repeat(" ", indentLevel), formattedString), nil
+	indentStr := strings.Repeat(" ", indentLevel)
+	return fmt.Sprintf("%s%s", indentStr, formattedString), nil
 }
 
 func extractGroupTitle(s string) (string, error) {
