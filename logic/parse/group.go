@@ -1,15 +1,15 @@
 package parse
 
 import (
-	"strings"
-
 	"github.com/MayugeStudio/easy_task/domain"
+	"github.com/MayugeStudio/easy_task/utils"
 )
 
 func toGroup(str string) *domain.Group {
-	str = strings.TrimSpace(str)
-	str = strings.TrimPrefix(str, "-")
-	str = strings.TrimSpace(str)
-	g := domain.NewGroup(str)
+	l := utils.NewLine(str).
+		TrimSpace().
+		TrimPrefix("-").
+		TrimSpace()
+	g := domain.NewGroup(string(l))
 	return g
 }
