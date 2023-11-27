@@ -52,10 +52,9 @@ func TestPrintTodoItem(t *testing.T) {
 			wantW: "" +
 				"[ ] Task1\n" +
 				"[X] Task2\n" +
-				"GroupTitle\n" +
+				"GroupTitle [##########          ]50.0%\n" +
 				"  [ ] GroupTask1\n" +
 				"  [X] GroupTask2\n" +
-				"  [##########          ]50.0%\n" +
 				"[####################                    ]50.0%",
 			wantErr: false,
 		},
@@ -66,10 +65,10 @@ func TestPrintTodoItem(t *testing.T) {
 				"- [X] Task3",
 				"- [ ] Task4",
 				"- [ ] Task5",
-				"- GroupTitle1",
+				"- Group1",
 				"  - [X] GroupTask1",
 				"  - [X] GroupTask2",
-				"- GroupTitle2",
+				"- Group2",
 				"  - [ ] GroupTask1",
 				"  - [ ] GroupTask2",
 			},
@@ -79,14 +78,12 @@ func TestPrintTodoItem(t *testing.T) {
 				"[X] Task3\n" +
 				"[ ] Task4\n" +
 				"[ ] Task5\n" +
-				"GroupTitle1\n" +
+				"Group1 [####################]100.0%\n" +
 				"  [X] GroupTask1\n" +
 				"  [X] GroupTask2\n" +
-				"  [####################]100.0%\n" +
-				"GroupTitle2\n" +
+				"Group2 [                    ]0.0%\n" +
 				"  [ ] GroupTask1\n" +
 				"  [ ] GroupTask2\n" +
-				"  [                    ]0.0%\n" +
 				"[######################                  ]57.1%",
 			wantErr: false,
 		},
