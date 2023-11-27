@@ -13,9 +13,9 @@ const (
 	undoneSymbol = " "
 )
 
-func Items(w io.Writer, items []domain.Item) error {
+func Items(w io.Writer, items []domain.Item) error { // TODO: Change argument type []domain.Item to domain.Items.
 	for _, item := range items {
-		str := getItemString(item)
+		str := getItemString(item, 0)
 		if _, err := fmt.Fprint(w, str); err != nil {
 			return fmt.Errorf("printing item: %w", err)
 		}
@@ -23,7 +23,7 @@ func Items(w io.Writer, items []domain.Item) error {
 	return nil
 }
 
-func getItemString(item domain.Item) string {
+func getItemString(item domain.Item, indentLevel int) string {
 	if !item.IsParent() {
 		var doneStr string
 		if item.Progress() == 1 { // TODO: Implement float64 constant in domain package?
@@ -31,21 +31,21 @@ func getItemString(item domain.Item) string {
 		} else {
 			doneStr = undoneSymbol
 		}
-		return fmt.Sprintf("[%s] %s\n", doneStr, item.Title())
+		indentStr := strings.Repeat(" ", indentLevel)
+		return fmt.Sprintf("%s[%s] %s\n", indentStr, doneStr, item.Title())
 	}
 
 	var b strings.Builder
-	titleString := fmt.Sprintf("%s\n", item.Title())
+	indentStr := strings.Repeat(" ", indentLevel)
+	progress := item.Progress()
+	taskProgressStr := getProgressString(progress, 20)
+	titleString := fmt.Sprintf("%s%s %s\n", indentStr, item.Title(), taskProgressStr)
 	b.WriteString(titleString)
 
 	for _, child := range item.Children() {
-		childStr := fmt.Sprintf("  %s", getItemString(child))
+		childStr := getItemString(child, indentLevel+2)
 		b.WriteString(childStr)
 	}
-
-	progress := item.Progress()
-	taskProgressString := fmt.Sprintf("  %s\n", getProgressString(progress, 20))
-	b.WriteString(taskProgressString)
 
 	return b.String()
 }

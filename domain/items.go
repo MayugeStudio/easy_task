@@ -1,22 +1,22 @@
 package domain
 
-type TodoList struct {
+type Items struct {
 	items []Item
 }
 
-func NewTodoList() *TodoList {
-	return &TodoList{items: make([]Item, 0)}
+func NewItems() *Items {
+	return &Items{items: make([]Item, 0)}
 }
 
-func (c *TodoList) AddItem(i Item) {
+func (c *Items) AddItem(i Item) {
 	c.items = append(c.items, i)
 }
 
-func (c *TodoList) GetItems() []Item {
+func (c *Items) GetItems() []Item {
 	return c.items
 }
 
-func (c *TodoList) Progress() float64 {
+func (c *Items) Progress() float64 {
 	if len(c.items) == 0 {
 		return 0
 	}

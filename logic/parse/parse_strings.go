@@ -8,20 +8,30 @@ import (
 	"github.com/MayugeStudio/easy_task/logic/internal/share"
 )
 
-func ToTodoList(taskStrings []string) *domain.TodoList {
-	list := domain.NewTodoList()
+func ToItems(taskStrings []string) *domain.Items {
+	items := domain.NewItems()
 	taskStrings, _ = format.ToValidStrings(taskStrings)
 	var group *domain.Group
+	currentIndentLevel := 0
 	for _, str := range taskStrings {
 		if share.IsSingleTaskString(str) {
+			currentIndentLevel = 0
 			task := toTask(str)
-			list.AddItem(task)
+			items.AddItem(task)
 			continue
 		}
 
 		if share.IsGroupTitle(str) {
+			indentLevel := share.GetIndentLevel(str)
+			if group != nil && indentLevel > currentIndentLevel {
+				currentIndentLevel = indentLevel
+				nextGroup := toGroup(str)
+				group.AddItem(nextGroup)
+				group = nextGroup
+				continue
+			}
 			group = toGroup(str)
-			list.AddItem(group)
+			items.AddItem(group)
 			continue
 		}
 
@@ -34,7 +44,7 @@ func ToTodoList(taskStrings []string) *domain.TodoList {
 			continue
 		}
 	}
-	return list
+	return items
 }
 
 func toTask(str string) *domain.Task {
@@ -58,6 +68,7 @@ func toTask(str string) *domain.Task {
 }
 
 func toGroup(str string) *domain.Group {
+	str = strings.TrimSpace(str)
 	str = strings.TrimPrefix(str, "-")
 	str = strings.TrimSpace(str)
 	g := domain.NewGroup(str)

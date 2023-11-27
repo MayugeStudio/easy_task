@@ -26,14 +26,12 @@ func TestItems(t *testing.T) {
 				newGroup("G2", []domain.Item{newTask("T1", false), newTask("T2", false)}),
 			},
 			wantW: "" +
-				"G1\n" +
+				"G1 [##########          ]50.0%\n" +
 				"  [ ] T1\n" +
 				"  [X] T2\n" +
-				"  [##########          ]50.0%\n" +
-				"G2\n" +
+				"G2 [                    ]0.0%\n" +
 				"  [ ] T1\n" +
-				"  [ ] T2\n" +
-				"  [                    ]0.0%\n",
+				"  [ ] T2\n",
 			wantErr: false,
 		},
 	}
@@ -53,35 +51,53 @@ func TestItems(t *testing.T) {
 }
 
 func Test_getItemString(t *testing.T) {
-	type input struct {
-		item domain.Item
-	}
 	tests := map[string]struct {
-		in   input
+		in   domain.Item
 		want string
 	}{
 		"Task_Done": {
-			in:   input{item: newTask("TaskTitle", true)},
-			want: "[X] TaskTitle\n",
+			in:   newTask("Task", true),
+			want: "[X] Task\n",
 		},
 		"Task_Undone": {
-			in:   input{item: newTask("TaskTitle", false)},
-			want: "[ ] TaskTitle\n",
+			in:   newTask("Task", false),
+			want: "[ ] Task\n",
 		},
 		"Group": {
-			in: input{item: newGroup("GroupTitle", []domain.Item{newTask("TaskTitle1", true), newTask("TaskTitle2", false)})},
+			in: newGroup("Group",
+				[]domain.Item{
+					newTask("Task1", true),
+					newTask("Task2", false),
+				},
+			),
 			want: "" +
-				"GroupTitle\n" +
-				"  [X] TaskTitle1\n" +
-				"  [ ] TaskTitle2\n" +
-				"  [##########          ]50.0%\n",
+				"Group [##########          ]50.0%\n" +
+				"  [X] Task1\n" +
+				"  [ ] Task2\n",
+		},
+		"NestedGroup": {
+			in: newGroup("Group",
+				[]domain.Item{
+					newGroup("NestedGroup",
+						[]domain.Item{
+							newTask("Task1", true),
+							newTask("Task2", false),
+						},
+					),
+				},
+			),
+			want: "" +
+				"Group [##########          ]50.0%\n" +
+				"  NestedGroup [##########          ]50.0%\n" +
+				"    [X] Task1\n" +
+				"    [ ] Task2\n",
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := getItemString(tt.in.item)
+			got := getItemString(tt.in, 0)
 			if got != tt.want {
-				t.Errorf("getItemString() gotW = %v, want %v", got, tt.want)
+				t.Errorf("getItemString() gotW = \n%v, want \n%v", got, tt.want)
 			}
 		})
 	}

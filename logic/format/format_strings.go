@@ -26,25 +26,34 @@ func ToValidStrings(taskStrings []string) ([]string, []error) {
 	result := make([]string, 0)
 	errs := make([]error, 0)
 	inGroup := false
+	var formattedString string
+	var err error
 	for _, str := range taskStrings {
-		var formattedString string
-		var err error
 		if share.IsGroupTitle(str) { // TODO: rename share -> share/XXX. 'share.IsGroupTitle' is difficult to read.
 			formattedString, err = toFormattedGroupTitle(str)
 			inGroup = true
-		} else if inGroup && share.IsGroupTaskString(str) {
+			goto success
+		}
+		if inGroup && share.IsGroupTaskString(str) {
 			formattedString, err = toFormattedGroupTaskString(str)
-		} else if share.IsSingleTaskString(str) {
+			goto success
+		}
+		if share.IsSingleTaskString(str) {
 			formattedString, err = toFormattedTaskString(str)
 			inGroup = false
-		} else if share.IsItemModificationString(str) {
-			formattedString, err = toFormattedModificationString(str)
-		} else {
-			if !strings.HasPrefix(str, "  ") {
-				inGroup = false
-			}
-			continue
+			goto success
 		}
+		if share.IsItemModificationString(str) {
+			formattedString, err = toFormattedModificationString(str)
+			goto success
+		}
+
+		if !strings.HasPrefix(str, "  ") {
+			inGroup = false
+		}
+		continue
+
+	success:
 		if err != nil {
 			errs = append(errs, err)
 			continue
@@ -55,23 +64,28 @@ func ToValidStrings(taskStrings []string) ([]string, []error) {
 }
 
 func toFormattedGroupTitle(s string) (string, error) {
+	indentLevel := share.GetIndentLevel(s)
 	title, err := extractGroupTitle(s)
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("- %s", title), nil
+	return fmt.Sprintf("%s- %s", strings.Repeat(" ", indentLevel), title), nil
 }
 
 func toFormattedGroupTaskString(s string) (string, error) {
 	if !strings.HasPrefix(s, " ") {
 		return "", errInvalidIndent
 	}
+	indentLevel := share.GetIndentLevel(s)
 	noSpaceStr := strings.TrimSpace(s)
 	formattedString, err := toFormattedTaskString(noSpaceStr)
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("  %s", formattedString), nil
+	if indentLevel == 1 {
+		indentLevel = 2
+	}
+	return fmt.Sprintf("%s%s", strings.Repeat(" ", indentLevel), formattedString), nil
 }
 
 func toFormattedTaskString(s string) (string, error) {
@@ -167,6 +181,7 @@ func toFormattedModificationString(s string) (string, error) {
 }
 
 func extractGroupTitle(s string) (string, error) {
+	s = strings.TrimSpace(s)
 	if !strings.HasPrefix(s, "-") {
 		// FIXME: Define error var.
 		return "", fmt.Errorf("%w: invalid group title %q", errSyntax, s)
