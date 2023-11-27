@@ -5,25 +5,25 @@ import (
 	"testing"
 )
 
-func TestNewTodoList(t *testing.T) {
+func TestNewItems(t *testing.T) {
 	tests := map[string]struct {
-		want *TodoList
+		want *Items
 	}{
 		"Success": {
-			want: &TodoList{items: make([]Item, 0)},
+			want: &Items{items: make([]Item, 0)},
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got := NewTodoList()
+			got := NewItems()
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewTodoList() = %v, want %v", got, tt.want)
+				t.Errorf("NewItems() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestTodoList_AddItem(t *testing.T) {
+func TestItems_AddItem(t *testing.T) {
 	tests := map[string]struct {
 		in   Item
 		want []Item
@@ -39,7 +39,7 @@ func TestTodoList_AddItem(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			list := TodoList{make([]Item, 0)}
+			list := Items{make([]Item, 0)}
 			list.AddItem(tt.in)
 			got := list.items
 			if !reflect.DeepEqual(got, tt.want) {
@@ -49,7 +49,7 @@ func TestTodoList_AddItem(t *testing.T) {
 	}
 }
 
-func TestTodoList_GetItems(t *testing.T) {
+func TestItems_GetItems(t *testing.T) {
 	tests := map[string]struct {
 		fields []Item
 		want   []Item
@@ -75,7 +75,7 @@ func TestTodoList_GetItems(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			list := TodoList{items: tt.fields}
+			list := Items{items: tt.fields}
 			got := list.GetItems()
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetItems() = %v, want %v", got, tt.want)
@@ -84,7 +84,7 @@ func TestTodoList_GetItems(t *testing.T) {
 	}
 }
 
-func TestTodoList_Progress(t *testing.T) {
+func TestItems_Progress(t *testing.T) {
 	type input struct {
 		tasks      []bool
 		groupTasks [][]bool
@@ -124,7 +124,7 @@ func TestTodoList_Progress(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			c := &TodoList{}
+			c := &Items{}
 			for _, status := range tt.in.tasks {
 				task := &Task{isDone: status}
 				c.AddItem(task)
