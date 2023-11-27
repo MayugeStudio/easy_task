@@ -1,26 +1,26 @@
 package parse
 
 import (
-	"strings"
-
 	"github.com/MayugeStudio/easy_task/domain"
+	"github.com/MayugeStudio/easy_task/utils"
 )
 
 func toTask(str string) *domain.Task {
 	title := ""
 	isDone := false
-	str = strings.TrimPrefix(str, "-")
-	str = strings.TrimSpace(str)
-	str = strings.Replace(str, "[", "", 1)
-	str = strings.Replace(str, "]", "", 1)
-	str = strings.TrimSpace(str)
-	if strings.HasPrefix(str, "X") {
+	l := utils.NewLine(str).
+		TrimPrefix("-").
+		TrimSpace().
+		Replace("[", "", 1).
+		Replace("]", "", 1).
+		TrimSpace()
+
+	if l.HasPrefix("X") {
 		isDone = true
-		str = strings.TrimPrefix(str, "X")
-		str = strings.TrimSpace(str)
+		l = l.TrimPrefix("X").TrimSpace()
 	}
 
-	title = str
+	title = l.String()
 
 	task := domain.NewTask(title, isDone)
 	return task
