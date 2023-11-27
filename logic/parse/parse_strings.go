@@ -8,7 +8,7 @@ import (
 	"github.com/MayugeStudio/easy_task/logic/internal/share"
 )
 
-func ToItems(taskStrings []string) *domain.Items {
+func ToItems(taskStrings []string) domain.Items {
 	items := domain.NewItems()
 	taskStrings, _ = format.ToValidStrings(taskStrings)
 	var group *domain.Group
@@ -17,7 +17,7 @@ func ToItems(taskStrings []string) *domain.Items {
 		if share.IsSingleTaskString(str) {
 			currentIndentLevel = 0
 			task := toTask(str)
-			items.AddItem(task)
+			items = append(items, task)
 			continue
 		}
 
@@ -31,7 +31,7 @@ func ToItems(taskStrings []string) *domain.Items {
 				continue
 			}
 			group = toGroup(str)
-			items.AddItem(group)
+			items = append(items, group)
 			continue
 		}
 

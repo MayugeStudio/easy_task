@@ -15,7 +15,7 @@ func PrintTodoItem(w io.Writer, fileName string, reader logic.FileReader) error 
 		return fmt.Errorf("scanning file: %w", scanErr)
 	}
 	items := parse.ToItems(lines)
-	if err := print.Items(w, items.GetItems()); err != nil {
+	if err := print.Items(w, items); err != nil {
 		return fmt.Errorf("printing items: %w", err)
 	}
 	if err := print.Progress(w, items); err != nil {

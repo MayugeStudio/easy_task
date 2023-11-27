@@ -7,10 +7,10 @@ import (
 
 func TestNewItems(t *testing.T) {
 	tests := map[string]struct {
-		want *Items
+		want Items
 	}{
 		"Success": {
-			want: &Items{items: make([]Item, 0)},
+			want: Items{},
 		},
 	}
 	for testName, tt := range tests {
@@ -18,67 +18,6 @@ func TestNewItems(t *testing.T) {
 			got := NewItems()
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewItems() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestItems_AddItem(t *testing.T) {
-	tests := map[string]struct {
-		in   Item
-		want []Item
-	}{
-		"Success_Task": {
-			in:   &Task{"T", false},
-			want: []Item{&Task{"T", false}},
-		},
-		"Success_Group": {
-			in:   &Group{"G", make([]Item, 0)},
-			want: []Item{&Group{"G", make([]Item, 0)}},
-		},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			list := Items{make([]Item, 0)}
-			list.AddItem(tt.in)
-			got := list.items
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("AddItem() items = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestItems_GetItems(t *testing.T) {
-	tests := map[string]struct {
-		fields []Item
-		want   []Item
-	}{
-		"ZeroItem": {
-			fields: []Item{},
-			want:   []Item{},
-		},
-		"TasksAndGroups": {
-			fields: []Item{
-				&Task{"Task1", false},
-				&Task{"Task2", false},
-				&Group{"Group1", []Item{&Task{"Task3", false}}},
-				&Group{"Group2", []Item{&Task{"Task4", false}}},
-			},
-			want: []Item{
-				&Task{"Task1", false},
-				&Task{"Task2", false},
-				&Group{"Group1", []Item{&Task{"Task3", false}}},
-				&Group{"Group2", []Item{&Task{"Task4", false}}},
-			},
-		},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			list := Items{items: tt.fields}
-			got := list.GetItems()
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetItems() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -124,20 +63,20 @@ func TestItems_Progress(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			c := &Items{}
+			items := Items{}
 			for _, status := range tt.in.tasks {
 				task := &Task{isDone: status}
-				c.AddItem(task)
+				items = append(items, task)
 			}
 			for _, areTasksDone := range tt.in.groupTasks {
 				group := &Group{}
 				for _, isDone := range areTasksDone {
 					group.AddItem(&Task{isDone: isDone})
 				}
-				c.AddItem(group)
+				items = append(items, group)
 			}
 
-			got := c.Progress()
+			got := items.Progress()
 
 			if got != tt.want {
 				t.Errorf("Progress() = %v, want %v", got, tt.want)
