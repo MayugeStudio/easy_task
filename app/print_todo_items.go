@@ -15,7 +15,7 @@ func PrintTodoItem(w io.Writer, fileName string, reader logic.FileReader) error 
 	if scanErr != nil {
 		return fmt.Errorf("scanning file: %w", scanErr)
 	}
-	lines, _ = format.ToValidStrings(lines)
+	lines, _ = format.ToFormattedStrings(lines)
 	items := parse.ToItems(lines)
 	if err := print.Items(w, items); err != nil {
 		return fmt.Errorf("printing items: %w", err)

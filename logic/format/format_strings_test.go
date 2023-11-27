@@ -15,13 +15,13 @@ func joinWithComma(elems []string) string {
 	return "[" + strings.Join(newElems, ", ") + "]"
 }
 
-func TestToValidStrings_OnlySingleTasks(t *testing.T) {
+func TestToFormattedStrings_OnlySingleTasks(t *testing.T) {
 	t.Parallel()
 	tests := map[string]struct {
 		in   []string
 		want []string
 	}{
-		"ToValidStrings": {
+		"ToFormattedStrings": {
 			in: []string{
 				"-[]Bake the bread.",
 				"- [] Fry eggs.",
@@ -55,7 +55,7 @@ func TestToValidStrings_OnlySingleTasks(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, _ := ToValidStrings(tt.in)
+			got, _ := ToFormattedStrings(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
 			}
@@ -63,7 +63,7 @@ func TestToValidStrings_OnlySingleTasks(t *testing.T) {
 	}
 }
 
-func TestToValidStrings_OnlyGroupTasks(t *testing.T) {
+func TestToFormattedStrings_OnlyGroupTasks(t *testing.T) {
 	t.Parallel()
 	tests := map[string]struct {
 		in   []string
@@ -141,7 +141,7 @@ func TestToValidStrings_OnlyGroupTasks(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, _ := ToValidStrings(tt.in)
+			got, _ := ToFormattedStrings(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FormatTaskStrings() = %s, want %s", joinWithComma(got), joinWithComma(tt.want))
 			}
@@ -149,7 +149,7 @@ func TestToValidStrings_OnlyGroupTasks(t *testing.T) {
 	}
 }
 
-func TestToValidStrings_MultiGroup(t *testing.T) {
+func TestToFormattedStrings_MultiGroup(t *testing.T) {
 	t.Parallel()
 	tests := map[string]struct {
 		in   []string
@@ -214,7 +214,7 @@ func TestToValidStrings_MultiGroup(t *testing.T) {
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			got, _ := ToValidStrings(tt.in)
+			got, _ := ToFormattedStrings(tt.in)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FormatTaskStrings() = \n%s \nwant \n%s", strings.Join(got, "\n"), strings.Join(tt.want, "\n"))
 			}

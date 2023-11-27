@@ -22,7 +22,7 @@ var (
 	errInvalidModificationAttribute = fmt.Errorf("%w: invalid modification attribute", errSyntax)
 )
 
-func ToValidStrings(taskStrings []string) ([]string, []error) {
+func ToFormattedStrings(taskStrings []string) ([]string, []error) {
 	result := make([]string, 0)
 	errs := make([]error, 0)
 	inGroup := false
