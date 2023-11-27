@@ -6,6 +6,7 @@ import (
 )
 
 func TestNewItems(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		want Items
 	}{
@@ -22,6 +23,7 @@ func TestNewItems(t *testing.T) {
 }
 
 func TestItems_Progress(t *testing.T) {
+	t.Parallel()
 	type input struct {
 		taskStatus       []bool
 		groupTasksStatus [][]bool

@@ -2,13 +2,13 @@ package print
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 
 	"github.com/MayugeStudio/easy_task/domain"
 )
 
 func TestProgress(t *testing.T) { // FIX-TEST: Add group pattern.
+	t.Parallel()
 	tests := map[string]struct {
 		in      []bool
 		wantW   string
@@ -39,8 +39,8 @@ func TestProgress(t *testing.T) { // FIX-TEST: Add group pattern.
 		t.Run(testName, func(t *testing.T) {
 			w := &bytes.Buffer{}
 			items := domain.NewItems()
-			for i, b := range tt.in { // FIX-TEST: This code is redundant. Duplicate task title is ok.
-				items = append(items, newTask(fmt.Sprintf("T%d", i), b))
+			for _, b := range tt.in {
+				items = append(items, newTask("T", b))
 			}
 			err := Progress(w, items)
 			if (err != nil) != tt.wantErr {
@@ -55,6 +55,7 @@ func TestProgress(t *testing.T) { // FIX-TEST: Add group pattern.
 }
 
 func Test_getProgressString(t *testing.T) {
+	t.Parallel()
 	type input struct {
 		progress float64
 		length   float64

@@ -16,6 +16,7 @@ func (m MockFileReader) ReadLines(filename string) (lines []string, err error) {
 }
 
 func TestScanFile(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		fileName string
 		reader   FileReader
@@ -76,6 +77,7 @@ func TestScanFile(t *testing.T) {
 }
 
 func TestFileScanner_ReadLines(t *testing.T) {
+	t.Parallel()
 	var fileName = "temp.txt"
 	f, createErr := os.CreateTemp("", fileName)
 	if createErr != nil {

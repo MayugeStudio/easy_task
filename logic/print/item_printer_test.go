@@ -8,6 +8,7 @@ import (
 )
 
 func TestItems(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in      []domain.Item
 		wantW   string
@@ -51,6 +52,7 @@ func TestItems(t *testing.T) {
 }
 
 func Test_getItemString(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		in   domain.Item
 		want string
