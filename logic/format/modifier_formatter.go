@@ -20,7 +20,7 @@ func toFormattedModificationString(s string) (string, error) {
 	}
 	l := utils.NewLine(s).TrimSpace()
 	if !l.HasPrefix("<-") {
-		return "", errInvalidModification
+		return "", errInvalidModifier
 	}
 	l = l.TrimPrefix("<-").TrimSpace()
 
@@ -31,7 +31,7 @@ func toFormattedModificationString(s string) (string, error) {
 
 	var attribute string
 	if !l.HasPrefix("Tag") { // TODO: This implementation is temporary.
-		return "", fmt.Errorf("%w: while formatting modification string", errInvalidModificationAttribute)
+		return "", fmt.Errorf("%w: while formatting modification string", errInvalidModifierAttribute)
 	}
 	attribute = "Tag"
 	l = l.TrimPrefix("Tag").TrimSpace() // TODO: Implement TrimPrefixInSlice that trim the prefix in passed slice to Line type.
