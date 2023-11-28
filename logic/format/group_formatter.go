@@ -24,9 +24,8 @@ func toFormattedGroupTaskString(s string) (string, error) {
 		return "", errInvalidIndent
 	}
 	indentLevel := share.GetIndentLevel(l.String())
-	// TODO: Change Indent rule. Use indentLevel % 2 == 1 -> indentLevel += 1
-	if indentLevel == 1 {
-		indentLevel = 2
+	if indentLevel%2 == 1 {
+		indentLevel++
 	}
 	indentStr := strings.Repeat(" ", indentLevel)
 	fStr, err := toFormattedTaskString(l.TrimSpace().String())
@@ -39,8 +38,7 @@ func toFormattedGroupTaskString(s string) (string, error) {
 func extractGroupTitle(s string) (string, error) {
 	s = strings.TrimSpace(s)
 	if !strings.HasPrefix(s, "-") {
-		// FIXME: Define error var.
-		return "", fmt.Errorf("%w: invalid group title %q", errSyntax, s)
+		return "", fmt.Errorf("%w: %q", errInvalidGroupTitle, s)
 	}
 	s = strings.TrimPrefix(s, "-")
 	return strings.TrimSpace(s), nil

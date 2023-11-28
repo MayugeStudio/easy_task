@@ -11,7 +11,7 @@ func ToFormattedStrings(taskStrings []string) ([]string, []error) {
 	for _, str := range taskStrings {
 		var fStr string
 		var err error
-		if share.IsGroupTitle(str) { // TODO: rename share -> share/XXX. 'share.IsGroupTitle' is difficult to read.
+		if share.IsGroupTitle(str) {
 			fStr, err = toFormattedGroupTitle(str)
 			inGroup = true
 		}
