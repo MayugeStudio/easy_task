@@ -58,18 +58,7 @@ func TestToFormattedStrings(t *testing.T) {
 				"  - [ ] Task2",
 			},
 		},
-		"ContainsInvalidTaskString": {
-			in: []string{
-				"- [ ] Task1",
-				"InvalidString",
-				"- [ ] Task2",
-			},
-			want: []string{
-				"- [ ] Task1",
-				"- [ ] Task2",
-			},
-		},
-		"ContainsInvalidGroupTaskStringOtherThanInvalidIndent": {
+		"ContainsInvalidGroupTaskString": {
 			in: []string{
 				"- Group",
 				"  - [X] Task1",

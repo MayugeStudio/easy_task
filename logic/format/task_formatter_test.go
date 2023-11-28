@@ -40,12 +40,13 @@ func Test_toFormattedTaskStatus(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		"GoodFormat_Done":   {in: "- [ ] Task", want: " "},
-		"GoodFormat_Undone": {in: "- [X] Task", want: "X"},
-		"BadFormat_Done":    {in: "-[]Task", want: " "},
-		"BadFormat_Undone":  {in: "-[X]Task", want: "X"},
-		"NoDash":            {in: "[ ] Task", wantErr: true},
-		"NoBracketStart":    {in: "- ] Task", wantErr: true},
+		"GoodFormat_Done":         {in: "- [ ] Task", want: " "},
+		"GoodFormat_Undone":       {in: "- [X] Task", want: "X"},
+		"BadFormat_Done":          {in: "-[]Task", want: " "},
+		"BadFormat_Undone":        {in: "-[X]Task", want: "X"},
+		"BadFormat_InvalidStatus": {in: "-[A]Task", want: " "},
+		"NoDash":                  {in: "[ ] Task", wantErr: true},
+		"NoBracketStart":          {in: "- ] Task", wantErr: true},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {

@@ -48,6 +48,5 @@ func toFormattedTaskStatus(s string) (string, error) {
 	if l.HasPrefix("X") || l.HasPrefix("x") {
 		return "X", nil
 	}
-	// FIXME: Other strings are ignored.
 	return " ", nil
 }

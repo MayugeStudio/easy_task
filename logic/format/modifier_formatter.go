@@ -34,7 +34,7 @@ func toFormattedModificationString(s string) (string, error) {
 		return "", fmt.Errorf("%w: while formatting modification string", errInvalidModifierAttribute)
 	}
 	attribute = "Tag"
-	l = l.TrimPrefix("Tag").TrimSpace() // TODO: Implement TrimPrefixInSlice that trim the prefix in passed slice to Line type.
+	l = l.TrimPrefix("Tag").TrimSpace()
 	if !l.HasPrefix("]") {
 		return "", fmt.Errorf("%w: while formatting modification string", errNoBracketEnd)
 	}

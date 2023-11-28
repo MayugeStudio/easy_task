@@ -5,7 +5,6 @@ import (
 	"fmt"
 )
 
-// FIXME: Make the error message more detailed.
 var (
 	errSyntax                   = errors.New("format error")
 	errNoDash                   = fmt.Errorf("%w: no dash", errSyntax)
