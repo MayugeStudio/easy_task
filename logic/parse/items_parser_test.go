@@ -9,15 +9,6 @@ import (
 	"github.com/MayugeStudio/easy_task/domain"
 )
 
-var newTask = domain.NewTask
-var newGroup = func(title string, items []domain.Item) *domain.Group {
-	g := domain.NewGroup(title)
-	for _, item := range items {
-		g.AddItem(item)
-	}
-	return g
-}
-
 func debug(items []domain.Item, indent int) {
 	for _, item := range items {
 		fmt.Println(strings.Repeat(" ", indent), item.Title())
@@ -175,51 +166,6 @@ func TestToItems(t *testing.T) {
 				fmt.Println("Want")
 				debug(tt.want, 0)
 				t.Errorf("ToItems() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_toTask(t *testing.T) {
-	t.Parallel()
-	tests := map[string]struct {
-		in   string
-		want *domain.Task
-	}{
-		"Done": {
-			in:   "- [X] TaskName",
-			want: newTask("TaskName", true),
-		},
-		"Undone": {
-			in:   "- [ ] TaskName",
-			want: newTask("TaskName", false),
-		},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			got := toTask(tt.in)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("toTask() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_toGroup(t *testing.T) {
-	t.Parallel()
-	tests := map[string]struct {
-		in   string
-		want *domain.Group
-	}{
-		"GroupTitle":           {in: "- GroupName", want: newGroup("GroupName", make([]domain.Item, 0))},
-		"GroupTitle_2Indented": {in: "  - GroupName", want: newGroup("GroupName", make([]domain.Item, 0))},
-		"GroupTitle_4Indented": {in: "    - GroupName", want: newGroup("GroupName", make([]domain.Item, 0))},
-	}
-	for testName, tt := range tests {
-		t.Run(testName, func(t *testing.T) {
-			got := toGroup(tt.in)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("toGroup() = %v, want %v", got, tt.want)
 			}
 		})
 	}
