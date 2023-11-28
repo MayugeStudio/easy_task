@@ -25,8 +25,8 @@ func toFormattedGroupTaskString(s string) (string, error) {
 	}
 	indentLevel := share.GetIndentLevel(l.String())
 	// TODO: Change Indent rule. Use indentLevel % 2 == 1 -> indentLevel += 1
-	if indentLevel == 1 {
-		indentLevel = 2
+	if indentLevel%2 == 1 {
+		indentLevel++
 	}
 	indentStr := strings.Repeat(" ", indentLevel)
 	fStr, err := toFormattedTaskString(l.TrimSpace().String())

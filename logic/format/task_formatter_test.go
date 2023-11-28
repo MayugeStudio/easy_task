@@ -44,7 +44,7 @@ func Test_toFormattedTaskStatus(t *testing.T) {
 		"GoodFormat_Undone": {in: "- [X] Task", want: "X"},
 		"BadFormat_Done":    {in: "-[]Task", want: " "},
 		"BadFormat_Undone":  {in: "-[X]Task", want: "X"},
-		"NoDash":            {in: "[ ] Task", wantErr: true}, //FIXME: InValid -> Invalid
+		"NoDash":            {in: "[ ] Task", wantErr: true},
 		"NoBracketStart":    {in: "- ] Task", wantErr: true},
 	}
 	for testName, tt := range tests {

@@ -11,6 +11,7 @@ func Test_toFormattedGroupTaskString(t *testing.T) {
 	}{
 		"Valid":         {in: "  - [ ] Buy the milk.", want: "  - [ ] Buy the milk."},
 		"OneIndent":     {in: " - [ ] Buy the milk.", want: "  - [ ] Buy the milk."},
+		"ThreeIndent":   {in: "   - [ ] Buy the milk.", want: "    - [ ] Buy the milk."},
 		"NoIndent":      {in: "- [ ] Buy the milk.", wantErr: true},
 		"InvalidFormat": {in: "  - Buy the milk.", wantErr: true},
 	}
